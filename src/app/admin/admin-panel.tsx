@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import type { Chart, Project } from "@/lib/data";
 
 type Dataset = { charts: Chart[]; projects: Project[] };
