@@ -12,7 +12,6 @@ export function SiteHeader() {
     { href: "/charts", ja: "譜面一覧", en: "CHARTS" },
     { href: "/projects", ja: "企画一覧", en: "PROJECTS" },
     { href: "/about", ja: "このサイトについて", en: "ABOUT" }
-    { href: "/wiki", ja: "WIKI", en: "WIKI" },
   ];
 
   return (
