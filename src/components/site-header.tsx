@@ -27,6 +27,9 @@ export function SiteHeader() {
               {english ? link.en : link.ja}
             </Link>
           ))}
+          <a href="https://wikiwiki.jp/phigros-fnmd/" target="_blank" rel="noopener noreferrer" className="text-xs tracking-wider text-neutral-400 transition hover:text-white">
+            WIKI ↗
+          </a>
           <button onClick={() => setEnglish(!english)} className="border border-line px-3 py-2 text-[10px] tracking-widest text-neutral-300 hover:border-white hover:text-white">
             {english ? "JP" : "EN"}
           </button>
@@ -38,6 +41,7 @@ export function SiteHeader() {
       {open && (
         <nav className="grid gap-4 border-t border-line px-5 py-5 md:hidden">
           {links.map((link) => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="text-sm text-neutral-300">{english ? link.en : link.ja}</Link>)}
+          <a href="https://wikiwiki.jp/phigros-fnmd/" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="text-sm text-neutral-300">WIKI ↗</a>
           <button onClick={() => setEnglish(!english)} className="w-fit text-xs text-neutral-400">{english ? "日本語に切り替え" : "Switch to English"}</button>
         </nav>
       )}
