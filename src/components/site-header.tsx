@@ -28,7 +28,7 @@ export function SiteHeader() {
             </Link>
           ))}
           <button onClick={() => setEnglish(!english)} className="border border-line px-3 py-2 text-[10px] tracking-widest text-neutral-300 hover:border-white hover:text-white">
-            {english ? "日本語" : "EN"}
+            {english ? "JP" : "EN"}
           </button>
         </nav>
         <button className="text-white md:hidden" onClick={() => setOpen(!open)} aria-label="Toggle navigation">
