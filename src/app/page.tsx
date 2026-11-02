@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-7xl px-5">
       <section className="border-b border-line py-24 sm:py-32">
-        <p className="mb-5 text-[10px] tracking-[0.35em] text-neutral-500">PHIGROS FANMADE DATABASE</p>
+        <p className="mb-5 text-[10px] tracking-[0.35em] text-neutral-500">PHIGROS FANMADE ARCHIVE</p>
         <h1 className="max-w-3xl text-4xl font-light leading-tight tracking-tight sm:text-6xl">A collection of<br />fanmade charts.</h1>
         <p className="mt-6 max-w-xl text-sm leading-7 text-neutral-500">PCCのメンバーによって製作されたPhigros Fanmadeの譜面とコミュニティ企画を記録・共有する譜面倉庫。</p>
         <div className="mt-10 flex flex-wrap gap-3">
