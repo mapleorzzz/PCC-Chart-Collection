@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Chart, Project } from "@/lib/data";
 
-type Dataset = { charts: Chart[]; projects: Project[] };
+type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string };
+type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[] };
 const emptyChart: Chart = {
   id: "", title: "", artist: "", charter: "", difficulty: "IN",
   level: "", projectIds: [], publishedAt: new Date().toISOString().slice(0, 10)
@@ -17,7 +18,7 @@ export default function AdminPanel() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [data, setData] = useState<Dataset>({ charts: [], projects: [] });
+  const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [] });
   const [tab, setTab] = useState<"charts" | "projects">("charts");
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [project, setProject] = useState<Project>(emptyProject);
@@ -25,6 +26,8 @@ export default function AdminPanel() {
   const [busy, setBusy] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [publicationMode, setPublicationMode] = useState<"now" | "scheduled" | "draft">("now");
+  const [scheduledAt, setScheduledAt] = useState("");
 
   async function loadData() {
     const response = await fetch("/api/admin/data");
@@ -57,10 +60,10 @@ export default function AdminPanel() {
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     setLoggedIn(false);
-    setData({ charts: [], projects: [] });
+    setData({ charts: [], projects: [], scheduledCharts: [] });
   }
 
-  async function save(kind: "charts" | "projects", next: Chart[] | Project[]) {
+  async function save(kind: "charts" | "projects" | "scheduled", next: Chart[] | Project[] | ScheduledChart[]) {
     setBusy(true); setError("");
     try {
       const response = await fetch("/api/admin/data", {
@@ -69,7 +72,7 @@ export default function AdminPanel() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "保存できませんでした。");
-      setData((current) => ({ ...current, [kind]: next } as Dataset));
+      setData((current) => ({ ...current, [kind === "scheduled" ? "scheduledCharts" : kind]: next } as Dataset));
       setEditingId("");
       setChart(emptyChart);
       setProject(emptyProject);
@@ -99,10 +102,33 @@ export default function AdminPanel() {
 
   function submitChart(event: FormEvent) {
     event.preventDefault();
-    const next = editingId
-      ? data.charts.map((item) => item.id === editingId ? chart : item)
-      : [...data.charts, chart];
+    if (!editingId && publicationMode !== "now") {
+      if (publicationMode === "scheduled" && !scheduledAt) {
+        setError("公開日時を指定してください。");
+        return;
+      }
+      const item: ScheduledChart = {
+        id: chart.id, chart, status: publicationMode,
+        ...(publicationMode === "scheduled" ? { scheduledAt: new Date(scheduledAt + ":00+09:00").toISOString() } : {})
+      };
+      if (data.charts.some((item) => item.id === chart.id) || data.scheduledCharts.some((item) => item.id === chart.id)) {
+        setError("このIDは既に使用されています。"); return;
+      }
+      void save("scheduled", [...data.scheduledCharts, item]); return;
+    }
+    const next = editingId ? data.charts.map((item) => item.id === editingId ? chart : item) : [...data.charts, chart];
     void save("charts", next);
+  }
+
+  async function publishScheduled(item: ScheduledChart) {
+    if (!window.confirm(`「${item.chart.title}」を今すぐ公開しますか？`)) return;
+    await save("charts", [...data.charts.filter((chart) => chart.id !== item.chart.id), item.chart]);
+    await save("scheduled", data.scheduledCharts.filter((entry) => entry.id !== item.id));
+  }
+
+  async function removeScheduled(id: string) {
+    if (!window.confirm("この下書き・予約投稿を削除しますか？")) return;
+    await save("scheduled", data.scheduledCharts.filter((item) => item.id !== id));
   }
 
   function submitProject(event: FormEvent) {
@@ -177,10 +203,18 @@ export default function AdminPanel() {
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
             <label className={label}>関連企画（複数選択可）<select multiple className={field + " min-h-32"} value={chart.projectIds} onChange={(e) => setChart({ ...chart, projectIds: Array.from(e.target.selectedOptions, (option) => option.value) })}>{data.projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
             <label className={label + " sm:col-span-2"}>説明<textarea className={field + " min-h-24"} value={chart.description || ""} onChange={(e) => setChart({ ...chart, description: e.target.value })} /></label>
-            <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : "譜面を登録"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
+            {!editingId && <div className="grid gap-4 border-t border-line pt-4 sm:col-span-2 sm:grid-cols-2">
+              <label className={label}>公開方法<select className={field} value={publicationMode} onChange={(e) => setPublicationMode(e.target.value as "now" | "scheduled" | "draft")}><option value="now">今すぐ公開</option><option value="scheduled">日時を指定して予約公開</option><option value="draft">下書き保存（非公開）</option></select></label>
+              {publicationMode === "scheduled" && <label className={label}>公開日時（日本時間）<input type="datetime-local" className={field} value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} /></label>}
+              <p className="text-xs leading-6 text-neutral-500 sm:col-span-2">予約投稿は約5分間隔で公開処理されます。下書きは公開されません。</p>
+            </div>}
+            <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : publicationMode === "now" ? "譜面を登録・公開" : publicationMode === "scheduled" ? "予約投稿を保存" : "下書き保存"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
           </form>
         </section>
         <section className="mt-10"><h2 className="mb-4 text-lg">登録済み譜面</h2><div className="divide-y divide-line border-y border-line">{data.charts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 text-xs text-neutral-600">{item.charter} · {item.difficulty} {item.level}</p></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!data.charts.length && <p className="py-10 text-center text-sm text-neutral-600">譜面はまだ登録されていません。</p>}</div></section>
+        <section className="mt-10"><h2 className="mb-4 text-lg">予約・下書き ({data.scheduledCharts.length})</h2><div className="divide-y divide-line border-y border-line">
+          {data.scheduledCharts.map((item) => <div key={item.id} className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center"><div className="min-w-0"><p className="truncate text-sm">{item.chart.title}</p><p className="mt-1 text-xs text-neutral-500">{item.status === "draft" ? "下書き" : "予約公開"}{item.scheduledAt ? " · " + new Date(item.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) + "（JST）" : ""}</p></div><div className="flex min-h-10 shrink-0 items-center gap-4">{item.status === "scheduled" && <button onClick={() => publishScheduled(item)} className="text-xs text-neutral-300 hover:text-white">今すぐ公開</button>}<button onClick={() => removeScheduled(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}
+          {!data.scheduledCharts.length && <p className="py-8 text-center text-sm text-neutral-600">予約・下書きはありません。</p>}</div></section>
       </> : <>
         <section className="mt-8 border border-line p-5 sm:p-7">
           <h2 className="text-lg">{editingId ? "企画を編集" : "企画を新規登録"}</h2>
