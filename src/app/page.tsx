@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { allCharts, allProjects } from "@/lib/data";
 import { ChartCard } from "@/components/chart-card";
+import { usePublicData } from "@/lib/use-public-data";
 
 export default function HomePage() {
-  const latest = [...allCharts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 4);
-  const featuredProjects = allProjects.slice(0, 2);
+  const { charts, projects, loading, error } = usePublicData();
+  const latest = [...charts].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)).slice(0, 4);
+  const featuredProjects = projects.slice(0, 2);
 
   return (
     <div className="mx-auto max-w-7xl px-5">
@@ -19,20 +22,16 @@ export default function HomePage() {
         </div>
       </section>
       <section className="py-16">
-        <div className="mb-8 flex items-end justify-between">
-          <div><p className="text-[10px] tracking-[0.3em] text-neutral-600">COLLECTION</p><h2 className="mt-2 text-2xl font-light">Latest charts</h2></div>
-          <Link href="/charts" className="text-xs text-neutral-500 hover:text-white">VIEW ALL ↗</Link>
-        </div>
-        {latest.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6"><>{latest.map((chart) => <ChartCard key={chart.id} chart={chart} />)}</></div> : <EmptyState message="譜面はまだ登録されていません。" />}
+        <div className="mb-8 flex items-end justify-between"><div><p className="text-[10px] tracking-[0.3em] text-neutral-600">COLLECTION</p><h2 className="mt-2 text-2xl font-light">Latest charts</h2></div><Link href="/charts" className="text-xs text-neutral-500 hover:text-white">VIEW ALL ↗</Link></div>
+        {loading ? <Loading /> : error ? <EmptyState message="データを読み込めませんでした。ページを再読み込みしてください。" /> : latest.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{latest.map((chart) => <ChartCard key={chart.id} chart={chart} />)}</div> : <EmptyState message="譜面はまだ登録されていません。" />}
       </section>
       <section className="border-t border-line py-16">
         <div className="mb-8 flex items-end justify-between"><div><p className="text-[10px] tracking-[0.3em] text-neutral-600">COMMUNITY EVENTS</p><h2 className="mt-2 text-2xl font-light">Projects</h2></div><Link href="/projects" className="text-xs text-neutral-500 hover:text-white">VIEW ALL ↗</Link></div>
-        {featuredProjects.length ? <div className="grid gap-4 sm:grid-cols-2">{featuredProjects.map((project) => <Link key={project.id} href={`/projects/${project.id}`} className="border border-line p-6 transition hover:border-neutral-500"><p className="text-[10px] tracking-widest text-neutral-600">{project.year}</p><h3 className="mt-3 text-lg">{project.name}</h3><p className="mt-2 line-clamp-2 text-sm leading-6 text-neutral-500">{project.description}</p></Link>)}</div> : <EmptyState message="企画はまだ登録されていません。" />}
+        {loading ? <Loading /> : error ? <EmptyState message="データを読み込めませんでした。" /> : featuredProjects.length ? <div className="grid gap-4 sm:grid-cols-2">{featuredProjects.map((project) => <Link key={project.id} href={`/projects/${project.id}`} className="border border-line p-6 transition hover:border-neutral-500"><p className="text-[10px] tracking-widest text-neutral-600">{project.year}</p><h3 className="mt-3 text-lg">{project.name}</h3><p className="mt-2 line-clamp-2 text-sm leading-6 text-neutral-500">{project.description}</p></Link>)}</div> : <EmptyState message="企画はまだ登録されていません。" />}
       </section>
     </div>
   );
 }
 
-function EmptyState({ message }: { message: string }) {
-  return <div className="border border-dashed border-line px-6 py-16 text-center text-sm text-neutral-600">{message}</div>;
-}
+function Loading() { return <div className="py-12 text-center text-xs text-neutral-600">LOADING...</div>; }
+function EmptyState({ message }: { message: string }) { return <div className="border border-dashed border-line px-6 py-16 text-center text-sm text-neutral-600">{message}</div>; }
