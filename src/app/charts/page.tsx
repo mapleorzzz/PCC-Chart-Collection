@@ -17,7 +17,22 @@ export default function ChartsPage() {
     return text.includes(query.toLowerCase()) &&
       (difficulty === "ALL" || chart.difficulty === difficulty) &&
       (project === "ALL" || chart.projectIds.includes(project));
-  }).sort((a, b) => sort === "oldest" ? a.publishedAt.localeCompare(b.publishedAt) : sort === "title" ? a.title.localeCompare(b.title) : b.publishedAt.localeCompare(a.publishedAt)), [charts, query, difficulty, project, sort]);
+  }).sort((a, b) => {
+    if (sort === "oldest") return a.publishedAt.localeCompare(b.publishedAt);
+    if (sort === "title") return a.title.localeCompare(b.title, "ja");
+    if (sort === "level-desc" || sort === "level-asc") {
+      const levelA = Number.parseFloat(a.level);
+      const levelB = Number.parseFloat(b.level);
+      const validA = Number.isFinite(levelA);
+      const validB = Number.isFinite(levelB);
+      if (validA !== validB) return validA ? -1 : 1;
+      if (validA && validB && levelA !== levelB) {
+        return sort === "level-desc" ? levelB - levelA : levelA - levelB;
+      }
+      return a.title.localeCompare(b.title, "ja");
+    }
+    return b.publishedAt.localeCompare(a.publishedAt);
+  }), [charts, query, difficulty, project, sort]);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-16">
@@ -28,7 +43,7 @@ export default function ChartsPage() {
         <label className="flex items-center gap-3 border border-line bg-panel px-4"><Search size={15} className="text-neutral-600" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="曲名・アーティスト・Charter" className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-neutral-700" /></label>
         <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option>ALL</option>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select>
         <select value={project} onChange={(e) => setProject(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="ALL">すべての企画</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
-        <select value={sort} onChange={(e) => setSort(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option></select>
+        <select value={sort} onChange={(e) => setSort(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option><option value="level-desc">レベルが高い順</option><option value="level-asc">レベルが低い順</option></select>
       </div>
       <div className="mb-6 mt-8 flex items-center justify-between text-xs text-neutral-600"><span>{loading ? "LOADING..." : `${filtered.length} CHARTS`}</span><span className="flex items-center gap-2"><SlidersHorizontal size={13} /> GRID VIEW</span></div>
       {loading ? <div className="py-16 text-center text-xs text-neutral-600">LOADING...</div> : error ? <div className="py-16 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div> : filtered.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{filtered.map((chart) => <ChartCard key={chart.id} chart={chart} />)}</div> : <div className="border border-dashed border-line px-6 py-20 text-center text-sm text-neutral-600">該当する譜面はありません。</div>}
