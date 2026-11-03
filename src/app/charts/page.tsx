@@ -21,8 +21,12 @@ export default function ChartsPage() {
     if (sort === "oldest") return a.publishedAt.localeCompare(b.publishedAt);
     if (sort === "title") return a.title.localeCompare(b.title, "ja");
     if (sort === "level-desc" || sort === "level-asc") {
-      const levelA = Number.parseFloat(a.level);
-      const levelB = Number.parseFloat(b.level);
+      const parseLevel = (value: string) => {
+        const match = value.match(/\d+(?:\.\d+)?/);
+        return match ? Number(match[0]) : Number.NaN;
+      };
+      const levelA = parseLevel(a.level);
+      const levelB = parseLevel(b.level);
       const validA = Number.isFinite(levelA);
       const validB = Number.isFinite(levelB);
       if (validA !== validB) return validA ? -1 : 1;
