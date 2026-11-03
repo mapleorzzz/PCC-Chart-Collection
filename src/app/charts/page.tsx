@@ -26,7 +26,7 @@ export default function ChartsPage() {
       <p className="mt-3 text-sm text-neutral-500">登録されている譜面を検索・絞り込みできます。</p>
       <div className="mt-10 grid gap-3 md:grid-cols-[1fr_160px_200px_160px]">
         <label className="flex items-center gap-3 border border-line bg-panel px-4"><Search size={15} className="text-neutral-600" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="曲名・アーティスト・Charter" className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-neutral-700" /></label>
-        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option>ALL</option>{["EZ","HD","IN","AT"].map((d) => <option key={d}>{d}</option>)}</select>
+        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option>ALL</option>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select>
         <select value={project} onChange={(e) => setProject(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="ALL">すべての企画</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
         <select value={sort} onChange={(e) => setSort(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option></select>
       </div>
