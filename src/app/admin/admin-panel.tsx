@@ -132,7 +132,7 @@ export default function AdminPanel() {
   if (!loggedIn) return (
     <div className="mx-auto max-w-md px-5 py-24">
       <p className="text-[10px] tracking-[0.3em] text-neutral-600">RESTRICTED AREA</p>
-      <h1 className="mt-3 text-4xl font-light">Admin Login</h1>
+      <h1 className="mt-3 text-3xl font-light sm:text-4xl">Admin Login</h1>
       <form onSubmit={login} className="mt-8 space-y-4">
         <label className={label}>管理者パスワード<input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className={field} required /></label>
         {error && <p className="text-sm text-red-400">{error}</p>}
@@ -143,19 +143,19 @@ export default function AdminPanel() {
   );
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-14">
-      <div className="flex items-end justify-between gap-4">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-5 sm:py-14">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
         <div><p className="text-[10px] tracking-[0.3em] text-neutral-600">MANAGEMENT</p><h1 className="mt-3 text-4xl font-light">Admin Dashboard</h1><p className="mt-2 text-sm text-neutral-500">GitHubのデータを直接更新します。</p></div>
         <button onClick={logout} className="border border-line px-4 py-2 text-xs text-neutral-400 hover:border-white hover:text-white">ログアウト</button>
       </div>
       {error && <p className="mt-6 border border-red-900 bg-red-950/30 p-3 text-sm text-red-300">{error}</p>}
-      <div className="mt-10 flex gap-2 border-b border-line">
+      <div className="mt-8 flex gap-2 overflow-x-auto border-b border-line">
         <button onClick={() => { setTab("charts"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "charts" ? "border-b border-white text-white" : "text-neutral-500"}`}>譜面管理 ({data.charts.length})</button>
         <button onClick={() => { setTab("projects"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "projects" ? "border-b border-white text-white" : "text-neutral-500"}`}>企画管理 ({data.projects.length})</button>
       </div>
 
       {tab === "charts" ? <>
-        <section className="mt-8 border border-line p-5 sm:p-7">
+        <section className="mt-6 border border-line p-4 sm:mt-8 sm:p-7">
           <h2 className="text-lg">{editingId ? "譜面を編集" : "譜面を新規登録"}</h2>
           <form onSubmit={submitChart} className="mt-6 grid gap-4 sm:grid-cols-2">
             <label className={label}>ID（英数字・ハイフン）<input className={field} value={chart.id} disabled={!!editingId} onChange={(e) => setChart({ ...chart, id: e.target.value })} required /></label>
@@ -178,7 +178,7 @@ export default function AdminPanel() {
             <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : "譜面を登録"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
           </form>
         </section>
-        <section className="mt-10"><h2 className="mb-4 text-lg">登録済み譜面</h2><div className="divide-y divide-line border-y border-line">{data.charts.map((item) => <div key={item.id} className="flex items-center justify-between gap-4 py-4"><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 text-xs text-neutral-600">{item.charter} · {item.difficulty} {item.level}</p></div><div className="flex shrink-0 gap-3"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!data.charts.length && <p className="py-10 text-center text-sm text-neutral-600">譜面はまだ登録されていません。</p>}</div></section>
+        <section className="mt-10"><h2 className="mb-4 text-lg">登録済み譜面</h2><div className="divide-y divide-line border-y border-line">{data.charts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 text-xs text-neutral-600">{item.charter} · {item.difficulty} {item.level}</p></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!data.charts.length && <p className="py-10 text-center text-sm text-neutral-600">譜面はまだ登録されていません。</p>}</div></section>
       </> : <>
         <section className="mt-8 border border-line p-5 sm:p-7">
           <h2 className="text-lg">{editingId ? "企画を編集" : "企画を新規登録"}</h2>
