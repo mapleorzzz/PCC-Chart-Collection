@@ -137,9 +137,12 @@ export default function AdminPanel() {
       setError("未来の日時を正しい形式で入力してください。");
       return;
     }
-    await save("scheduled", data.scheduledCharts.map((entry) =>
-      entry.id === item.id ? { ...entry, scheduledAt: new Date(timestamp).toISOString(), status: "scheduled" } : entry
-    ));
+    const updated: ScheduledChart[] = data.scheduledCharts.map((entry): ScheduledChart =>
+      entry.id === item.id
+        ? { ...entry, scheduledAt: new Date(timestamp).toISOString(), status: "scheduled" }
+        : entry
+    );
+    await save("scheduled", updated);
   }
 
   async function removeScheduled(id: string) {
