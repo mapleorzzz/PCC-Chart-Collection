@@ -29,6 +29,7 @@ export default function AdminPanel() {
   const [chartImageFile, setChartImageFile] = useState<File | null>(null);
   const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
+  const [imageTarget, setImageTarget] = useState<"chart" | "project">("chart");
   const [publicationMode, setPublicationMode] = useState<"now" | "scheduled" | "draft">("now");
   const [scheduledAt, setScheduledAt] = useState("");
 
@@ -103,8 +104,9 @@ export default function AdminPanel() {
     }
   }
 
-  async function uploadImage(target: "chart" | "project") {
-    const file = target === "chart" ? chartImageFile : projectImageFile;
+  async function uploadImage(target: "chart" | "project", selectedFile?: File) {
+    const file = selectedFile || (target === "chart" ? chartImageFile : projectImageFile);
+    setImageTarget(target);
     if (!file) {
       setError("先に画像ファイルを選択してください。");
       return;
@@ -252,10 +254,10 @@ export default function AdminPanel() {
             <div className={label}>
               ジャケット画像
               <input className={field} value={chart.jacket || ""} onChange={(e) => setChart({ ...chart, jacket: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
-              <input id="chart-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} onChange={(e) => setChartImageFile(e.target.files?.[0] || null)} />
-              <button type="button" onClick={() => uploadImage("chart")} disabled={!chartImageFile || imageUploading} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{imageUploading ? "アップロード中..." : "画像をアップロード"}</button>
-              {chartImageFile && <p className="mt-2 text-xs text-neutral-400">{chartImageFile.name} · {(chartImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
-              <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下</p>
+              <input id="chart-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} disabled={imageUploading} onChange={(e) => { const file = e.target.files?.[0] || null; setChartImageFile(file); if (file) void uploadImage("chart", file); }} />
+              {imageUploading && imageTarget === "chart" && <p className="mt-2 text-xs text-neutral-400">画像をアップロード中...</p>}
+              {chartImageFile && !imageUploading && <p className="mt-2 text-xs text-neutral-400">{chartImageFile.name} · {(chartImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+              <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下。選択すると自動アップロードされます。</p>
             </div>
             <div className={label}>
               .pezファイル
@@ -292,10 +294,10 @@ export default function AdminPanel() {
             <div className={label + " sm:col-span-2"}>
               企画カバー画像
               <input className={field} value={project.cover || ""} onChange={(e) => setProject({ ...project, cover: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
-              <input id="project-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} onChange={(e) => setProjectImageFile(e.target.files?.[0] || null)} />
-              <button type="button" onClick={() => uploadImage("project")} disabled={!projectImageFile || imageUploading} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{imageUploading ? "アップロード中..." : "画像をアップロード"}</button>
-              {projectImageFile && <p className="mt-2 text-xs text-neutral-400">{projectImageFile.name} · {(projectImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
-              <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下</p>
+              <input id="project-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} disabled={imageUploading} onChange={(e) => { const file = e.target.files?.[0] || null; setProjectImageFile(file); if (file) void uploadImage("project", file); }} />
+              {imageUploading && imageTarget === "project" && <p className="mt-2 text-xs text-neutral-400">画像をアップロード中...</p>}
+              {projectImageFile && !imageUploading && <p className="mt-2 text-xs text-neutral-400">{projectImageFile.name} · {(projectImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+              <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下。選択すると自動アップロードされます。</p>
             </div>
             <label className={label + " sm:col-span-2"}>企画概要<textarea className={field + " min-h-32"} value={project.description} onChange={(e) => setProject({ ...project, description: e.target.value })} required /></label>
             <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : "企画を登録"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
