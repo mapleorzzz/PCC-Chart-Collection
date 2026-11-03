@@ -19,6 +19,7 @@ export default function ProjectDetailPage() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-5 sm:py-16">
       <Link href="/projects" className="text-xs text-neutral-500 hover:text-white">← PROJECTS</Link>
       <section className="mt-8 border-b border-line pb-12">
+        {project.cover && <div className="mb-8 aspect-[21/9] overflow-hidden border border-line bg-[#171717]"><img src={project.cover} alt="" className="h-full w-full object-cover" /></div>}
         <p className="text-[10px] tracking-[0.3em] text-neutral-600">PROJECT / {project.year}</p><h1 className="mt-4 break-words text-3xl font-light sm:text-5xl">{project.name}</h1>
         <p className="mt-6 max-w-3xl whitespace-pre-wrap text-sm leading-7 text-neutral-400">{project.description}</p>
         <div className="mt-8 flex flex-wrap gap-x-10 gap-y-4 text-xs text-neutral-500">{project.organizer && <span>ORGANIZER: {project.organizer}</span>}{(project.startDate || project.endDate) && <span>PERIOD: {project.startDate || "TBA"} — {project.endDate || "TBA"}</span>}</div>
