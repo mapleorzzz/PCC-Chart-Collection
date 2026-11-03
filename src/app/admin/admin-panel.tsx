@@ -22,7 +22,7 @@ export default function AdminPanel() {
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [project, setProject] = useState<Project>(emptyProject);
   const [editingId, setEditingId] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(false);\n  const [selectedFile, setSelectedFile] = useState<File | null>(null);\n  const [uploading, setUploading] = useState(false);
 
   async function loadData() {
     const response = await fetch("/api/admin/data");
@@ -73,6 +73,26 @@ export default function AdminPanel() {
       setProject(emptyProject);
     } catch (e) { setError(e instanceof Error ? e.message : "保存に失敗しました。"); }
     finally { setBusy(false); }
+  }
+
+  async function uploadChartFile() {
+    if (!selectedFile) { setError(".pezファイルを選択してください。"); return; }
+    setUploading(true); setError("");
+    try {
+      const form = new FormData();
+      form.append("file", selectedFile);
+      const response = await fetch("/api/admin/upload", { method: "POST", body: form });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "アップロードに失敗しました。");
+      setChart((current) => ({ ...current, fileUrl: result.browserDownloadUrl }));
+      setSelectedFile(null);
+      const picker = document.getElementById("chart-pez-file") as HTMLInputElement | null;
+      if (picker) picker.value = "";
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "アップロードに失敗しました。");
+    } finally {
+      setUploading(false);
+    }
   }
 
   function submitChart(event: FormEvent) {
@@ -145,7 +165,13 @@ export default function AdminPanel() {
             <label className={label}>難易度<select className={field} value={chart.difficulty} onChange={(e) => setChart({ ...chart, difficulty: e.target.value as Chart["difficulty"] })}>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select></label>
             <label className={label}>レベル<input className={field} value={chart.level} onChange={(e) => setChart({ ...chart, level: e.target.value })} placeholder="例: 15" required /></label>
             <label className={label}>ジャケット画像URL<input className={field} value={chart.jacket || ""} onChange={(e) => setChart({ ...chart, jacket: e.target.value })} placeholder="https://..." /></label>
-            <label className={label}>.pez配布URL<input className={field} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://..." /></label>
+            <div className={label}>
+              .pezファイル
+              <input id="chart-pez-file" type="file" accept=".pez,application/octet-stream" className={field} onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} />
+              <button type="button" onClick={uploadChartFile} disabled={!selectedFile || uploading} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{uploading ? "アップロード中..." : "GitHub Releaseにアップロード"}</button>
+              {selectedFile && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+              <p className="mt-2 break-all text-xs text-neutral-600">{chart.fileUrl ? "登録済み: " + chart.fileUrl : "アップロード後、ダウンロードURLがここに自動入力されます。"}</p>
+            </div>
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
             <label className={label}>関連企画（複数選択可）<select multiple className={field + " min-h-32"} value={chart.projectIds} onChange={(e) => setChart({ ...chart, projectIds: Array.from(e.target.selectedOptions, (option) => option.value) })}>{data.projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
             <label className={label + " sm:col-span-2"}>説明<textarea className={field + " min-h-24"} value={chart.description || ""} onChange={(e) => setChart({ ...chart, description: e.target.value })} /></label>
