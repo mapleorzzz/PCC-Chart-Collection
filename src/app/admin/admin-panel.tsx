@@ -22,7 +22,9 @@ export default function AdminPanel() {
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [project, setProject] = useState<Project>(emptyProject);
   const [editingId, setEditingId] = useState("");
-  const [busy, setBusy] = useState(false);\n  const [selectedFile, setSelectedFile] = useState<File | null>(null);\n  const [uploading, setUploading] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   async function loadData() {
     const response = await fetch("/api/admin/data");
