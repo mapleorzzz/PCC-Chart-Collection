@@ -31,7 +31,7 @@ export const allCharts = charts as Chart[];
 export const allProjects = projects as Project[];
 
 export function formatLevel(level: string) {
-  return `Lv.${level.replace(/^Lv\\.?\\s*/i, "").replace(/(\\d+)\\.\\d+/, "$1")}`;
+  return `Lv.${level.replace(/^Lv\.?\s*/i, "").replace(/(\d+)\.\d+/, "$1")}`;
 }
 
 export function getChart(id: string) {
