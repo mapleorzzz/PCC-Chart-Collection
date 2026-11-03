@@ -17,7 +17,7 @@ export function ChartCard({ chart }: { chart: Chart }) {
           <h3 className="truncate text-sm font-medium text-neutral-100 group-hover:text-white">{chart.title}</h3>
           <p className="mt-1 truncate text-xs text-muted">{chart.charter} / {chart.artist}</p>
         </div>
-        <span className="shrink-0 border border-neutral-700 px-2 py-1 text-[10px] tracking-wider text-neutral-300">{chart.difficulty} {chart.level}</span>
+        <span className="shrink-0 border border-neutral-700 px-2 py-1 text-[10px] tracking-wider text-neutral-300">{chart.difficulty} {chart.level.replace(/(\d+)\.\d+/, "$1")}</span>
       </div>
     </Link>
   );
