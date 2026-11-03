@@ -88,5 +88,20 @@
     "publishedAt": "2024-11-16",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793710475064-04074_png.png",
     "youtubeUrl": "https://youtu.be/5RCmjgxQKBc"
+  },
+  {
+    "id": "13donkeys",
+    "title": "13 Donkeys",
+    "artist": "Massive New Krew",
+    "charter": "13 囃狼s",
+    "difficulty": "IN",
+    "level": "14.1",
+    "projectIds": [
+      "wacca"
+    ],
+    "publishedAt": "2026-11-03",
+    "youtubeUrl": "https://youtu.be/CmLXBUzkUJ4",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793712034537-13Donkeys.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793712058620-2674531_jpg.jpg"
   }
 ]
