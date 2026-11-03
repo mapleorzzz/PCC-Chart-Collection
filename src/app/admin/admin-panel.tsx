@@ -26,8 +26,8 @@ export default function AdminPanel() {
   const [busy, setBusy] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-  const [imageTarget, setImageTarget] = useState<"chart" | "project">("chart");
+  const [chartImageFile, setChartImageFile] = useState<File | null>(null);
+  const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
   const [publicationMode, setPublicationMode] = useState<"now" | "scheduled" | "draft">("now");
   const [scheduledAt, setScheduledAt] = useState("");
@@ -104,19 +104,33 @@ export default function AdminPanel() {
   }
 
   async function uploadImage(target: "chart" | "project") {
-    if (!selectedImageFile) { setError("画像ファイルを選択してください。"); return; }
-    setImageUploading(true); setError("");
+    const file = target === "chart" ? chartImageFile : projectImageFile;
+    if (!file) {
+      setError("先に画像ファイルを選択してください。");
+      return;
+    }
+    setImageUploading(true);
+    setError("");
     try {
       const form = new FormData();
-      form.append("file", selectedImageFile);
+      form.append("file", file);
       const response = await fetch("/api/admin/upload-image", { method: "POST", body: form });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "画像アップロードに失敗しました。");
-      if (target === "chart") setChart((current) => ({ ...current, jacket: result.imageUrl }));
-      else setProject((current) => ({ ...current, cover: result.imageUrl }));
-      setSelectedImageFile(null);
-      const picker = document.getElementById(target === "chart" ? "chart-image-file" : "project-image-file") as HTMLInputElement | null;
-      if (picker) picker.value = "";
+      if (typeof result.imageUrl !== "string" || !result.imageUrl) {
+        throw new Error("アップロードは完了しましたが、画像URLを受け取れませんでした。");
+      }
+      if (target === "chart") {
+        setChart((current) => ({ ...current, jacket: result.imageUrl }));
+        setChartImageFile(null);
+        const picker = document.getElementById("chart-image-file") as HTMLInputElement | null;
+        if (picker) picker.value = "";
+      } else {
+        setProject((current) => ({ ...current, cover: result.imageUrl }));
+        setProjectImageFile(null);
+        const picker = document.getElementById("project-image-file") as HTMLInputElement | null;
+        if (picker) picker.value = "";
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "画像アップロードに失敗しました。");
     } finally {
@@ -238,8 +252,9 @@ export default function AdminPanel() {
             <div className={label}>
               ジャケット画像
               <input className={field} value={chart.jacket || ""} onChange={(e) => setChart({ ...chart, jacket: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
-              <input id="chart-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} onChange={(e) => { setSelectedImageFile(e.target.files?.[0] || null); setImageTarget("chart"); }} />
-              <button type="button" onClick={() => uploadImage("chart")} disabled={!selectedImageFile || imageUploading || imageTarget !== "chart"} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{imageUploading && imageTarget === "chart" ? "アップロード中..." : "画像をアップロード"}</button>
+              <input id="chart-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} onChange={(e) => setChartImageFile(e.target.files?.[0] || null)} />
+              <button type="button" onClick={() => uploadImage("chart")} disabled={!chartImageFile || imageUploading} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{imageUploading ? "アップロード中..." : "画像をアップロード"}</button>
+              {chartImageFile && <p className="mt-2 text-xs text-neutral-400">{chartImageFile.name} · {(chartImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
               <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下</p>
             </div>
             <div className={label}>
@@ -277,8 +292,9 @@ export default function AdminPanel() {
             <div className={label + " sm:col-span-2"}>
               企画カバー画像
               <input className={field} value={project.cover || ""} onChange={(e) => setProject({ ...project, cover: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
-              <input id="project-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} onChange={(e) => { setSelectedImageFile(e.target.files?.[0] || null); setImageTarget("project"); }} />
-              <button type="button" onClick={() => uploadImage("project")} disabled={!selectedImageFile || imageUploading || imageTarget !== "project"} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{imageUploading && imageTarget === "project" ? "アップロード中..." : "画像をアップロード"}</button>
+              <input id="project-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} onChange={(e) => setProjectImageFile(e.target.files?.[0] || null)} />
+              <button type="button" onClick={() => uploadImage("project")} disabled={!projectImageFile || imageUploading} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{imageUploading ? "アップロード中..." : "画像をアップロード"}</button>
+              {projectImageFile && <p className="mt-2 text-xs text-neutral-400">{projectImageFile.name} · {(projectImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
               <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下</p>
             </div>
             <label className={label + " sm:col-span-2"}>企画概要<textarea className={field + " min-h-32"} value={project.description} onChange={(e) => setProject({ ...project, description: e.target.value })} required /></label>
