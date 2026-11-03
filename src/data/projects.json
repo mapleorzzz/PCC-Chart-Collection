@@ -3,10 +3,20 @@
     "id": "wacca",
     "name": "WACCA Collection",
     "description": "PCC運営とサーバーのメンバーで手掛けたWACCA精選集。",
-    "year": 2024,
+    "year": 2025,
     "organizer": "PCC Administrator",
     "startDate": "2024-12-01",
     "endDate": "2024-12-06",
     "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793690761723-yt_NAxuVypp5B8_maxresdefault_jpg.jpg"
+  },
+  {
+    "id": "2025afeve",
+    "name": "2025 April Fool's Eve",
+    "description": "PCC運営で製作したエイプリルフール前夜祭。\n",
+    "year": 2025,
+    "organizer": "PCC Administrator",
+    "startDate": "2025-03-29",
+    "endDate": "2025-03-31",
+    "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793718026946-2025af_png.png"
   }
 ]
