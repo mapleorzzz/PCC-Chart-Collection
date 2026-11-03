@@ -6,7 +6,7 @@ export type Chart = {
   title: string;
   artist: string;
   charter: string;
-  difficulty: "EZ" | "HD" | "IN" | "AT";
+  difficulty: "EZ" | "HD" | "IN" | "AT" | "Other";
   level: string;
   jacket?: string;
   fileUrl?: string;
