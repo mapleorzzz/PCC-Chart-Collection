@@ -62,12 +62,9 @@ export async function POST(request: NextRequest) {
     }
 
     const release = await releaseResponse.json() as Release;
-    const filename = file.name.replace(/[\\/]/g, "_").replace(/[^\w.()\- ]/g, "_");
-    const existing = release.assets.find((asset) => asset.name === filename);
-    if (existing) {
-      const deleteResponse = await github(`/releases/assets/${existing.id}`, { method: "DELETE" });
-      if (!deleteResponse.ok) throw new Error("同名ファイルの既存アセットを置き換えられませんでした。");
-    }
+    // 既存の譜面ファイルは削除・上書きせず、アップロードごとに別名で保存する。
+    const safeOriginalName = file.name.replace(/[\\/]/g, "_").replace(/[^\w.()\- ]/g, "_");
+    const filename = `${Date.now()}-${safeOriginalName}`;
 
     const uploadResponse = await fetch(
       `https://uploads.github.com/repos/${repo}/releases/${release.id}/assets?name=${encodeURIComponent(filename)}`,
