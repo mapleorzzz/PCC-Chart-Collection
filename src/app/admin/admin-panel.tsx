@@ -33,6 +33,17 @@ export default function AdminPanel() {
   const [publicationMode, setPublicationMode] = useState<"now" | "scheduled" | "draft">("now");
   const [scheduledAt, setScheduledAt] = useState("");
 
+  function clearSelectedUploads() {
+    setSelectedFile(null);
+    setChartImageFile(null);
+    setProjectImageFile(null);
+    const ids = ["chart-pez-file", "chart-image-file", "project-image-file"];
+    ids.forEach((id) => {
+      const input = document.getElementById(id) as HTMLInputElement | null;
+      if (input) input.value = "";
+    });
+  }
+
   async function loadData() {
     const response = await fetch("/api/admin/data");
     const result = await response.json();
@@ -80,6 +91,7 @@ export default function AdminPanel() {
       setEditingId("");
       setChart(emptyChart);
       setProject(emptyProject);
+      clearSelectedUploads();
     } catch (e) { setError(e instanceof Error ? e.message : "保存に失敗しました。"); }
     finally { setBusy(false); }
   }
@@ -199,9 +211,26 @@ export default function AdminPanel() {
     void save("projects", next);
   }
 
-  function editChart(item: Chart) { setEditingId(item.id); setChart({ ...item }); setTab("charts"); }
-  function editProject(item: Project) { setEditingId(item.id); setProject({ ...item }); setTab("projects"); }
-  function cancelEdit() { setEditingId(""); setChart(emptyChart); setProject(emptyProject); }
+  function editChart(item: Chart) {
+    clearSelectedUploads();
+    setEditingId(item.id);
+    setChart({ ...item });
+    setProject(emptyProject);
+    setTab("charts");
+  }
+  function editProject(item: Project) {
+    clearSelectedUploads();
+    setEditingId(item.id);
+    setProject({ ...item });
+    setChart(emptyChart);
+    setTab("projects");
+  }
+  function cancelEdit() {
+    clearSelectedUploads();
+    setEditingId("");
+    setChart(emptyChart);
+    setProject(emptyProject);
+  }
 
   async function removeChart(id: string) {
     if (!window.confirm("この譜面を削除しますか？")) return;
