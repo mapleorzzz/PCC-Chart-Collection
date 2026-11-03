@@ -46,5 +46,17 @@
     "publishedAt": "2024-09-05",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793692419099-yt_jfUeboZ4i-M_maxresdefault_jpg.jpg",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/_3.pez"
+  },
+  {
+    "id": "quatez",
+    "title": "QUATTUORUX",
+    "artist": "打打だいず Vs. Tanchiky Vs. からめる",
+    "charter": "虚星瑠一 Vs. AoyamaYS Vs. SuperChaos",
+    "difficulty": "EZ",
+    "level": "Lv.7",
+    "projectIds": [],
+    "publishedAt": "2024-10-18",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793692855632-quat_jpg.jpg",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/QUATTUORUX_EZ.pez"
   }
 ]
