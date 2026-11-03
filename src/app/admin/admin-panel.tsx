@@ -268,6 +268,7 @@ export default function AdminPanel() {
               <p className="mt-2 text-xs text-neutral-600">ファイルを選択すると自動でGitHub Releaseにアップロードされます。</p>
               <p className="mt-2 break-all text-xs text-neutral-600">{chart.fileUrl ? "登録済み: " + chart.fileUrl : "アップロード後、ダウンロードURLがここに自動入力されます。"}</p>
             </div>
+            <label className={label}>YouTubeリンク<input type="url" className={field} value={chart.youtubeUrl || ""} onChange={(e) => setChart({ ...chart, youtubeUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." /></label>
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
             <label className={label}>関連企画（複数選択可）<select multiple className={field + " min-h-32"} value={chart.projectIds} onChange={(e) => setChart({ ...chart, projectIds: Array.from(e.target.selectedOptions, (option) => option.value) })}>{data.projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
             <label className={label + " sm:col-span-2"}>説明<textarea className={field + " min-h-24"} value={chart.description || ""} onChange={(e) => setChart({ ...chart, description: e.target.value })} /></label>
