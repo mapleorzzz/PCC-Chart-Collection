@@ -84,12 +84,13 @@ export default function AdminPanel() {
     finally { setBusy(false); }
   }
 
-  async function uploadChartFile() {
-    if (!selectedFile) { setError(".pezファイルを選択してください。"); return; }
+  async function uploadChartFile(fileToUpload?: File) {
+    const file = fileToUpload || selectedFile;
+    if (!file) { setError(".pezファイルを選択してください。"); return; }
     setUploading(true); setError("");
     try {
       const form = new FormData();
-      form.append("file", selectedFile);
+      form.append("file", file);
       const response = await fetch("/api/admin/upload", { method: "POST", body: form });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "アップロードに失敗しました。");
@@ -261,9 +262,10 @@ export default function AdminPanel() {
             </div>
             <div className={label}>
               .pezファイル
-              <input id="chart-pez-file" type="file" accept=".pez,application/octet-stream" className={field} onChange={(e) => setSelectedFile(e.target.files?.[0] || null)} />
-              <button type="button" onClick={uploadChartFile} disabled={!selectedFile || uploading} className="mt-2 border border-line px-4 py-2 text-xs text-neutral-200 disabled:opacity-40">{uploading ? "アップロード中..." : "GitHub Releaseにアップロード"}</button>
-              {selectedFile && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+              <input id="chart-pez-file" type="file" accept=".pez,application/octet-stream" className={field} disabled={uploading} onChange={(e) => { const file = e.target.files?.[0] || null; setSelectedFile(file); if (file) void uploadChartFile(file); }} />
+              {uploading && <p className="mt-2 text-xs text-neutral-400">GitHub Releaseにアップロード中...</p>}
+              {selectedFile && !uploading && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+              <p className="mt-2 text-xs text-neutral-600">ファイルを選択すると自動でGitHub Releaseにアップロードされます。</p>
               <p className="mt-2 break-all text-xs text-neutral-600">{chart.fileUrl ? "登録済み: " + chart.fileUrl : "アップロード後、ダウンロードURLがここに自動入力されます。"}</p>
             </div>
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
