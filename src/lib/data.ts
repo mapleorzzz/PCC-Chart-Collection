@@ -10,6 +10,7 @@ export type Chart = {
   level: string;
   jacket?: string;
   fileUrl?: string;
+  youtubeUrl?: string;
   projectIds: string[];
   publishedAt: string;
   description?: string;
