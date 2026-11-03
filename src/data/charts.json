@@ -10,5 +10,17 @@
     "publishedAt": "2026-11-03",
     "jacket": "https://i.ytimg.com/vi/zgHMFKelvVA/maxresdefault.jpg",
     "fileUrl": "https://cdn.discordapp.com/attachments/1270199814793199698/1400792450938962073/Boom_Boom_Boom_Boom_-_AT_Lv.16.pez?ex=6aea64e1&is=6ae91361&hm=aa9232428df98ef8f1c6d638dc0fde7c3873c8192266caedec5d7a4c0c3c0a81&"
+  },
+  {
+    "id": "nighttheater",
+    "title": "NightTheater",
+    "artist": "わかどり",
+    "charter": "ЯsukuИ vs. komone vs. Fevm1r",
+    "difficulty": "IN",
+    "level": "15",
+    "projectIds": [],
+    "publishedAt": "2026-11-03",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/NightTheater.pez",
+    "jacket": "https://imgur.com/a/2mHGd7n"
   }
 ]
