@@ -16,7 +16,7 @@ export function SiteHeader() {
 
   return (
     <header className="border-b border-line">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-5 sm:py-5">
         <Link href="/" className="group">
           <span className="block text-lg font-semibold tracking-[0.18em] text-white">PCC</span>
           <span className="block text-[9px] tracking-[0.22em] text-muted">CHART COLLECTION</span>
@@ -34,15 +34,15 @@ export function SiteHeader() {
             {english ? "JP" : "EN"}
           </button>
         </nav>
-        <button className="text-white md:hidden" onClick={() => setOpen(!open)} aria-label="Toggle navigation">
+        <button className="flex min-h-11 min-w-11 items-center justify-center text-white md:hidden" onClick={() => setOpen(!open)} aria-label="Toggle navigation">
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
       {open && (
-        <nav className="grid gap-4 border-t border-line px-5 py-5 md:hidden">
-          {links.map((link) => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="text-sm text-neutral-300">{english ? link.en : link.ja}</Link>)}
+        <nav className="grid gap-1 border-t border-line px-4 py-3 sm:px-5 md:hidden">
+          {links.map((link) => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="flex min-h-11 items-center text-sm text-neutral-300">{english ? link.en : link.ja}</Link>)}
           <a href="https://wikiwiki.jp/phigros-fnmd/" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="text-sm text-neutral-300">WIKI ↗</a>
-          <button onClick={() => setEnglish(!english)} className="w-fit text-xs text-neutral-400">{english ? "日本語に切り替え" : "Switch to English"}</button>
+          <button onClick={() => setEnglish(!english)} className="min-h-11 w-fit text-xs text-neutral-400">{english ? "日本語に切り替え" : "Switch to English"}</button>
         </nav>
       )}
     </header>
