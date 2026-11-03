@@ -4,7 +4,8 @@ import { isAdminAuthenticated } from "@/lib/admin-auth";
 const repo = "mapleorzzz/PCC-Chart-Collection";
 const files = {
   charts: "src/data/charts.json",
-  projects: "src/data/projects.json"
+  projects: "src/data/projects.json",
+  scheduled: "src/data/scheduled-charts.json"
 } as const;
 
 async function githubRequest(path: string, init?: RequestInit) {
@@ -25,14 +26,15 @@ async function githubRequest(path: string, init?: RequestInit) {
 export async function GET() {
   if (!(await isAdminAuthenticated())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
-    const [chartsRes, projectsRes] = await Promise.all([
+    const [chartsRes, projectsRes, scheduledRes] = await Promise.all([
       githubRequest(files.charts),
-      githubRequest(files.projects)
+      githubRequest(files.projects),
+      githubRequest(files.scheduled)
     ]);
-    if (!chartsRes.ok || !projectsRes.ok) throw new Error("GitHubからデータを取得できませんでした。");
-    const [chartsFile, projectsFile] = await Promise.all([chartsRes.json(), projectsRes.json()]);
+    if (!chartsRes.ok || !projectsRes.ok || !scheduledRes.ok) throw new Error("GitHubからデータを取得できませんでした。");
+    const [chartsFile, projectsFile, scheduledFile] = await Promise.all([chartsRes.json(), projectsRes.json(), scheduledRes.json()]);
     const decode = (file: { content: string }) => JSON.parse(Buffer.from(file.content, "base64").toString("utf8"));
-    return NextResponse.json({ charts: decode(chartsFile), projects: decode(projectsFile) });
+    return NextResponse.json({ charts: decode(chartsFile), projects: decode(projectsFile), scheduledCharts: decode(scheduledFile) });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "データ取得に失敗しました。" }, { status: 500 });
   }
