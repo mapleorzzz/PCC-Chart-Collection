@@ -2,21 +2,22 @@
 
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { allCharts, allProjects } from "@/lib/data";
 import { ChartCard } from "@/components/chart-card";
+import { usePublicData } from "@/lib/use-public-data";
 
 export default function ChartsPage() {
+  const { charts, projects, loading, error } = usePublicData();
   const [query, setQuery] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [project, setProject] = useState("ALL");
   const [sort, setSort] = useState("newest");
 
-  const filtered = useMemo(() => allCharts.filter((chart) => {
+  const filtered = useMemo(() => charts.filter((chart) => {
     const text = [chart.title, chart.artist, chart.charter].join(" ").toLowerCase();
     return text.includes(query.toLowerCase()) &&
       (difficulty === "ALL" || chart.difficulty === difficulty) &&
       (project === "ALL" || chart.projectIds.includes(project));
-  }).sort((a, b) => sort === "oldest" ? a.publishedAt.localeCompare(b.publishedAt) : sort === "title" ? a.title.localeCompare(b.title) : b.publishedAt.localeCompare(a.publishedAt)), [query, difficulty, project, sort]);
+  }).sort((a, b) => sort === "oldest" ? a.publishedAt.localeCompare(b.publishedAt) : sort === "title" ? a.title.localeCompare(b.title) : b.publishedAt.localeCompare(a.publishedAt)), [charts, query, difficulty, project, sort]);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-16">
@@ -26,11 +27,11 @@ export default function ChartsPage() {
       <div className="mt-10 grid gap-3 md:grid-cols-[1fr_160px_200px_160px]">
         <label className="flex items-center gap-3 border border-line bg-panel px-4"><Search size={15} className="text-neutral-600" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="曲名・アーティスト・Charter" className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-neutral-700" /></label>
         <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option>ALL</option>{["EZ","HD","IN","AT"].map((d) => <option key={d}>{d}</option>)}</select>
-        <select value={project} onChange={(e) => setProject(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="ALL">すべての企画</option>{allProjects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
+        <select value={project} onChange={(e) => setProject(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="ALL">すべての企画</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
         <select value={sort} onChange={(e) => setSort(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option></select>
       </div>
-      <div className="mb-6 mt-8 flex items-center justify-between text-xs text-neutral-600"><span>{filtered.length} CHARTS</span><span className="flex items-center gap-2"><SlidersHorizontal size={13} /> GRID VIEW</span></div>
-      {filtered.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{filtered.map((chart) => <ChartCard key={chart.id} chart={chart} />)}</div> : <div className="border border-dashed border-line px-6 py-20 text-center text-sm text-neutral-600">該当する譜面はありません。</div>}
+      <div className="mb-6 mt-8 flex items-center justify-between text-xs text-neutral-600"><span>{loading ? "LOADING..." : `${filtered.length} CHARTS`}</span><span className="flex items-center gap-2"><SlidersHorizontal size={13} /> GRID VIEW</span></div>
+      {loading ? <div className="py-16 text-center text-xs text-neutral-600">LOADING...</div> : error ? <div className="py-16 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div> : filtered.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{filtered.map((chart) => <ChartCard key={chart.id} chart={chart} />)}</div> : <div className="border border-dashed border-line px-6 py-20 text-center text-sm text-neutral-600">該当する譜面はありません。</div>}
     </div>
   );
 }
