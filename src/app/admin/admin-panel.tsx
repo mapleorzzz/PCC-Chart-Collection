@@ -142,7 +142,7 @@ export default function AdminPanel() {
             <label className={label}>曲名<input className={field} value={chart.title} onChange={(e) => setChart({ ...chart, title: e.target.value })} required /></label>
             <label className={label}>アーティスト<input className={field} value={chart.artist} onChange={(e) => setChart({ ...chart, artist: e.target.value })} required /></label>
             <label className={label}>Charter<input className={field} value={chart.charter} onChange={(e) => setChart({ ...chart, charter: e.target.value })} required /></label>
-            <label className={label}>難易度<select className={field} value={chart.difficulty} onChange={(e) => setChart({ ...chart, difficulty: e.target.value as Chart["difficulty"] })}>{["EZ","HD","IN","AT"].map((d) => <option key={d}>{d}</option>)}</select></label>
+            <label className={label}>難易度<select className={field} value={chart.difficulty} onChange={(e) => setChart({ ...chart, difficulty: e.target.value as Chart["difficulty"] })}>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select></label>
             <label className={label}>レベル<input className={field} value={chart.level} onChange={(e) => setChart({ ...chart, level: e.target.value })} placeholder="例: 15" required /></label>
             <label className={label}>ジャケット画像URL<input className={field} value={chart.jacket || ""} onChange={(e) => setChart({ ...chart, jacket: e.target.value })} placeholder="https://..." /></label>
             <label className={label}>.pez配布URL<input className={field} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://..." /></label>
