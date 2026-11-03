@@ -26,7 +26,7 @@ export default function ChartDetailPage() {
           </div>
           {chart.description && <p className="mt-6 whitespace-pre-wrap text-sm leading-7 text-neutral-400">{chart.description}</p>}
           {relatedProjects.length > 0 && <div className="mt-8"><p className="text-[10px] tracking-widest text-neutral-600">PROJECTS</p><div className="mt-3 flex flex-wrap gap-2">{relatedProjects.map((item) => <Link key={item.id} href={`/projects/${item.id}`} className="border border-line px-3 py-2 text-xs text-neutral-300 hover:border-white">{item.name}</Link>)}</div></div>}
-          {chart.fileUrl ? <a href={chart.fileUrl} target="_blank" rel="noreferrer" className="mt-8 inline-flex bg-white px-5 py-3 text-xs font-medium tracking-wider text-black hover:bg-neutral-200">DOWNLOAD .PEZ ↗</a> : <p className="mt-8 border border-line px-5 py-3 text-xs text-neutral-600">ダウンロードファイルは準備中です。</p>}
+          {chart.fileUrl ? <a href={chart.fileUrl} className="mt-8 inline-flex bg-white px-5 py-3 text-xs font-medium tracking-wider text-black hover:bg-neutral-200" download>DOWNLOAD .PEZ ↓</a> : <p className="mt-8 border border-line px-5 py-3 text-xs text-neutral-600">ダウンロードファイルは準備中です。</p>}
         </div>
       </div>
     </div>
