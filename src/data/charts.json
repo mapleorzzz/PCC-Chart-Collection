@@ -22,5 +22,17 @@
     "publishedAt": "2026-11-03",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/NightTheater.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793690736615-5414716833575834_jpg.jpg"
+  },
+  {
+    "id": "nottroll",
+    "title": "もはやPhigrosだけで曲作れるから",
+    "artist": "ねこ",
+    "charter": "もはや7人いても譜面作れるから",
+    "difficulty": "Other",
+    "level": "Lv.鳩",
+    "projectIds": [],
+    "publishedAt": "2026-11-03",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/___Phigros_________.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793691916896-3643691526443901_png.png"
   }
 ]
