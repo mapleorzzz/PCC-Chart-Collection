@@ -126,6 +126,22 @@ export default function AdminPanel() {
     await save("scheduled", data.scheduledCharts.filter((entry) => entry.id !== item.id));
   }
 
+  async function reschedule(item: ScheduledChart) {
+    const current = item.scheduledAt
+      ? new Date(new Date(item.scheduledAt).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 16)
+      : "";
+    const value = window.prompt("新しい公開日時を日本時間で入力してください（例: 2026-12-01T18:30）", current);
+    if (!value) return;
+    const timestamp = Date.parse(value + ":00+09:00");
+    if (!Number.isFinite(timestamp) || timestamp <= Date.now()) {
+      setError("未来の日時を正しい形式で入力してください。");
+      return;
+    }
+    await save("scheduled", data.scheduledCharts.map((entry) =>
+      entry.id === item.id ? { ...entry, scheduledAt: new Date(timestamp).toISOString(), status: "scheduled" } : entry
+    ));
+  }
+
   async function removeScheduled(id: string) {
     if (!window.confirm("この下書き・予約投稿を削除しますか？")) return;
     await save("scheduled", data.scheduledCharts.filter((item) => item.id !== id));
@@ -213,7 +229,7 @@ export default function AdminPanel() {
         </section>
         <section className="mt-10"><h2 className="mb-4 text-lg">登録済み譜面</h2><div className="divide-y divide-line border-y border-line">{data.charts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 text-xs text-neutral-600">{item.charter} · {item.difficulty} {item.level}</p></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!data.charts.length && <p className="py-10 text-center text-sm text-neutral-600">譜面はまだ登録されていません。</p>}</div></section>
         <section className="mt-10"><h2 className="mb-4 text-lg">予約・下書き ({data.scheduledCharts.length})</h2><div className="divide-y divide-line border-y border-line">
-          {data.scheduledCharts.map((item) => <div key={item.id} className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center"><div className="min-w-0"><p className="truncate text-sm">{item.chart.title}</p><p className="mt-1 text-xs text-neutral-500">{item.status === "draft" ? "下書き" : "予約公開"}{item.scheduledAt ? " · " + new Date(item.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) + "（JST）" : ""}</p></div><div className="flex min-h-10 shrink-0 items-center gap-4">{item.status === "scheduled" && <button onClick={() => publishScheduled(item)} className="text-xs text-neutral-300 hover:text-white">今すぐ公開</button>}<button onClick={() => removeScheduled(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}
+          {data.scheduledCharts.map((item) => <div key={item.id} className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center"><div className="min-w-0"><p className="truncate text-sm">{item.chart.title}</p><p className="mt-1 text-xs text-neutral-500">{item.status === "draft" ? "下書き" : "予約公開"}{item.scheduledAt ? " · " + new Date(item.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) + "（JST）" : ""}</p></div><div className="flex min-h-10 shrink-0 items-center gap-4">{item.status === "scheduled" && <><button onClick={() => reschedule(item)} className="text-xs text-neutral-300 hover:text-white">日時変更</button><button onClick={() => publishScheduled(item)} className="text-xs text-neutral-300 hover:text-white">今すぐ公開</button></>}<button onClick={() => removeScheduled(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}
           {!data.scheduledCharts.length && <p className="py-8 text-center text-sm text-neutral-600">予約・下書きはありません。</p>}</div></section>
       </> : <>
         <section className="mt-8 border border-line p-5 sm:p-7">
