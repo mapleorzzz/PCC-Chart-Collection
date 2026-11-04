@@ -152,7 +152,9 @@
     "charter": "虚星 瑠一 & Hazefrost",
     "difficulty": "AT",
     "level": "17.6",
-    "projectIds": [],
+    "projectIds": [
+      "wacca"
+    ],
     "publishedAt": "2024-12-05",
     "youtubeUrl": "https://youtu.be/v802OuG0Nt0",
     "songId": "invisiblefrenzy"
