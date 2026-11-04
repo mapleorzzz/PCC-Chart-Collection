@@ -17,21 +17,9 @@ export function SiteHeader() {
   return (
     <header className="border-b border-line">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-5 sm:py-5">
-        <Link href="/" aria-label="PCC Chart Collection ホームへ戻る" className="group flex shrink-0 items-center">
-          <img
-            src="/pcc-header-logo.webp"
-            alt="PHIRA CHARTER CHAMPIONSHIP"
-            className="h-12 w-12 object-contain sm:h-14 sm:w-14"
-            onError={(event) => {
-              event.currentTarget.style.display = "none";
-              const fallback = event.currentTarget.nextElementSibling as HTMLElement | null;
-              if (fallback) fallback.style.display = "block";
-            }}
-          />
-          <span className="hidden text-left">
-            <span className="block text-lg font-semibold tracking-[0.18em] text-white">PCC</span>
-            <span className="block text-[9px] tracking-[0.22em] text-muted">CHART COLLECTION</span>
-          </span>
+        <Link href="/" aria-label="PCC Chart Collection ホームへ戻る" className="group flex shrink-0 flex-col justify-center">
+          <span className="block text-lg font-semibold tracking-[0.18em] text-white">PCC</span>
+          <span className="block text-[9px] tracking-[0.22em] text-muted">CHART COLLECTION</span>
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
