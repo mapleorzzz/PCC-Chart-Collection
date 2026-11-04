@@ -30,7 +30,7 @@ export function SiteHeader() {
           <a href="https://wikiwiki.jp/phigros-fnmd/" target="_blank" rel="noopener noreferrer" className="text-xs tracking-wider text-neutral-400 transition hover:text-white">
             WIKI ↗
           </a>
-          <a href="https://discord.com/qVNzHuZ26T" target="_blank" rel="noopener noreferrer" className="text-xs tracking-wider text-neutral-400 transition hover:text-white">
+          <a href="https://discord.com/invite/qVNzHuZ26T" target="_blank" rel="noopener noreferrer" className="text-xs tracking-wider text-neutral-400 transition hover:text-white">
             DISCORD ↗
           </a>
           <button onClick={() => setEnglish(!english)} className="border border-line px-3 py-2 text-[10px] tracking-widest text-neutral-300 hover:border-white hover:text-white">
@@ -45,7 +45,7 @@ export function SiteHeader() {
         <nav className="grid gap-1 border-t border-line px-4 py-3 sm:px-5 md:hidden">
           {links.map((link) => <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="flex min-h-11 items-center text-sm text-neutral-300">{english ? link.en : link.ja}</Link>)}
           <a href="https://wikiwiki.jp/phigros-fnmd/" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="text-sm text-neutral-300">WIKI ↗</a>
-          <a href="https://discord.com/qVNzHuZ26T" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="flex min-h-11 items-center text-sm text-neutral-300">DISCORD ↗</a>
+          <a href="https://discord.com/invite/qVNzHuZ26T" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className="flex min-h-11 items-center text-sm text-neutral-300">DISCORD ↗</a>
           <button onClick={() => setEnglish(!english)} className="min-h-11 w-fit text-xs text-neutral-400">{english ? "日本語に切り替え" : "Switch to English"}</button>
         </nav>
       )}
