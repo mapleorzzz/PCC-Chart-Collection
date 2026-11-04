@@ -364,6 +364,7 @@ export default function AdminPanel() {
             <div className={label + " sm:col-span-2"}>
               企画カバー画像
               <input className={field} value={project.cover || ""} onChange={(e) => setProject({ ...project, cover: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
+              {project.cover && <div className="mt-2 flex items-center gap-3"><img src={project.cover} alt="企画カバーのプレビュー" className="h-14 w-24 border border-line object-cover" /><span className="text-[10px] text-emerald-400">画像URL設定済み</span></div>}
               <input id="project-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} disabled={imageUploading} onChange={(e) => { const file = e.target.files?.[0] || null; setProjectImageFile(file); if (file) void uploadImage("project", file); }} />
               {imageUploading && imageTarget === "project" && <p className="mt-2 text-xs text-neutral-400">画像をアップロード中...</p>}
               {projectImageFile && !imageUploading && <p className="mt-2 text-xs text-neutral-400">{projectImageFile.name} · {(projectImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
