@@ -15,20 +15,46 @@ export default function ChartDetailPage() {
     .sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)) : [];
   const jacketImages = Array.from(new Set(songCharts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
   const [jacketIndex, setJacketIndex] = useState(0);
-  const [previousJacketIndex, setPreviousJacketIndex] = useState(0);
+  const [nextJacketIndex, setNextJacketIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setJacketIndex(0);
+    setNextJacketIndex(null);
+  }, [groupKey]);
 
   useEffect(() => {
     if (jacketImages.length <= 1) return;
-    jacketImages.forEach((src) => {
-      const image = new Image();
-      image.src = src;
-    });
-    const timer = window.setInterval(() => {
-      setPreviousJacketIndex(jacketIndex);
-      setJacketIndex((current) => (current + 1) % jacketImages.length);
-    }, 5000);
-    return () => window.clearInterval(timer);
-  }, [jacketImages.length, jacketIndex]);
+
+    let cancelled = false;
+    let intervalId: number | undefined;
+    let fadeTimeoutId: number | undefined;
+
+    const showNextJacket = () => {
+      const nextIndex = (jacketIndex + 1) % jacketImages.length;
+      const preload = new Image();
+      preload.onload = () => {
+        if (cancelled) return;
+        setNextJacketIndex(nextIndex);
+        fadeTimeoutId = window.setTimeout(() => {
+          if (cancelled) return;
+          setJacketIndex(nextIndex);
+          setNextJacketIndex(null);
+        }, 1000);
+      };
+      preload.onerror = () => {
+        if (cancelled) return;
+        setJacketIndex(nextIndex);
+      };
+      preload.src = jacketImages[nextIndex];
+    };
+
+    intervalId = window.setInterval(showNextJacket, 5000);
+    return () => {
+      cancelled = true;
+      if (intervalId !== undefined) window.clearInterval(intervalId);
+      if (fadeTimeoutId !== undefined) window.clearTimeout(fadeTimeoutId);
+    };
+  }, [jacketImages.join("|"), jacketIndex]);
 
   if (loading) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-xs text-neutral-600">LOADING...</div>;
   if (error) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div>;
@@ -58,15 +84,18 @@ export default function ChartDetailPage() {
         <div className="relative aspect-square overflow-hidden border border-line bg-panel">
           {jacketImages.length > 0 ? (
             <>
-              {jacketImages.length > 1 && previousJacketIndex !== jacketIndex && (
-                <img src={jacketImages[previousJacketIndex % jacketImages.length]} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000 ease-in-out" />
-              )}
               <img
-                key={jacketIndex}
-                src={jacketImages[jacketIndex % jacketImages.length]}
+                src={jacketImages[jacketIndex]}
                 alt={chart.title}
-                className="absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity duration-1000 ease-in-out"
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${nextJacketIndex === null ? "opacity-100" : "opacity-0"}`}
               />
+              {nextJacketIndex !== null && (
+                <img
+                  src={jacketImages[nextJacketIndex]}
+                  alt={chart.title}
+                  className="absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity duration-1000 ease-in-out"
+                />
+              )}
             </>
           ) : (
             <div className="flex h-full items-center justify-center text-xs tracking-widest text-neutral-700">NO JACKET</div>
