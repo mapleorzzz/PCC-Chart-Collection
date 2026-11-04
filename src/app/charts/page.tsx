@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { ChartCard } from "@/components/chart-card";
+import { groupCharts } from "@/lib/data";
 import { usePublicData } from "@/lib/use-public-data";
 
 export default function ChartsPage() {
@@ -12,30 +13,30 @@ export default function ChartsPage() {
   const [project, setProject] = useState("ALL");
   const [sort, setSort] = useState("newest");
 
-  const filtered = useMemo(() => charts.filter((chart) => {
+  const filtered = useMemo(() => groupCharts(charts.filter((chart) => {
     const text = [chart.title, chart.artist, chart.charter].join(" ").toLowerCase();
     return text.includes(query.toLowerCase()) &&
       (difficulty === "ALL" || chart.difficulty === difficulty) &&
       (project === "ALL" || chart.projectIds.includes(project));
-  }).sort((a, b) => {
-    if (sort === "oldest") return a.publishedAt.localeCompare(b.publishedAt);
-    if (sort === "title") return a.title.localeCompare(b.title, "ja");
+  })).sort((a, b) => {
+    if (sort === "oldest") return a.chart.publishedAt.localeCompare(b.chart.publishedAt);
+    if (sort === "title") return a.chart.title.localeCompare(b.chart.title, "ja");
     if (sort === "level-desc" || sort === "level-asc") {
       const parseLevel = (value: string) => {
         const match = value.match(/\d+(?:\.\d+)?/);
         return match ? Number(match[0]) : Number.NaN;
       };
-      const levelA = parseLevel(a.level);
-      const levelB = parseLevel(b.level);
+      const levelA = parseLevel(a.chart.level);
+      const levelB = parseLevel(b.chart.level);
       const validA = Number.isFinite(levelA);
       const validB = Number.isFinite(levelB);
       if (validA !== validB) return validA ? -1 : 1;
       if (validA && validB && levelA !== levelB) {
         return sort === "level-desc" ? levelB - levelA : levelA - levelB;
       }
-      return a.title.localeCompare(b.title, "ja");
+      return a.chart.title.localeCompare(b.chart.title, "ja");
     }
-    return b.publishedAt.localeCompare(a.publishedAt);
+    return b.chart.publishedAt.localeCompare(a.chart.publishedAt);
   }), [charts, query, difficulty, project, sort]);
 
   return (
@@ -49,8 +50,8 @@ export default function ChartsPage() {
         <select value={project} onChange={(e) => setProject(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="ALL">すべての企画</option>{projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
         <select value={sort} onChange={(e) => setSort(e.target.value)} className="border border-line bg-panel px-3 py-3 text-sm outline-none"><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option><option value="level-desc">レベルが高い順</option><option value="level-asc">レベルが低い順</option></select>
       </div>
-      <div className="mb-6 mt-8 flex items-center justify-between text-xs text-neutral-600"><span>{loading ? "LOADING..." : `${filtered.length} CHARTS`}</span><span className="flex items-center gap-2"><SlidersHorizontal size={13} /> GRID VIEW</span></div>
-      {loading ? <div className="py-16 text-center text-xs text-neutral-600">LOADING...</div> : error ? <div className="py-16 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div> : filtered.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{filtered.map((chart) => <ChartCard key={chart.id} chart={chart} />)}</div> : <div className="border border-dashed border-line px-6 py-20 text-center text-sm text-neutral-600">該当する譜面はありません。</div>}
+      <div className="mb-6 mt-8 flex items-center justify-between text-xs text-neutral-600"><span>{loading ? "LOADING..." : `${filtered.length} SONGS · ${filtered.reduce((sum, item) => sum + item.charts.length, 0)} CHARTS`}</span><span className="flex items-center gap-2"><SlidersHorizontal size={13} /> GRID VIEW</span></div>
+      {loading ? <div className="py-16 text-center text-xs text-neutral-600">LOADING...</div> : error ? <div className="py-16 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div> : filtered.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{filtered.map((group) => <ChartCard key={group.chart.id} chart={group.chart} group={group.charts} />)}</div> : <div className="border border-dashed border-line px-6 py-20 text-center text-sm text-neutral-600">該当する譜面はありません。</div>}
     </div>
   );
 }
