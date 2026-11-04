@@ -37,6 +37,7 @@ export default function AdminPanel() {
   const [chartDifficultyFilter, setChartDifficultyFilter] = useState("all");
   const [chartSort, setChartSort] = useState<"newest" | "oldest" | "title">("newest");
   const [projectSearch, setProjectSearch] = useState("");
+  const [selectedScheduledId, setSelectedScheduledId] = useState("");
 
   function clearSelectedUploads() {
     setSelectedFile(null);
@@ -264,6 +265,7 @@ export default function AdminPanel() {
   const filteredProjects = data.projects.filter((item) =>
     [item.name, item.organizer || "", item.id].some((value) => value.toLowerCase().includes(projectSearch.trim().toLowerCase()))
   );
+  const selectedScheduled = data.scheduledCharts.find((item) => item.id === selectedScheduledId) || data.scheduledCharts[0] || null;
 
   if (!loggedIn) return (
     <div className="mx-auto max-w-md px-5 py-24">
