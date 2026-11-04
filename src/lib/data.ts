@@ -38,7 +38,7 @@ export function formatLevel(level: string) {
 export function groupCharts(charts: Chart[]) {
   const groups = new Map<string, Chart[]>();
   for (const chart of charts) {
-    const key = chart.songId?.trim() || `${chart.title.trim().toLocaleLowerCase()}::${chart.artist.trim().toLocaleLowerCase()}`;
+    const key = chart.songId?.trim() || `chart:${chart.id}`;
     groups.set(key, [...(groups.get(key) || []), chart]);
   }
   return Array.from(groups.values()).map((items) => ({ chart: items[0], charts: items.sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)) }));
