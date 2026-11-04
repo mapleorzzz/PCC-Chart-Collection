@@ -16,10 +16,12 @@ export default function ChartDetailPage() {
   const jacketImages = Array.from(new Set(songCharts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
   const [jacketIndex, setJacketIndex] = useState(0);
   const [nextJacketIndex, setNextJacketIndex] = useState<number | null>(null);
+  const [isJacketFading, setIsJacketFading] = useState(false);
 
   useEffect(() => {
     setJacketIndex(0);
     setNextJacketIndex(null);
+    setIsJacketFading(false);
   }, [groupKey]);
 
   useEffect(() => {
@@ -28,6 +30,8 @@ export default function ChartDetailPage() {
     let cancelled = false;
     let intervalId: number | undefined;
     let fadeTimeoutId: number | undefined;
+    let firstFrameId: number | undefined;
+    let secondFrameId: number | undefined;
 
     const showNextJacket = () => {
       const nextIndex = (jacketIndex + 1) % jacketImages.length;
@@ -35,10 +39,21 @@ export default function ChartDetailPage() {
       preload.onload = () => {
         if (cancelled) return;
         setNextJacketIndex(nextIndex);
+        setIsJacketFading(false);
+
+        // 画像を opacity: 0 の状態で一度描画してから、同時にクロスフェードを開始する
+        firstFrameId = window.requestAnimationFrame(() => {
+          secondFrameId = window.requestAnimationFrame(() => {
+            if (cancelled) return;
+            setIsJacketFading(true);
+          });
+        });
+
         fadeTimeoutId = window.setTimeout(() => {
           if (cancelled) return;
           setJacketIndex(nextIndex);
           setNextJacketIndex(null);
+          setIsJacketFading(false);
         }, 1000);
       };
       preload.onerror = () => {
@@ -53,6 +68,8 @@ export default function ChartDetailPage() {
       cancelled = true;
       if (intervalId !== undefined) window.clearInterval(intervalId);
       if (fadeTimeoutId !== undefined) window.clearTimeout(fadeTimeoutId);
+      if (firstFrameId !== undefined) window.cancelAnimationFrame(firstFrameId);
+      if (secondFrameId !== undefined) window.cancelAnimationFrame(secondFrameId);
     };
   }, [jacketImages.join("|"), jacketIndex]);
 
@@ -87,13 +104,13 @@ export default function ChartDetailPage() {
               <img
                 src={jacketImages[jacketIndex]}
                 alt={chart.title}
-                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${nextJacketIndex === null ? "opacity-100" : "opacity-0"}`}
+                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${isJacketFading ? "opacity-0" : "opacity-100"}`}
               />
               {nextJacketIndex !== null && (
                 <img
                   src={jacketImages[nextJacketIndex]}
                   alt={chart.title}
-                  className="absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity duration-1000 ease-in-out"
+                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${isJacketFading ? "opacity-100" : "opacity-0"}`}
                 />
               )}
             </>
