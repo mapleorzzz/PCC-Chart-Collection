@@ -16,20 +16,24 @@ export default function ChartDetailPage() {
   const groupKey = chart.songId?.trim() || `chart:${chart.id}`;
   const songCharts = charts.filter((item) => (item.songId?.trim() || `chart:${item.id}`) === groupKey)
     .sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty));
-  const youtubeUrl = songCharts.find((item) => item.youtubeUrl)?.youtubeUrl;
-  const youtubeId = (() => {
-    if (!youtubeUrl) return null;
-    try {
-      const url = new URL(youtubeUrl);
-      if (url.hostname === "youtu.be") return url.pathname.slice(1).split("/")[0] || null;
-      if (url.hostname.endsWith("youtube.com")) {
-        if (url.pathname === "/watch") return url.searchParams.get("v");
-        const parts = url.pathname.split("/").filter(Boolean);
-        if (["embed", "shorts", "live"].includes(parts[0])) return parts[1] || null;
-      }
-    } catch {}
-    return null;
-  })();
+  const videos = songCharts
+    .filter((item) => item.youtubeUrl)
+    .map((item) => {
+      const youtubeUrl = item.youtubeUrl!;
+      let youtubeId: string | null = null;
+      try {
+        const url = new URL(youtubeUrl);
+        if (url.hostname === "youtu.be") youtubeId = url.pathname.slice(1).split("/")[0] || null;
+        else if (url.hostname.endsWith("youtube.com")) {
+          if (url.pathname === "/watch") youtubeId = url.searchParams.get("v");
+          else {
+            const parts = url.pathname.split("/").filter(Boolean);
+            if (["embed", "shorts", "live"].includes(parts[0])) youtubeId = parts[1] || null;
+          }
+        }
+      } catch {}
+      return { chart: item, url: youtubeUrl, id: youtubeId };
+    });
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-5 sm:py-16">
       <Link href="/charts" className="text-xs text-neutral-500 hover:text-white">← ALL CHARTS</Link>
@@ -50,7 +54,7 @@ export default function ChartDetailPage() {
               ))}
             </div>
           </section>
-          {youtubeUrl && <section className="mt-8"><p className="mb-3 text-[10px] tracking-[0.3em] text-neutral-600">PLAY VIDEO</p>{youtubeId ? <div className="aspect-video overflow-hidden border border-line bg-black"><iframe className="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${youtubeId}`} title={`${chart.title} - YouTube`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div> : <a href={youtubeUrl} target="_blank" rel="noreferrer" className="text-sm text-neutral-300 underline underline-offset-4">YouTubeで動画を見る ↗</a>}</section>}
+          {videos.length > 0 && <section className="mt-8"><p className="mb-3 text-[10px] tracking-[0.3em] text-neutral-600">PLAY VIDEO</p><div className="grid gap-6">{videos.map(({ chart: videoChart, url, id: videoId }) => <div key={videoChart.id}><p className="mb-2 text-xs text-neutral-400">{videoChart.difficulty} {formatLevel(videoChart.level)}</p>{videoId ? <div className="aspect-video overflow-hidden border border-line bg-black"><iframe className="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${videoId}`} title={`${chart.title} - ${videoChart.difficulty} YouTube`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div> : <a href={url} target="_blank" rel="noreferrer" className="text-sm text-neutral-300 underline underline-offset-4">YouTubeで動画を見る ↗</a>}</div>)}</div></section>}
         </div>
       </div>
     </div>
