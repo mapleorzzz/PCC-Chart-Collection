@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { usePublicData } from "@/lib/use-public-data";
 import { formatLevel } from "@/lib/data";
 
@@ -9,13 +10,29 @@ export default function ChartDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { charts, loading, error } = usePublicData();
   const chart = charts.find((item) => item.id === id);
+  const groupKey = chart ? (chart.songId?.trim() || `chart:${chart.id}`) : "";
+  const songCharts = chart ? charts.filter((item) => (item.songId?.trim() || `chart:${item.id}`) === groupKey)
+    .sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)) : [];
+  const jacketImages = Array.from(new Set(songCharts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
+  const [jacketIndex, setJacketIndex] = useState(0);
+  const [previousJacketIndex, setPreviousJacketIndex] = useState(0);
+
+  useEffect(() => {
+    if (jacketImages.length <= 1) return;
+    jacketImages.forEach((src) => {
+      const image = new Image();
+      image.src = src;
+    });
+    const timer = window.setInterval(() => {
+      setPreviousJacketIndex(jacketIndex);
+      setJacketIndex((current) => (current + 1) % jacketImages.length);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [jacketImages.length, jacketIndex]);
+
   if (loading) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-xs text-neutral-600">LOADING...</div>;
   if (error) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div>;
   if (!chart) return <div className="mx-auto max-w-5xl px-5 py-24 text-center"><p className="text-sm text-neutral-500">譜面が見つかりません。</p><Link href="/charts" className="mt-5 inline-block text-xs text-neutral-400 hover:text-white">← ALL CHARTS</Link></div>;
-
-  const groupKey = chart.songId?.trim() || `chart:${chart.id}`;
-  const songCharts = charts.filter((item) => (item.songId?.trim() || `chart:${item.id}`) === groupKey)
-    .sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty));
   const videos = songCharts
     .filter((item) => item.youtubeUrl)
     .map((item) => {
@@ -38,7 +55,23 @@ export default function ChartDetailPage() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-5 sm:py-16">
       <Link href="/charts" className="text-xs text-neutral-500 hover:text-white">← ALL CHARTS</Link>
       <div className="mt-6 grid min-w-0 gap-7 md:mt-8 md:grid-cols-[minmax(0,340px)_1fr] md:gap-10">
-        <div className="aspect-square border border-line bg-panel">{chart.jacket ? <img src={chart.jacket} alt={chart.title} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs tracking-widest text-neutral-700">NO JACKET</div>}</div>
+        <div className="relative aspect-square overflow-hidden border border-line bg-panel">
+          {jacketImages.length > 0 ? (
+            <>
+              {jacketImages.length > 1 && previousJacketIndex !== jacketIndex && (
+                <img src={jacketImages[previousJacketIndex % jacketImages.length]} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000 ease-in-out" />
+              )}
+              <img
+                key={jacketIndex}
+                src={jacketImages[jacketIndex % jacketImages.length]}
+                alt={chart.title}
+                className="absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity duration-1000 ease-in-out"
+              />
+            </>
+          ) : (
+            <div className="flex h-full items-center justify-center text-xs tracking-widest text-neutral-700">NO JACKET</div>
+          )}
+        </div>
         <div>
           <h1 className="mt-4 break-words text-2xl font-light sm:text-4xl">{chart.title}</h1>
           <p className="mt-3 text-sm text-neutral-500">{chart.artist}</p>
