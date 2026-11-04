@@ -157,5 +157,18 @@
     "publishedAt": "2024-12-05",
     "songId": "invisiblefrenzy",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793772421216-IMG_4838_webp.webp"
+  },
+  {
+    "id": "divewithu",
+    "title": "DIVE with Ü",
+    "artist": "HARDCORE TANO*C & エリザベス（CV:大西沙織） & リリィ（CV:青木志貴） & ルーン（CV:河瀬茉希）",
+    "charter": "THANK YOU FOR PLAYING",
+    "difficulty": "IN",
+    "level": "14.7",
+    "projectIds": [
+      "wacca"
+    ],
+    "publishedAt": "2024-12-06",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793772607043-IMG_4839_webp.webp"
   }
 ]
