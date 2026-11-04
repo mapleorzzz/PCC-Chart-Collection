@@ -360,37 +360,74 @@ export default function AdminPanel() {
           </div>
         </div>
             </> : tab === "projects" ? <>
-        <section className="mt-8 border border-line p-4 sm:p-7">
-          <h2 className="text-lg">{editingId ? "企画を編集" : "企画を新規登録"}</h2>
-          <form onSubmit={submitProject} className="mt-6 grid gap-4 sm:grid-cols-2">
-            <label className={label}>ID（英数字・ハイフン）<input className={field} value={project.id} disabled={!!editingId} onChange={(e) => setProject({ ...project, id: e.target.value })} required /></label>
-            <label className={label}>企画名<input className={field} value={project.name} onChange={(e) => setProject({ ...project, name: e.target.value })} required /></label>
-            <label className={label}>開催年<input type="number" className={field} value={project.year} onChange={(e) => setProject({ ...project, year: Number(e.target.value) })} required /></label>
-            <label className={label}>主催者<input className={field} value={project.organizer || ""} onChange={(e) => setProject({ ...project, organizer: e.target.value })} /></label>
-            <label className={label}>開始日<input type="date" className={field} value={project.startDate || ""} onChange={(e) => setProject({ ...project, startDate: e.target.value })} /></label>
-            <label className={label}>終了日<input type="date" className={field} value={project.endDate || ""} onChange={(e) => setProject({ ...project, endDate: e.target.value })} /></label>
-            <div className={label + " sm:col-span-2"}>
-              企画カバー画像
-              <input className={field} value={project.cover || ""} onChange={(e) => setProject({ ...project, cover: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
-              {project.cover && <div className="mt-2 flex items-center gap-3"><img src={project.cover} alt="企画カバーのプレビュー" className="h-14 w-24 border border-line object-cover" /><span className="text-[10px] text-emerald-400">画像URL設定済み</span></div>}
-              <input id="project-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} disabled={imageUploading} onChange={(e) => { const file = e.target.files?.[0] || null; setProjectImageFile(file); if (file) void uploadImage("project", file); }} />
-              {imageUploading && imageTarget === "project" && <p className="mt-2 text-xs text-neutral-400">画像をアップロード中...</p>}
-              {projectImageFile && !imageUploading && <p className="mt-2 text-xs text-neutral-400">{projectImageFile.name} · {(projectImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
-              <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下。選択すると自動アップロードされます。</p>
+        <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(280px,0.82fr)_minmax(0,1.7fr)]">
+          <section className="min-w-0 lg:sticky lg:top-6">
+            <div className="mb-4"><h2 className="text-lg">登録済み企画</h2><p className="mt-1 text-xs text-neutral-600">{filteredProjects.length} / {data.projects.length} 件表示</p></div>
+            <input aria-label="企画を検索" className={field + " w-full"} value={projectSearch} onChange={(e) => setProjectSearch(e.target.value)} placeholder="企画名・主催者で検索..." />
+            <div className="mt-4 divide-y divide-line border-y border-line">
+              {filteredProjects.map((item) => <div key={item.id} className="flex items-center gap-3 py-4">
+                {item.cover ? <img src={item.cover} alt="" className="h-12 w-16 shrink-0 border border-line object-cover" /> : <div className="flex h-12 w-16 shrink-0 items-center justify-center border border-line text-[8px] text-neutral-700">NO COVER</div>}
+                <div className="min-w-0 flex-1"><p className="truncate text-sm">{item.name}</p><p className="mt-1 truncate text-xs text-neutral-600">{item.year} · {item.organizer || "主催者未設定"}</p></div>
+                <div className="flex shrink-0 gap-3"><button onClick={() => editProject(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeProject(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div>
+              </div>)}
+              {!filteredProjects.length && <p className="py-10 text-center text-sm text-neutral-600">{data.projects.length ? "条件に一致する企画がありません。" : "企画はまだ登録されていません。"}</p>}
             </div>
-            <label className={label + " sm:col-span-2"}>企画概要<textarea className={field + " min-h-32"} value={project.description} onChange={(e) => setProject({ ...project, description: e.target.value })} required /></label>
-            <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : "企画を登録"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
-          </form>
-        </section>
-        <section className="mt-10"><div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><h2 className="text-lg">登録済み企画</h2><p className="mt-1 text-xs text-neutral-600">{filteredProjects.length} / {data.projects.length} 件表示</p></div><input aria-label="企画を検索" className={field + " sm:w-64"} value={projectSearch} onChange={(e) => setProjectSearch(e.target.value)} placeholder="企画名・主催者で検索..." /></div><div className="divide-y divide-line border-y border-line">{filteredProjects.map((item) => <div key={item.id} className="flex items-center justify-between gap-4 py-4"><div className="min-w-0"><p className="truncate text-sm">{item.name}</p><p className="mt-1 text-xs text-neutral-600">{item.year} · {item.organizer || "主催者未設定"}</p></div><div className="flex shrink-0 gap-3"><button onClick={() => editProject(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeProject(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!filteredProjects.length && <p className="py-10 text-center text-sm text-neutral-600">{data.projects.length ? "条件に一致する企画がありません。" : "企画はまだ登録されていません。"}</p>}</div></section>
+          </section>
+          <section className="min-w-0 border border-line p-4 sm:p-7">
+            <h2 className="text-lg">{editingId ? "企画を編集" : "企画を新規登録"}</h2>
+            <form onSubmit={submitProject} className="mt-5 grid gap-4 sm:grid-cols-2">
+              <label className={label}>ID（英数字・ハイフン）<input className={field} value={project.id} disabled={!!editingId} onChange={(e) => setProject({ ...project, id: e.target.value })} required /></label>
+              <label className={label}>企画名<input className={field} value={project.name} onChange={(e) => setProject({ ...project, name: e.target.value })} required /></label>
+              <label className={label}>開催年<input type="number" className={field} value={project.year} onChange={(e) => setProject({ ...project, year: Number(e.target.value) })} required /></label>
+              <label className={label}>主催者<input className={field} value={project.organizer || ""} onChange={(e) => setProject({ ...project, organizer: e.target.value })} /></label>
+              <label className={label}>開始日<input type="date" className={field} value={project.startDate || ""} onChange={(e) => setProject({ ...project, startDate: e.target.value })} /></label>
+              <label className={label}>終了日<input type="date" className={field} value={project.endDate || ""} onChange={(e) => setProject({ ...project, endDate: e.target.value })} /></label>
+              <div className={label + " sm:col-span-2">
+                企画カバー画像
+                <input className={field} value={project.cover || ""} onChange={(e) => setProject({ ...project, cover: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
+                {project.cover && <div className="mt-2 flex items-center gap-3"><img src={project.cover} alt="企画カバーのプレビュー" className="h-14 w-24 border border-line object-cover" /><span className="text-[10px] text-emerald-400">画像URL設定済み</span></div>}
+                <input id="project-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} disabled={imageUploading} onChange={(e) => { const file = e.target.files?.[0] || null; setProjectImageFile(file); if (file) void uploadImage("project", file); }} />
+                {imageUploading && imageTarget === "project" && <p className="mt-2 text-xs text-neutral-400">画像をアップロード中...</p>}
+                {projectImageFile && !imageUploading && <p className="mt-2 text-xs text-neutral-400">{projectImageFile.name} · {(projectImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+                <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下。選択すると自動アップロードされます。</p>
+              </div>
+              <label className={label + " sm:col-span-2"}>企画概要<textarea className={field + " min-h-32"} value={project.description} onChange={(e) => setProject({ ...project, description: e.target.value })} required /></label>
+              <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : "企画を登録"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
+            </form>
+          </section>
+        </div>
       </> : <>
-        <section className="mt-8">
-          <div className="mb-4"><h2 className="text-lg">予約・下書き</h2><p className="mt-1 text-xs text-neutral-600">公開予約と非公開の下書きを管理します。</p></div>
-          <div className="divide-y divide-line border-y border-line">
-            {data.scheduledCharts.map((item) => <div key={item.id} className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center"><div className="flex min-w-0 items-center gap-3"><div className="h-12 w-12 shrink-0 overflow-hidden border border-line bg-[#171717]">{item.chart.jacket ? <img src={item.chart.jacket} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-[8px] text-neutral-700">NO IMG</div>}</div><div className="min-w-0"><p className="truncate text-sm">{item.chart.title}</p><p className="mt-1 text-xs text-neutral-500">{item.status === "draft" ? "下書き・非公開" : "予約公開"}{item.scheduledAt ? " · " + new Date(item.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) + "（JST）" : ""}</p><p className="mt-1 text-[10px] text-neutral-600">{item.chart.difficulty} {formatLevel(item.chart.level)} · {item.chart.artist}</p></div></div><div className="flex min-h-10 shrink-0 items-center gap-4">{item.status === "scheduled" && <><button onClick={() => reschedule(item)} className="text-xs text-neutral-300 hover:text-white">日時変更</button><button onClick={() => publishScheduled(item)} className="text-xs text-neutral-300 hover:text-white">今すぐ公開</button></>}<button onClick={() => removeScheduled(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}
-            {!data.scheduledCharts.length && <p className="py-10 text-center text-sm text-neutral-600">予約・下書きはありません。</p>}
-          </div>
-        </section>
+        <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(280px,0.82fr)_minmax(0,1.7fr)]">
+          <section className="min-w-0 lg:sticky lg:top-6">
+            <div className="mb-4"><h2 className="text-lg">予約・下書き</h2><p className="mt-1 text-xs text-neutral-600">{data.scheduledCharts.length} 件 · 公開予約と非公開下書き</p></div>
+            <div className="divide-y divide-line border-y border-line">
+              {data.scheduledCharts.map((item) => <button type="button" key={item.id} onClick={() => setSelectedScheduledId(item.id)} className={`flex w-full items-center gap-3 px-2 py-4 text-left transition hover:bg-white/5 ${selectedScheduledId === item.id ? "bg-white/5" : ""}`}>
+                {item.chart.jacket ? <img src={item.chart.jacket} alt="" className="h-12 w-12 shrink-0 border border-line object-cover" /> : <div className="flex h-12 w-12 shrink-0 items-center justify-center border border-line text-[8px] text-neutral-700">NO IMG</div>}
+                <span className="min-w-0 flex-1"><span className="block truncate text-sm">{item.chart.title}</span><span className="mt-1 block truncate text-xs text-neutral-500">{item.status === "draft" ? "下書き・非公開" : "予約公開"}</span><span className="mt-1 block text-[10px] text-neutral-600">{item.chart.difficulty} {formatLevel(item.chart.level)}</span></span>
+                <span className="text-neutral-600">›</span>
+              </button>)}
+              {!data.scheduledCharts.length && <p className="py-10 text-center text-sm text-neutral-600">予約・下書きはありません。</p>}
+            </div>
+          </section>
+          <section className="min-w-0 border border-line p-4 sm:p-7">
+            {selectedScheduled ? <>
+              <div className="flex flex-col gap-4 sm:flex-row">
+                {selectedScheduled.chart.jacket && <img src={selectedScheduled.chart.jacket} alt="" className="h-28 w-28 border border-line object-cover" />}
+                <div className="min-w-0"><p className="text-[10px] tracking-[0.2em] text-neutral-500">SCHEDULED ITEM</p><h2 className="mt-2 text-xl">{selectedScheduled.chart.title}</h2><p className="mt-1 text-sm text-neutral-500">{selectedScheduled.chart.artist}</p><p className="mt-3 text-xs text-neutral-400">{selectedScheduled.status === "draft" ? "下書き・非公開" : "予約公開"}</p>{selectedScheduled.scheduledAt && <p className="mt-1 text-xs text-neutral-500">{new Date(selectedScheduled.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}（JST）</p>}</div>
+              </div>
+              <div className="mt-6 grid gap-3 border-t border-line pt-5 sm:grid-cols-2">
+                <div><p className="text-[10px] text-neutral-600">DIFFICULTY</p><p className="mt-1 text-sm">{selectedScheduled.chart.difficulty} {formatLevel(selectedScheduled.chart.level)}</p></div>
+                <div><p className="text-[10px] text-neutral-600">CHARTER</p><p className="mt-1 text-sm">{selectedScheduled.chart.charter}</p></div>
+                <div><p className="text-[10px] text-neutral-600">ID</p><p className="mt-1 text-sm">{selectedScheduled.chart.id}</p></div>
+                <div><p className="text-[10px] text-neutral-600">PEZ</p><p className="mt-1 break-all text-sm">{selectedScheduled.chart.fileUrl ? "登録済み" : "未登録"}</p></div>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3 border-t border-line pt-5">
+                {selectedScheduled.status === "scheduled" && <><button onClick={() => reschedule(selectedScheduled)} className="border border-line px-4 py-3 text-xs text-neutral-200 hover:border-white">日時変更</button><button onClick={() => publishScheduled(selectedScheduled)} className="bg-white px-4 py-3 text-xs text-black">今すぐ公開</button></>}
+                <button onClick={() => removeScheduled(selectedScheduled.id)} className="border border-red-900 px-4 py-3 text-xs text-red-400 hover:border-red-500">削除</button>
+              </div>
+            </> : <div className="flex min-h-64 items-center justify-center text-center text-sm text-neutral-600">{data.scheduledCharts.length ? "左側から予約・下書きを選択してください。" : "予約・下書きはまだありません。"}</div>}
+          </section>
+        </div>
       </>}
     </div>
   );
