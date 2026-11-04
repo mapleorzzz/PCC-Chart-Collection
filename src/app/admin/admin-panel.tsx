@@ -298,7 +298,6 @@ export default function AdminPanel() {
               <p className="mt-2 text-xs text-neutral-600">選択するとGitHub Releaseに自動アップロードされます。</p>
             </div>
             <label className={label}>.pez ダウンロードURL<input type="url" className={field} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://example.com/chart.pez" /></label>
-            </div>
             <label className={label}>YouTubeリンク<input type="url" className={field} value={chart.youtubeUrl || ""} onChange={(e) => setChart({ ...chart, youtubeUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." /></label>
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
             <label className={label}>関連企画（複数選択可）<select multiple className={field + " min-h-32"} value={chart.projectIds} onChange={(e) => setChart({ ...chart, projectIds: Array.from(e.target.selectedOptions, (option) => option.value) })}>{data.projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
