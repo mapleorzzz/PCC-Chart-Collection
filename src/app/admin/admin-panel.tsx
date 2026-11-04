@@ -295,8 +295,10 @@ export default function AdminPanel() {
               <input id="chart-pez-file" type="file" accept=".pez,application/octet-stream" className={field} disabled={uploading} onChange={(e) => { const file = e.target.files?.[0] || null; setSelectedFile(file); if (file) void uploadChartFile(file); }} />
               {uploading && <p className="mt-2 text-xs text-neutral-400">GitHub Releaseにアップロード中...</p>}
               {selectedFile && !uploading && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
-              <p className="mt-2 text-xs text-neutral-600">ファイルを選択すると自動でGitHub Releaseにアップロードされます。</p>
-              <p className="mt-2 break-all text-xs text-neutral-600">{chart.fileUrl ? "登録済み: " + chart.fileUrl : "アップロード後、ダウンロードURLがここに自動入力されます。"}</p>
+              <p className="mt-2 text-xs text-neutral-600">ファイルを選択すると自動でGitHub Releaseにアップロードされます。アップロードできない場合は、外部にアップロードした .pez のURLを下に入力してください。</p>
+              <label className="mt-3 block text-xs text-neutral-400">.pez ダウンロードURL
+                <input type="url" className={field + " mt-2"} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://example.com/chart.pez" />
+              </label>
             </div>
             <label className={label}>YouTubeリンク<input type="url" className={field} value={chart.youtubeUrl || ""} onChange={(e) => setChart({ ...chart, youtubeUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." /></label>
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
