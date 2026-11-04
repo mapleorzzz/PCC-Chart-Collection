@@ -136,15 +136,15 @@
     "id": "invisiblefrenzy",
     "title": "Invisible Frenzy",
     "artist": "Kobaryo",
-    "charter": "Cosmos",
-    "difficulty": "IN",
-    "level": "16.0",
+    "charter": "虚星 瑠一",
+    "difficulty": "AT",
+    "level": "17.6",
     "projectIds": [
       "wacca"
     ],
-    "publishedAt": "2024-12-04",
-    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793772243439-IMG_4838_webp.webp",
-    "songId": "invisiblefrenzy"
+    "publishedAt": "2024-12-05",
+    "songId": "invisiblefrenzy",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793772421216-IMG_4838_webp.webp"
   },
   {
     "id": "invisiblefrenzy",
@@ -153,7 +153,9 @@
     "charter": "虚星 瑠一",
     "difficulty": "AT",
     "level": "17.6",
-    "projectIds": [],
+    "projectIds": [
+      "wacca"
+    ],
     "publishedAt": "2024-12-05",
     "songId": "invisiblefrenzy",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793772421216-IMG_4838_webp.webp"
