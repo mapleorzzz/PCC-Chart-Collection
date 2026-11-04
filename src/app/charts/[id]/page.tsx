@@ -16,7 +16,6 @@ export default function ChartDetailPage() {
   const jacketImages = Array.from(new Set(songCharts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
   const [jacketIndex, setJacketIndex] = useState(0);
   const [nextJacketIndex, setNextJacketIndex] = useState<number | null>(null);
-  const [isJacketFading, setIsJacketFading] = useState(false);
   const currentJacketRef = useRef<HTMLImageElement>(null);
   const nextJacketRef = useRef<HTMLImageElement>(null);
   const currentAnimationRef = useRef<Animation | null>(null);
@@ -25,7 +24,6 @@ export default function ChartDetailPage() {
   useEffect(() => {
     setJacketIndex(0);
     setNextJacketIndex(null);
-    setIsJacketFading(false);
   }, [groupKey]);
 
   useEffect(() => {
@@ -33,9 +31,6 @@ export default function ChartDetailPage() {
 
     let cancelled = false;
     let intervalId: number | undefined;
-    let fadeTimeoutId: number | undefined;
-    let currentAnimation: Animation | undefined;
-    let nextAnimation: Animation | undefined;
 
     const showNextJacket = () => {
       const nextIndex = (jacketIndex + 1) % jacketImages.length;
@@ -55,9 +50,6 @@ export default function ChartDetailPage() {
     return () => {
       cancelled = true;
       if (intervalId !== undefined) window.clearInterval(intervalId);
-      if (fadeTimeoutId !== undefined) window.clearTimeout(fadeTimeoutId);
-      currentAnimation?.cancel();
-      nextAnimation?.cancel();
     };
   }, [jacketImages.join("|"), jacketIndex]);
 
@@ -83,8 +75,10 @@ export default function ChartDetailPage() {
     const timeout = window.setTimeout(() => {
       setJacketIndex(nextJacketIndex);
       setNextJacketIndex(null);
-      currentAnimationRef.current?.cancel();
-      nextAnimationRef.current?.cancel();
+      window.requestAnimationFrame(() => {
+        currentAnimationRef.current?.cancel();
+        nextAnimationRef.current?.cancel();
+      });
     }, 1000);
 
     return () => window.clearTimeout(timeout);
