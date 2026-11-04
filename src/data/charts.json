@@ -144,5 +144,17 @@
     ],
     "publishedAt": "2024-12-06",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793772607043-IMG_4839_webp.webp"
+  },
+  {
+    "id": "invisiblefrenzyat",
+    "title": "Invisible Frenzy",
+    "artist": "Kobaryo",
+    "charter": "虚星 瑠一 & Hazefrost",
+    "difficulty": "AT",
+    "level": "17.6",
+    "projectIds": [],
+    "publishedAt": "2024-12-05",
+    "youtubeUrl": "https://youtu.be/v802OuG0Nt0",
+    "songId": "invisiblefrenzy"
   }
 ]
