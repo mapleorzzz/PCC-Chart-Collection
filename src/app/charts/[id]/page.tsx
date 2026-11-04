@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePublicData } from "@/lib/use-public-data";
 import { formatLevel } from "@/lib/data";
 
@@ -17,6 +17,10 @@ export default function ChartDetailPage() {
   const [jacketIndex, setJacketIndex] = useState(0);
   const [nextJacketIndex, setNextJacketIndex] = useState<number | null>(null);
   const [isJacketFading, setIsJacketFading] = useState(false);
+  const currentJacketRef = useRef<HTMLImageElement>(null);
+  const nextJacketRef = useRef<HTMLImageElement>(null);
+  const currentAnimationRef = useRef<Animation | null>(null);
+  const nextAnimationRef = useRef<Animation | null>(null);
 
   useEffect(() => {
     setJacketIndex(0);
@@ -30,8 +34,8 @@ export default function ChartDetailPage() {
     let cancelled = false;
     let intervalId: number | undefined;
     let fadeTimeoutId: number | undefined;
-    let firstFrameId: number | undefined;
-    let secondFrameId: number | undefined;
+    let currentAnimation: Animation | undefined;
+    let nextAnimation: Animation | undefined;
 
     const showNextJacket = () => {
       const nextIndex = (jacketIndex + 1) % jacketImages.length;
@@ -39,22 +43,6 @@ export default function ChartDetailPage() {
       preload.onload = () => {
         if (cancelled) return;
         setNextJacketIndex(nextIndex);
-        setIsJacketFading(false);
-
-        // 画像を opacity: 0 の状態で一度描画してから、同時にクロスフェードを開始する
-        firstFrameId = window.requestAnimationFrame(() => {
-          secondFrameId = window.requestAnimationFrame(() => {
-            if (cancelled) return;
-            setIsJacketFading(true);
-          });
-        });
-
-        fadeTimeoutId = window.setTimeout(() => {
-          if (cancelled) return;
-          setJacketIndex(nextIndex);
-          setNextJacketIndex(null);
-          setIsJacketFading(false);
-        }, 1000);
       };
       preload.onerror = () => {
         if (cancelled) return;
@@ -68,10 +56,39 @@ export default function ChartDetailPage() {
       cancelled = true;
       if (intervalId !== undefined) window.clearInterval(intervalId);
       if (fadeTimeoutId !== undefined) window.clearTimeout(fadeTimeoutId);
-      if (firstFrameId !== undefined) window.cancelAnimationFrame(firstFrameId);
-      if (secondFrameId !== undefined) window.cancelAnimationFrame(secondFrameId);
+      currentAnimation?.cancel();
+      nextAnimation?.cancel();
     };
   }, [jacketImages.join("|"), jacketIndex]);
+
+  useEffect(() => {
+    if (nextJacketIndex === null) return;
+
+    const current = currentJacketRef.current;
+    const next = nextJacketRef.current;
+    if (!current || !next) return;
+
+    // Both layers animate from the same instant, so the image never swaps before fading.
+    currentAnimationRef.current?.cancel();
+    nextAnimationRef.current?.cancel();
+    currentAnimationRef.current = current.animate(
+      [{ opacity: 1 }, { opacity: 0 }],
+      { duration: 1000, easing: "ease-in-out", fill: "forwards" }
+    );
+    nextAnimationRef.current = next.animate(
+      [{ opacity: 0 }, { opacity: 1 }],
+      { duration: 1000, easing: "ease-in-out", fill: "forwards" }
+    );
+
+    const timeout = window.setTimeout(() => {
+      setJacketIndex(nextJacketIndex);
+      setNextJacketIndex(null);
+      currentAnimationRef.current?.cancel();
+      nextAnimationRef.current?.cancel();
+    }, 1000);
+
+    return () => window.clearTimeout(timeout);
+  }, [nextJacketIndex]);
 
   if (loading) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-xs text-neutral-600">LOADING...</div>;
   if (error) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div>;
@@ -102,15 +119,19 @@ export default function ChartDetailPage() {
           {jacketImages.length > 0 ? (
             <>
               <img
+                ref={currentJacketRef}
                 src={jacketImages[jacketIndex]}
                 alt={chart.title}
-                className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${isJacketFading ? "opacity-0" : "opacity-100"}`}
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ opacity: nextJacketIndex === null ? 1 : 1 }}
               />
               {nextJacketIndex !== null && (
                 <img
+                  ref={nextJacketRef}
                   src={jacketImages[nextJacketIndex]}
                   alt={chart.title}
-                  className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${isJacketFading ? "opacity-100" : "opacity-0"}`}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  style={{ opacity: 0 }}
                 />
               )}
             </>
