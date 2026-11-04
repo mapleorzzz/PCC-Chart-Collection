@@ -267,5 +267,20 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793786494395-oiia_png.png",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793786533758-Hardcore.Oiiaioooooiai.pez",
     "youtubeUrl": "https://youtu.be/gNjuiyMZYRw"
+  },
+  {
+    "id": "mesmerizerdestroy",
+    "title": "メズマライザー　破壊",
+    "artist": "DJ Raisei",
+    "charter": "ねこ×ぬこ×meow×cat×neko3777×とくめい",
+    "difficulty": "Other",
+    "level": "狂",
+    "projectIds": [
+      "2025afeve"
+    ],
+    "publishedAt": "2025-03-31",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793786873271-mesmerizer_png.png",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Mesmerizer_Destroy.pez",
+    "youtubeUrl": "https://youtu.be/3cS3egFxg0w"
   }
 ]
