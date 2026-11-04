@@ -40,7 +40,6 @@ export default function ChartDetailPage() {
       <div className="mt-6 grid min-w-0 gap-7 md:mt-8 md:grid-cols-[minmax(0,340px)_1fr] md:gap-10">
         <div className="aspect-square border border-line bg-panel">{chart.jacket ? <img src={chart.jacket} alt={chart.title} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-xs tracking-widest text-neutral-700">NO JACKET</div>}</div>
         <div>
-          <p className="text-[10px] tracking-[0.3em] text-neutral-600">SONG ARCHIVE / {songCharts.length} DIFFICULTIES</p>
           <h1 className="mt-4 break-words text-2xl font-light sm:text-4xl">{chart.title}</h1>
           <p className="mt-3 text-sm text-neutral-500">{chart.artist}</p>
           <section className="mt-8">
