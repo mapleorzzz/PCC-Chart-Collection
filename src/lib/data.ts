@@ -5,6 +5,7 @@ export type Chart = {
   id: string;
   title: string;
   artist: string;
+  songId?: string;
   charter: string;
   difficulty: "EZ" | "HD" | "IN" | "AT" | "Other";
   level: string;
@@ -32,6 +33,15 @@ export const allProjects = projects as Project[];
 
 export function formatLevel(level: string) {
   return `Lv.${level.replace(/^Lv\.?\s*/i, "").replace(/(\d+)\.\d+/, "$1")}`;
+}
+
+export function groupCharts(charts: Chart[]) {
+  const groups = new Map<string, Chart[]>();
+  for (const chart of charts) {
+    const key = chart.songId?.trim() || `${chart.title.trim().toLocaleLowerCase()}::${chart.artist.trim().toLocaleLowerCase()}`;
+    groups.set(key, [...(groups.get(key) || []), chart]);
+  }
+  return Array.from(groups.values()).map((items) => ({ chart: items[0], charts: items.sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)) }));
 }
 
 export function getChart(id: string) {
