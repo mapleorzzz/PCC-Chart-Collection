@@ -32,6 +32,10 @@ export default function AdminPanel() {
   const [imageTarget, setImageTarget] = useState<"chart" | "project">("chart");
   const [publicationMode, setPublicationMode] = useState<"now" | "scheduled" | "draft">("now");
   const [scheduledAt, setScheduledAt] = useState("");
+  const [chartSearch, setChartSearch] = useState("");
+  const [chartDifficultyFilter, setChartDifficultyFilter] = useState("all");
+  const [chartSort, setChartSort] = useState<"newest" | "oldest" | "title">("newest");
+  const [projectSearch, setProjectSearch] = useState("");
 
   function clearSelectedUploads() {
     setSelectedFile(null);
@@ -243,8 +247,22 @@ export default function AdminPanel() {
     await save("projects", data.projects.filter((item) => item.id !== id));
   }
 
-  const field = "mt-1 w-full border border-line bg-[#111] px-3 py-3 text-sm text-white outline-none focus:border-neutral-500";
-  const label = "block text-xs text-neutral-500";
+  const field = "mt-1 w-full border border-line bg-[#111] px-3 py-2.5 text-sm text-white outline-none transition focus:border-neutral-500";
+  const label = "block text-xs text-neutral-400";
+  const filteredCharts = data.charts
+    .filter((item) => {
+      const q = chartSearch.trim().toLowerCase();
+      const matchesSearch = !q || [item.title, item.artist, item.charter, item.id].some((value) => value.toLowerCase().includes(q));
+      return matchesSearch && (chartDifficultyFilter === "all" || item.difficulty === chartDifficultyFilter);
+    })
+    .sort((a, b) => chartSort === "title"
+      ? a.title.localeCompare(b.title, "ja")
+      : chartSort === "newest"
+        ? b.publishedAt.localeCompare(a.publishedAt)
+        : a.publishedAt.localeCompare(b.publishedAt));
+  const filteredProjects = data.projects.filter((item) =>
+    [item.name, item.organizer || "", item.id].some((value) => value.toLowerCase().includes(projectSearch.trim().toLowerCase()))
+  );
 
   if (!loggedIn) return (
     <div className="mx-auto max-w-md px-5 py-24">
@@ -265,16 +283,25 @@ export default function AdminPanel() {
         <div><p className="text-[10px] tracking-[0.3em] text-neutral-600">MANAGEMENT</p><h1 className="mt-3 text-4xl font-light">Admin Dashboard</h1><p className="mt-2 text-sm text-neutral-500">GitHubのデータを直接更新します。</p></div>
         <button onClick={logout} className="border border-line px-4 py-2 text-xs text-neutral-400 hover:border-white hover:text-white">ログアウト</button>
       </div>
-      {error && <p className="mt-6 border border-red-900 bg-red-950/30 p-3 text-sm text-red-300">{error}</p>}
+      {error && <p role="alert" className="mt-6 border border-red-900 bg-red-950/30 p-3 text-sm text-red-300">{error}</p>}
+      <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {[
+          { label: "公開中の譜面", value: data.charts.length },
+          { label: "企画", value: data.projects.length },
+          { label: "予約・下書き", value: data.scheduledCharts.length }
+        ].map((item) => <div key={item.label} className="border border-line bg-[#0d0d0d] p-4"><p className="text-[10px] tracking-wider text-neutral-500">{item.label}</p><p className="mt-2 text-2xl font-light tabular-nums">{item.value}</p></div>)}
+      </div>
       <div className="mt-8 flex gap-2 overflow-x-auto border-b border-line">
         <button onClick={() => { setTab("charts"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "charts" ? "border-b border-white text-white" : "text-neutral-500"}`}>譜面管理 ({data.charts.length})</button>
         <button onClick={() => { setTab("projects"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "projects" ? "border-b border-white text-white" : "text-neutral-500"}`}>企画管理 ({data.projects.length})</button>
+        <button onClick={() => { setTab("scheduled"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "scheduled" ? "border-b border-white text-white" : "text-neutral-500"}`}>予約・下書き ({data.scheduledCharts.length})</button>
       </div>
 
       {tab === "charts" ? <>
         <section className="mt-6 border border-line p-4 sm:mt-8 sm:p-7">
           <h2 className="text-lg">{editingId ? "譜面を編集" : "譜面を新規登録"}</h2>
-          <form onSubmit={submitChart} className="mt-6 grid gap-4 sm:grid-cols-2">
+          <form onSubmit={submitChart} className="mt-5 grid gap-5 sm:grid-cols-2">
+            <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">01 / BASIC INFORMATION</p></div>
             <label className={label}>ID（英数字・ハイフン）<input className={field} value={chart.id} disabled={!!editingId} onChange={(e) => setChart({ ...chart, id: e.target.value })} required /></label>
             <label className={label}>曲名<input className={field} value={chart.title} onChange={(e) => setChart({ ...chart, title: e.target.value })} required /></label>
             <label className={label}>楽曲グループID（同じ楽曲の譜面で共通）<input className={field} value={chart.songId || ""} onChange={(e) => setChart({ ...chart, songId: e.target.value.trim() || undefined })} placeholder="グループ化する譜面に同じIDを入力" /></label>
@@ -282,9 +309,11 @@ export default function AdminPanel() {
             <label className={label}>Charter<input className={field} value={chart.charter} onChange={(e) => setChart({ ...chart, charter: e.target.value })} required /></label>
             <label className={label}>難易度<select className={field} value={chart.difficulty} onChange={(e) => setChart({ ...chart, difficulty: e.target.value as Chart["difficulty"] })}>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select></label>
             <label className={label}>レベル<input className={field} value={chart.level} onChange={(e) => setChart({ ...chart, level: e.target.value })} placeholder="例: 15" required /></label>
+            <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">02 / ASSETS & MEDIA</p></div>
             <div className={label}>
               ジャケット画像
               <input className={field} value={chart.jacket || ""} onChange={(e) => setChart({ ...chart, jacket: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
+              {chart.jacket && <div className="mt-2 flex items-center gap-3"><img src={chart.jacket} alt="ジャケットプレビュー" className="h-14 w-14 border border-line object-cover" /><span className="text-[10px] text-emerald-400">画像URL設定済み</span></div>}
               <input id="chart-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} disabled={imageUploading} onChange={(e) => { const file = e.target.files?.[0] || null; setChartImageFile(file); if (file) void uploadImage("chart", file); }} />
               {imageUploading && imageTarget === "chart" && <p className="mt-2 text-xs text-neutral-400">画像をアップロード中...</p>}
               {chartImageFile && !imageUploading && <p className="mt-2 text-xs text-neutral-400">{chartImageFile.name} · {(chartImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
@@ -296,13 +325,15 @@ export default function AdminPanel() {
               {uploading && <p className="mt-2 text-xs text-neutral-400">GitHub Releaseにアップロード中...</p>}
               {selectedFile && !uploading && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
               <p className="mt-2 text-xs text-neutral-600">選択するとGitHub Releaseに自動アップロードされます。</p>
+              {chart.fileUrl ? <p className="mt-2 text-[10px] text-emerald-400">✓ PEZダウンロードURL設定済み</p> : <p className="mt-2 text-[10px] text-amber-500">! PEZ未登録</p>}
             </div>
             <label className={label}>.pez ダウンロードURL<input type="url" className={field} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://example.com/chart.pez" /></label>
-            <label className={label}>YouTubeリンク<input type="url" className={field} value={chart.youtubeUrl || ""} onChange={(e) => setChart({ ...chart, youtubeUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." /></label>
+            <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">03 / VIDEO & DETAILS</p></div>
+            <label className={label}>YouTubeリンク<input type="url" className={field} value={chart.youtubeUrl || ""} onChange={(e) => setChart({ ...chart, youtubeUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." />{chart.youtubeUrl ? <span className="mt-1 block text-[10px] text-emerald-400">動画リンク設定済み</span> : <span className="mt-1 block text-[10px] text-neutral-600">未設定（後から追加できます）</span>}</label>
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
             <label className={label}>関連企画（複数選択可）<select multiple className={field + " min-h-32"} value={chart.projectIds} onChange={(e) => setChart({ ...chart, projectIds: Array.from(e.target.selectedOptions, (option) => option.value) })}>{data.projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
             <label className={label + " sm:col-span-2"}>説明<textarea className={field + " min-h-24"} value={chart.description || ""} onChange={(e) => setChart({ ...chart, description: e.target.value })} /></label>
-            {!editingId && <div className="grid gap-4 border-t border-line pt-4 sm:col-span-2 sm:grid-cols-2">
+            {!editingId && <div className="grid gap-4 border-t border-line pt-4 sm:col-span-2 sm:grid-cols-2"><p className="text-[10px] tracking-[0.2em] text-neutral-500 sm:col-span-2">04 / PUBLISHING</p>
               <label className={label}>公開方法<select className={field} value={publicationMode} onChange={(e) => setPublicationMode(e.target.value as "now" | "scheduled" | "draft")}><option value="now">今すぐ公開</option><option value="scheduled">日時を指定して予約公開</option><option value="draft">下書き保存（非公開）</option></select></label>
               {publicationMode === "scheduled" && <label className={label}>公開日時（日本時間）<input type="datetime-local" className={field} value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} /></label>}
               <p className="text-xs leading-6 text-neutral-500 sm:col-span-2">予約投稿は約5分間隔で公開処理されます。下書きは公開されません。</p>
@@ -310,12 +341,18 @@ export default function AdminPanel() {
             <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : publicationMode === "now" ? "譜面を登録・公開" : publicationMode === "scheduled" ? "予約投稿を保存" : "下書き保存"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
           </form>
         </section>
-        <section className="mt-10"><h2 className="mb-4 text-lg">登録済み譜面</h2><div className="divide-y divide-line border-y border-line">{data.charts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 text-xs text-neutral-600">{item.charter} · {item.difficulty} {formatLevel(item.level)}</p></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!data.charts.length && <p className="py-10 text-center text-sm text-neutral-600">譜面はまだ登録されていません。</p>}</div></section>
-        <section className="mt-10"><h2 className="mb-4 text-lg">予約・下書き ({data.scheduledCharts.length})</h2><div className="divide-y divide-line border-y border-line">
-          {data.scheduledCharts.map((item) => <div key={item.id} className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center"><div className="min-w-0"><p className="truncate text-sm">{item.chart.title}</p><p className="mt-1 text-xs text-neutral-500">{item.status === "draft" ? "下書き" : "予約公開"}{item.scheduledAt ? " · " + new Date(item.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) + "（JST）" : ""}</p></div><div className="flex min-h-10 shrink-0 items-center gap-4">{item.status === "scheduled" && <><button onClick={() => reschedule(item)} className="text-xs text-neutral-300 hover:text-white">日時変更</button><button onClick={() => publishScheduled(item)} className="text-xs text-neutral-300 hover:text-white">今すぐ公開</button></>}<button onClick={() => removeScheduled(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}
-          {!data.scheduledCharts.length && <p className="py-8 text-center text-sm text-neutral-600">予約・下書きはありません。</p>}</div></section>
-      </> : <>
-        <section className="mt-8 border border-line p-5 sm:p-7">
+        <section className="mt-10">
+          <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><h2 className="text-lg">登録済み譜面</h2><p className="mt-1 text-xs text-neutral-600">{filteredCharts.length} / {data.charts.length} 件表示</p></div>
+            <div className="grid grid-cols-2 gap-2 sm:flex">
+              <input aria-label="譜面を検索" className={field + " sm:w-56"} value={chartSearch} onChange={(e) => setChartSearch(e.target.value)} placeholder="曲名・アーティスト・Charter..." />
+              <select aria-label="難易度で絞り込み" className={field + " sm:w-32"} value={chartDifficultyFilter} onChange={(e) => setChartDifficultyFilter(e.target.value)}><option value="all">全難易度</option>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d} value={d}>{d}</option>)}</select>
+              <select aria-label="並び替え" className={field + " col-span-2 sm:w-36"} value={chartSort} onChange={(e) => setChartSort(e.target.value as "newest" | "oldest" | "title")}><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option></select>
+            </div>
+          </div>
+          <div className="divide-y divide-line border-y border-line">{filteredCharts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="flex min-w-0 items-center gap-3"><div className="h-12 w-12 shrink-0 overflow-hidden border border-line bg-[#171717]">{item.jacket ? <img src={item.jacket} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-[8px] text-neutral-700">NO IMG</div>}</div><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 truncate text-xs text-neutral-500">{item.artist} · {item.charter}</p><p className="mt-1 text-[10px] text-neutral-600">{item.difficulty} {formatLevel(item.level)} · {item.fileUrl ? "PEZあり" : "PEZなし"} · {item.youtubeUrl ? "動画あり" : "動画なし"}</p></div></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!filteredCharts.length && <p className="py-10 text-center text-sm text-neutral-600">{data.charts.length ? "条件に一致する譜面がありません。" : "譜面はまだ登録されていません。"}</p>}</div>
+        </section>
+      </> : tab === "projects" ? <>
+        <section className="mt-8 border border-line p-4 sm:p-7">
           <h2 className="text-lg">{editingId ? "企画を編集" : "企画を新規登録"}</h2>
           <form onSubmit={submitProject} className="mt-6 grid gap-4 sm:grid-cols-2">
             <label className={label}>ID（英数字・ハイフン）<input className={field} value={project.id} disabled={!!editingId} onChange={(e) => setProject({ ...project, id: e.target.value })} required /></label>
@@ -336,7 +373,15 @@ export default function AdminPanel() {
             <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : "企画を登録"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
           </form>
         </section>
-        <section className="mt-10"><h2 className="mb-4 text-lg">登録済み企画</h2><div className="divide-y divide-line border-y border-line">{data.projects.map((item) => <div key={item.id} className="flex items-center justify-between gap-4 py-4"><div className="min-w-0"><p className="truncate text-sm">{item.name}</p><p className="mt-1 text-xs text-neutral-600">{item.year} · {item.organizer || "主催者未設定"}</p></div><div className="flex shrink-0 gap-3"><button onClick={() => editProject(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeProject(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!data.projects.length && <p className="py-10 text-center text-sm text-neutral-600">企画はまだ登録されていません。</p>}</div></section>
+        <section className="mt-10"><div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><h2 className="text-lg">登録済み企画</h2><p className="mt-1 text-xs text-neutral-600">{filteredProjects.length} / {data.projects.length} 件表示</p></div><input aria-label="企画を検索" className={field + " sm:w-64"} value={projectSearch} onChange={(e) => setProjectSearch(e.target.value)} placeholder="企画名・主催者で検索..." /></div><div className="divide-y divide-line border-y border-line">{filteredProjects.map((item) => <div key={item.id} className="flex items-center justify-between gap-4 py-4"><div className="min-w-0"><p className="truncate text-sm">{item.name}</p><p className="mt-1 text-xs text-neutral-600">{item.year} · {item.organizer || "主催者未設定"}</p></div><div className="flex shrink-0 gap-3"><button onClick={() => editProject(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeProject(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!filteredProjects.length && <p className="py-10 text-center text-sm text-neutral-600">{data.projects.length ? "条件に一致する企画がありません。" : "企画はまだ登録されていません。"}</p>}</div></section>
+      </> : <>
+        <section className="mt-8">
+          <div className="mb-4"><h2 className="text-lg">予約・下書き</h2><p className="mt-1 text-xs text-neutral-600">公開予約と非公開の下書きを管理します。</p></div>
+          <div className="divide-y divide-line border-y border-line">
+            {data.scheduledCharts.map((item) => <div key={item.id} className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center"><div className="flex min-w-0 items-center gap-3"><div className="h-12 w-12 shrink-0 overflow-hidden border border-line bg-[#171717]">{item.chart.jacket ? <img src={item.chart.jacket} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-[8px] text-neutral-700">NO IMG</div>}</div><div className="min-w-0"><p className="truncate text-sm">{item.chart.title}</p><p className="mt-1 text-xs text-neutral-500">{item.status === "draft" ? "下書き・非公開" : "予約公開"}{item.scheduledAt ? " · " + new Date(item.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) + "（JST）" : ""}</p><p className="mt-1 text-[10px] text-neutral-600">{item.chart.difficulty} {formatLevel(item.chart.level)} · {item.chart.artist}</p></div></div><div className="flex min-h-10 shrink-0 items-center gap-4">{item.status === "scheduled" && <><button onClick={() => reschedule(item)} className="text-xs text-neutral-300 hover:text-white">日時変更</button><button onClick={() => publishScheduled(item)} className="text-xs text-neutral-300 hover:text-white">今すぐ公開</button></>}<button onClick={() => removeScheduled(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}
+            {!data.scheduledCharts.length && <p className="py-10 text-center text-sm text-neutral-600">予約・下書きはありません。</p>}
+          </div>
+        </section>
       </>}
     </div>
   );
