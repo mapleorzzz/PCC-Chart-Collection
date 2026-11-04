@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChartCard } from "@/components/chart-card";
+import { groupCharts } from "@/lib/data";
 import { usePublicData } from "@/lib/use-public-data";
 
 export default function ProjectDetailPage() {
@@ -14,7 +15,7 @@ export default function ProjectDetailPage() {
   if (error) return <div className="mx-auto max-w-7xl px-5 py-24 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div>;
   if (!project) return <div className="mx-auto max-w-7xl px-5 py-24 text-center"><p className="text-sm text-neutral-500">企画が見つかりません。</p><Link href="/projects" className="mt-5 inline-block text-xs text-neutral-400 hover:text-white">← PROJECTS</Link></div>;
 
-  const relatedCharts = charts.filter((chart) => chart.projectIds.includes(project.id));
+  const relatedCharts = groupCharts(charts.filter((chart) => chart.projectIds.includes(project.id)));
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-5 sm:py-16">
       <Link href="/projects" className="text-xs text-neutral-500 hover:text-white">← PROJECTS</Link>
@@ -25,8 +26,8 @@ export default function ProjectDetailPage() {
         <div className="mt-8 flex flex-wrap gap-x-10 gap-y-4 text-xs text-neutral-500">{project.organizer && <span>ORGANIZER: {project.organizer}</span>}{(project.startDate || project.endDate) && <span>PERIOD: {project.startDate || "TBA"} — {project.endDate || "TBA"}</span>}</div>
       </section>
       <section className="py-12">
-        <div className="mb-8 flex items-end justify-between"><div><p className="text-[10px] tracking-[0.3em] text-neutral-600">PARTICIPATING CHARTS</p><h2 className="mt-2 text-2xl font-light">参加譜面</h2></div><span className="text-xs text-neutral-600">{relatedCharts.length} CHARTS</span></div>
-        {relatedCharts.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{relatedCharts.map((chart) => <ChartCard key={chart.id} chart={chart} />)}</div> : <div className="border border-dashed border-line px-6 py-16 text-center text-sm text-neutral-600">この企画の譜面はまだ登録されていません。</div>}
+        <div className="mb-8 flex items-end justify-between"><div><p className="text-[10px] tracking-[0.3em] text-neutral-600">PARTICIPATING CHARTS</p><h2 className="mt-2 text-2xl font-light">参加譜面</h2></div><span className="text-xs text-neutral-600">{relatedCharts.reduce((sum, group) => sum + group.charts.length, 0)} CHARTS · {relatedCharts.length} SONGS</span></div>
+        {relatedCharts.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{relatedCharts.map((group) => <ChartCard key={group.chart.id} chart={group.chart} group={group.charts} />)}</div> : <div className="border border-dashed border-line px-6 py-16 text-center text-sm text-neutral-600">この企画の譜面はまだ登録されていません。</div>}
       </section>
     </div>
   );
