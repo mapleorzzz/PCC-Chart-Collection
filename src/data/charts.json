@@ -117,5 +117,19 @@
     "publishedAt": "2024-12-02",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793756786351-IMG_4836_png.png",
     "youtubeUrl": ""
+  },
+  {
+    "id": "genocider",
+    "title": "GENOCIDER",
+    "artist": "DJ Myosuke",
+    "charter": "囃狼 is genocider",
+    "difficulty": "Other",
+    "level": "16.6",
+    "projectIds": [
+      "wacca"
+    ],
+    "publishedAt": "2024-12-03",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793758043985-IMG_4837_png.png",
+    "youtubeUrl": "https://youtu.be/GF1hbC1rofg?si=ou9-t6STQW8Peg3I"
   }
 ]
