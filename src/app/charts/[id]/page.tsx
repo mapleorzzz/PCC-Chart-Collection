@@ -16,72 +16,50 @@ export default function ChartDetailPage() {
   const jacketImages = Array.from(new Set(songCharts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
   const [jacketIndex, setJacketIndex] = useState(0);
   const [nextJacketIndex, setNextJacketIndex] = useState<number | null>(null);
-  const currentJacketRef = useRef<HTMLImageElement>(null);
-  const nextJacketRef = useRef<HTMLImageElement>(null);
-  const currentAnimationRef = useRef<Animation | null>(null);
-  const nextAnimationRef = useRef<Animation | null>(null);
+  const [isJacketFading, setIsJacketFading] = useState(false);
 
   useEffect(() => {
     setJacketIndex(0);
     setNextJacketIndex(null);
+    setIsJacketFading(false);
   }, [groupKey]);
 
   useEffect(() => {
-    if (jacketImages.length <= 1) return;
+    if (jacketImages.length <= 1 || nextJacketIndex !== null) return;
 
     let cancelled = false;
-    let intervalId: number | undefined;
-
-    const showNextJacket = () => {
+    const intervalId = window.setTimeout(() => {
       const nextIndex = (jacketIndex + 1) % jacketImages.length;
       const preload = new Image();
       preload.onload = () => {
-        if (cancelled) return;
-        setNextJacketIndex(nextIndex);
-      };
-      preload.onerror = () => {
-        if (cancelled) return;
-        setJacketIndex(nextIndex);
+        if (!cancelled) setNextJacketIndex(nextIndex);
       };
       preload.src = jacketImages[nextIndex];
-    };
+    }, 5000);
 
-    intervalId = window.setInterval(showNextJacket, 5000);
     return () => {
       cancelled = true;
-      if (intervalId !== undefined) window.clearInterval(intervalId);
+      window.clearTimeout(intervalId);
     };
-  }, [jacketImages.join("|"), jacketIndex]);
+  }, [jacketImages.join("|"), jacketIndex, nextJacketIndex]);
 
   useEffect(() => {
     if (nextJacketIndex === null) return;
 
-    const current = currentJacketRef.current;
-    const next = nextJacketRef.current;
-    if (!current || !next) return;
+    let finishTimeout: number;
+    const frame = window.requestAnimationFrame(() => {
+      setIsJacketFading(true);
+      finishTimeout = window.setTimeout(() => {
+        setJacketIndex(nextJacketIndex);
+        setNextJacketIndex(null);
+        setIsJacketFading(false);
+      }, 1000);
+    });
 
-    // Both layers animate from the same instant, so the image never swaps before fading.
-    currentAnimationRef.current?.cancel();
-    nextAnimationRef.current?.cancel();
-    currentAnimationRef.current = current.animate(
-      [{ opacity: 1 }, { opacity: 0 }],
-      { duration: 1000, easing: "ease-in-out", fill: "forwards" }
-    );
-    nextAnimationRef.current = next.animate(
-      [{ opacity: 0 }, { opacity: 1 }],
-      { duration: 1000, easing: "ease-in-out", fill: "forwards" }
-    );
-
-    const timeout = window.setTimeout(() => {
-      setJacketIndex(nextJacketIndex);
-      setNextJacketIndex(null);
-      window.requestAnimationFrame(() => {
-        currentAnimationRef.current?.cancel();
-        nextAnimationRef.current?.cancel();
-      });
-    }, 1000);
-
-    return () => window.clearTimeout(timeout);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      if (finishTimeout !== undefined) window.clearTimeout(finishTimeout);
+    };
   }, [nextJacketIndex]);
 
   if (loading) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-xs text-neutral-600">LOADING...</div>;
@@ -113,19 +91,17 @@ export default function ChartDetailPage() {
           {jacketImages.length > 0 ? (
             <>
               <img
-                ref={currentJacketRef}
                 src={jacketImages[jacketIndex]}
                 alt={chart.title}
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{ opacity: nextJacketIndex === null ? 1 : 1 }}
+                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
+                style={{ opacity: isJacketFading ? 0 : 1 }}
               />
               {nextJacketIndex !== null && (
                 <img
-                  ref={nextJacketRef}
                   src={jacketImages[nextJacketIndex]}
                   alt={chart.title}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  style={{ opacity: 0 }}
+                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
+                  style={{ opacity: isJacketFading ? 1 : 0 }}
                 />
               )}
             </>
