@@ -384,7 +384,7 @@ export default function AdminPanel() {
               <label className={label}>主催者<input className={field} value={project.organizer || ""} onChange={(e) => setProject({ ...project, organizer: e.target.value })} /></label>
               <label className={label}>開始日<input type="date" className={field} value={project.startDate || ""} onChange={(e) => setProject({ ...project, startDate: e.target.value })} /></label>
               <label className={label}>終了日<input type="date" className={field} value={project.endDate || ""} onChange={(e) => setProject({ ...project, endDate: e.target.value })} /></label>
-              <div className={label + " sm:col-span-2">
+              <div className={label + " sm:col-span-2"}>
                 企画カバー画像
                 <input className={field} value={project.cover || ""} onChange={(e) => setProject({ ...project, cover: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
                 {project.cover && <div className="mt-2 flex items-center gap-3"><img src={project.cover} alt="企画カバーのプレビュー" className="h-14 w-24 border border-line object-cover" /><span className="text-[10px] text-emerald-400">画像URL設定済み</span></div>}
