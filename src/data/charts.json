@@ -236,5 +236,21 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793785261995-Fxxking.Wedding.pez",
     "youtubeUrl": "https://youtu.be/L82dFBXDuk8",
     "songId": "fxxkingwedding"
+  },
+  {
+    "id": "weddingranpage",
+    "title": "Fxxking Wedding",
+    "artist": "余興",
+    "charter": "maple & neko & chaos are rampaging",
+    "difficulty": "Other",
+    "level": "狂",
+    "projectIds": [
+      "2025afeve"
+    ],
+    "publishedAt": "2025-03-30",
+    "songId": "fxxkingwedding",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793785881745-wed_png.png",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793786070669-Fxxking.Wedding.Rampage.pez",
+    "youtubeUrl": "https://youtu.be/j6r5TB4p8_0"
   }
 ]
