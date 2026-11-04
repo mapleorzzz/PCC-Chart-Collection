@@ -19,7 +19,7 @@ export default function AdminPanel() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [] });
-  const [tab, setTab] = useState<"charts" | "projects">("charts");
+  const [tab, setTab] = useState<"charts" | "projects" | "scheduled">("charts");
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [project, setProject] = useState<Project>(emptyProject);
   const [editingId, setEditingId] = useState("");
