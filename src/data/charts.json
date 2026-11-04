@@ -283,5 +283,19 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Mesmerizer_Destroy.pez",
     "youtubeUrl": "https://youtu.be/3cS3egFxg0w",
     "description": "※アンロックムービーが含まれます。"
+  },
+  {
+    "id": "errcodesp",
+    "title": "Error Code (VIP Mix)",
+    "artist": "Z ClaxX & SumaiLight",
+    "charter": "深刻なエラーが発生しました。今すぐプレイを中断してください。",
+    "difficulty": "Other",
+    "level": "狂",
+    "projectIds": [],
+    "publishedAt": "2025-04-01",
+    "songId": "errcode",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793797406537-5267002057056493_png.png",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793797411887-Error.Code.Rampage.pez",
+    "youtubeUrl": "https://youtu.be/BWbrHsPrmsk"
   }
 ]
