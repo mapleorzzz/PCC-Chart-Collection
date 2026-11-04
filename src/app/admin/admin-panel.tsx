@@ -299,6 +299,20 @@ export default function AdminPanel() {
       </div>
 
       {tab === "charts" ? <>
+        <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(280px,0.82fr)_minmax(0,1.7fr)]">
+          <div className="min-w-0 lg:sticky lg:top-6">
+        <section className="mt-10">
+          <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><h2 className="text-lg">登録済み譜面</h2><p className="mt-1 text-xs text-neutral-600">{filteredCharts.length} / {data.charts.length} 件表示</p></div>
+            <div className="grid grid-cols-2 gap-2 sm:flex">
+              <input aria-label="譜面を検索" className={field + " sm:w-56"} value={chartSearch} onChange={(e) => setChartSearch(e.target.value)} placeholder="曲名・アーティスト・Charter..." />
+              <select aria-label="難易度で絞り込み" className={field + " sm:w-32"} value={chartDifficultyFilter} onChange={(e) => setChartDifficultyFilter(e.target.value)}><option value="all">全難易度</option>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d} value={d}>{d}</option>)}</select>
+              <select aria-label="並び替え" className={field + " col-span-2 sm:w-36"} value={chartSort} onChange={(e) => setChartSort(e.target.value as "newest" | "oldest" | "title")}><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option></select>
+            </div>
+          </div>
+          <div className="divide-y divide-line border-y border-line">{filteredCharts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="flex min-w-0 items-center gap-3"><div className="h-12 w-12 shrink-0 overflow-hidden border border-line bg-[#171717]">{item.jacket ? <img src={item.jacket} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-[8px] text-neutral-700">NO IMG</div>}</div><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 truncate text-xs text-neutral-500">{item.artist} · {item.charter}</p><p className="mt-1 text-[10px] text-neutral-600">{item.difficulty} {formatLevel(item.level)} · {item.fileUrl ? "PEZあり" : "PEZなし"} · {item.youtubeUrl ? "動画あり" : "動画なし"}</p></div></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!filteredCharts.length && <p className="py-10 text-center text-sm text-neutral-600">{data.charts.length ? "条件に一致する譜面がありません。" : "譜面はまだ登録されていません。"}</p>}</div>
+        </section>
+          </div>
+          <div className="min-w-0">
         <section className="mt-6 border border-line p-4 sm:mt-8 sm:p-7">
           <h2 className="text-lg">{editingId ? "譜面を編集" : "譜面を新規登録"}</h2>
           <form onSubmit={submitChart} className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -342,17 +356,9 @@ export default function AdminPanel() {
             <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : publicationMode === "now" ? "譜面を登録・公開" : publicationMode === "scheduled" ? "予約投稿を保存" : "下書き保存"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
           </form>
         </section>
-        <section className="mt-10">
-          <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end"><div><h2 className="text-lg">登録済み譜面</h2><p className="mt-1 text-xs text-neutral-600">{filteredCharts.length} / {data.charts.length} 件表示</p></div>
-            <div className="grid grid-cols-2 gap-2 sm:flex">
-              <input aria-label="譜面を検索" className={field + " sm:w-56"} value={chartSearch} onChange={(e) => setChartSearch(e.target.value)} placeholder="曲名・アーティスト・Charter..." />
-              <select aria-label="難易度で絞り込み" className={field + " sm:w-32"} value={chartDifficultyFilter} onChange={(e) => setChartDifficultyFilter(e.target.value)}><option value="all">全難易度</option>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d} value={d}>{d}</option>)}</select>
-              <select aria-label="並び替え" className={field + " col-span-2 sm:w-36"} value={chartSort} onChange={(e) => setChartSort(e.target.value as "newest" | "oldest" | "title")}><option value="newest">新しい順</option><option value="oldest">古い順</option><option value="title">曲名順</option></select>
-            </div>
           </div>
-          <div className="divide-y divide-line border-y border-line">{filteredCharts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="flex min-w-0 items-center gap-3"><div className="h-12 w-12 shrink-0 overflow-hidden border border-line bg-[#171717]">{item.jacket ? <img src={item.jacket} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-[8px] text-neutral-700">NO IMG</div>}</div><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 truncate text-xs text-neutral-500">{item.artist} · {item.charter}</p><p className="mt-1 text-[10px] text-neutral-600">{item.difficulty} {formatLevel(item.level)} · {item.fileUrl ? "PEZあり" : "PEZなし"} · {item.youtubeUrl ? "動画あり" : "動画なし"}</p></div></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!filteredCharts.length && <p className="py-10 text-center text-sm text-neutral-600">{data.charts.length ? "条件に一致する譜面がありません。" : "譜面はまだ登録されていません。"}</p>}</div>
-        </section>
-      </> : tab === "projects" ? <>
+        </div>
+            </> : tab === "projects" ? <>
         <section className="mt-8 border border-line p-4 sm:p-7">
           <h2 className="text-lg">{editingId ? "企画を編集" : "企画を新規登録"}</h2>
           <form onSubmit={submitProject} className="mt-6 grid gap-4 sm:grid-cols-2">
