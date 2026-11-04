@@ -277,6 +277,7 @@ export default function AdminPanel() {
           <form onSubmit={submitChart} className="mt-6 grid gap-4 sm:grid-cols-2">
             <label className={label}>ID（英数字・ハイフン）<input className={field} value={chart.id} disabled={!!editingId} onChange={(e) => setChart({ ...chart, id: e.target.value })} required /></label>
             <label className={label}>曲名<input className={field} value={chart.title} onChange={(e) => setChart({ ...chart, title: e.target.value })} required /></label>
+            <label className={label}>楽曲グループID（同じ楽曲の譜面で共通）<input className={field} value={chart.songId || ""} onChange={(e) => setChart({ ...chart, songId: e.target.value.trim() || undefined })} placeholder="例: earthleviathan" /></label>
             <label className={label}>アーティスト<input className={field} value={chart.artist} onChange={(e) => setChart({ ...chart, artist: e.target.value })} required /></label>
             <label className={label}>Charter<input className={field} value={chart.charter} onChange={(e) => setChart({ ...chart, charter: e.target.value })} required /></label>
             <label className={label}>難易度<select className={field} value={chart.difficulty} onChange={(e) => setChart({ ...chart, difficulty: e.target.value as Chart["difficulty"] })}>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select></label>
