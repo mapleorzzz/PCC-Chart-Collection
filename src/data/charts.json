@@ -442,5 +442,23 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793894910112-Unraveling.Stasis.pez",
     "youtubeUrl": "https://youtu.be/e8y70gU1b2I",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793895020832-unrave_png.png"
+  },
+  {
+    "id": "xaleidscopix",
+    "title": "Xaleid◆scopiX",
+    "artist": "xi",
+    "charter": "~Rebuilding World~",
+    "charterSearch": [
+      "Fevm1r",
+      "Hazefrost",
+      "Nanokuro",
+      "wingbat"
+    ],
+    "difficulty": "AT",
+    "level": "18.2",
+    "projectIds": [],
+    "publishedAt": "2025-11-22",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793896263754-xaleid0_jpg.jpg",
+    "youtubeUrl": "https://youtu.be/kiOlMmtrIWk"
   }
 ]
