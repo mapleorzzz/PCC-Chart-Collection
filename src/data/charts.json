@@ -165,7 +165,13 @@
     "youtubeUrl": "https://youtu.be/v802OuG0Nt0",
     "songId": "invisiblefrenzy",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793782800646-ab67616d0000b2732d7ead5442f235a2983bc134_jpg.jpg",
-    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793782808277-Invisible.Frenzy_AT.pez"
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793782808277-Invisible.Frenzy_AT.pez",
+    "description": "",
+    "charterSearch": [
+      "虚星 瑠一",
+      "Hazefrost",
+      "Fevm1r"
+    ]
   },
   {
     "id": "invisiblefrenzyin",
