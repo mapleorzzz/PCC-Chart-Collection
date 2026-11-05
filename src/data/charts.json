@@ -374,7 +374,11 @@
     "publishedAt": "2025-10-18",
     "songId": "errcode",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793801212432-Error.Code.VIP.Mix._HD.pez",
-    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793801221325-600x600cc_webp.webp"
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793801221325-600x600cc_webp.webp",
+    "charterSearch": [
+      "wingbat",
+      "Chaos"
+    ]
   },
   {
     "id": "unravelingstasis",
