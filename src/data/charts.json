@@ -381,7 +381,10 @@
     "title": "Unraveling Stasis",
     "artist": "I'avenir proche",
     "charter": "Mono[ ]uro",
-    "charterSearch": [],
+    "charterSearch": [
+      "山田悠牙",
+      "Nanokuro"
+    ],
     "difficulty": "AT",
     "level": "18.4",
     "projectIds": [],
