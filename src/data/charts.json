@@ -385,7 +385,7 @@
   },
   {
     "id": "afterpandora",
-    "title": "AFTERPANDORA",
+    "title": "AFTER PANDORA",
     "artist": "削除",
     "charter": "サイゴノキボウ",
     "difficulty": "Other",
@@ -394,7 +394,8 @@
     "publishedAt": "2025-07-31",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1793800437243-AFTER.PANDORA.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793800481070-Song_AFTER_PANDORA_png.png",
-    "youtubeUrl": "https://youtu.be/XRRllyUa0Fk"
+    "youtubeUrl": "https://youtu.be/XRRllyUa0Fk",
+    "charterSearch": []
   },
   {
     "id": "pupa",
