@@ -18,5 +18,15 @@
     "startDate": "2025-03-29",
     "endDate": "2025-03-31",
     "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793718026946-2025af_png.png"
+  },
+  {
+    "id": "takumicubic",
+    "name": "TAKUMI³ Collection",
+    "description": "PCC運営とサーバーのメンバーで製作したTAKUMI³精選集。",
+    "year": 2025,
+    "startDate": "2025-12-01",
+    "endDate": "2025-12-12",
+    "organizer": "PCC Administrator",
+    "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793894543361-takumicover_jpg.jpg"
   }
 ]
