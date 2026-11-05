@@ -2,65 +2,18 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { JacketCarousel } from "@/components/jacket-carousel";
 import { usePublicData } from "@/lib/use-public-data";
-import { formatLevel } from "@/lib/data";
+import { formatLevel, getOrderedJacketImages } from "@/lib/data";
 
 export default function ChartDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { charts, loading, error } = usePublicData();
+  const { charts, jacketOrder, loading, error } = usePublicData();
   const chart = charts.find((item) => item.id === id);
   const groupKey = chart ? (chart.songId?.trim() || `chart:${chart.id}`) : "";
   const songCharts = chart ? charts.filter((item) => (item.songId?.trim() || `chart:${item.id}`) === groupKey)
     .sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)) : [];
-  const jacketImages = Array.from(new Set(songCharts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
-  const [jacketIndex, setJacketIndex] = useState(0);
-  const [nextJacketIndex, setNextJacketIndex] = useState<number | null>(null);
-  const [isJacketFading, setIsJacketFading] = useState(false);
-
-  useEffect(() => {
-    setJacketIndex(0);
-    setNextJacketIndex(null);
-    setIsJacketFading(false);
-  }, [groupKey]);
-
-  useEffect(() => {
-    if (jacketImages.length <= 1 || nextJacketIndex !== null) return;
-
-    let cancelled = false;
-    const intervalId = window.setTimeout(() => {
-      const nextIndex = (jacketIndex + 1) % jacketImages.length;
-      const preload = new Image();
-      preload.onload = () => {
-        if (!cancelled) setNextJacketIndex(nextIndex);
-      };
-      preload.src = jacketImages[nextIndex];
-    }, 5000);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(intervalId);
-    };
-  }, [jacketImages.join("|"), jacketIndex, nextJacketIndex]);
-
-  useEffect(() => {
-    if (nextJacketIndex === null) return;
-
-    let finishTimeout: number;
-    const frame = window.requestAnimationFrame(() => {
-      setIsJacketFading(true);
-      finishTimeout = window.setTimeout(() => {
-        setJacketIndex(nextJacketIndex);
-        setNextJacketIndex(null);
-        setIsJacketFading(false);
-      }, 1000);
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      if (finishTimeout !== undefined) window.clearTimeout(finishTimeout);
-    };
-  }, [nextJacketIndex]);
+  const jacketImages = getOrderedJacketImages(songCharts, jacketOrder);
 
   if (loading) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-xs text-neutral-600">LOADING...</div>;
   if (error) return <div className="mx-auto max-w-5xl px-5 py-24 text-center text-sm text-neutral-500">データを読み込めませんでした。再読み込みしてください。</div>;
@@ -88,26 +41,7 @@ export default function ChartDetailPage() {
       <Link href="/charts" className="text-xs text-neutral-500 hover:text-white">← ALL CHARTS</Link>
       <div className="mt-6 grid min-w-0 gap-7 md:mt-8 md:grid-cols-[minmax(0,340px)_1fr] md:gap-10">
         <div className="relative aspect-square overflow-hidden border border-line bg-panel">
-          {jacketImages.length > 0 ? (
-            <>
-              <img
-                src={jacketImages[jacketIndex]}
-                alt={chart.title}
-                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
-                style={{ opacity: isJacketFading ? 0 : 1 }}
-              />
-              {nextJacketIndex !== null && (
-                <img
-                  src={jacketImages[nextJacketIndex]}
-                  alt={chart.title}
-                  className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
-                  style={{ opacity: isJacketFading ? 1 : 0 }}
-                />
-              )}
-            </>
-          ) : (
-            <div className="flex h-full items-center justify-center text-xs tracking-widest text-neutral-700">NO JACKET</div>
-          )}
+          <JacketCarousel images={jacketImages} alt={chart.title} />
         </div>
         <div>
           <h1 className="mt-4 break-words text-2xl font-light sm:text-4xl">{chart.title}</h1>

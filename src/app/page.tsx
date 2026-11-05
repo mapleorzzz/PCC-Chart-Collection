@@ -7,7 +7,7 @@ import { groupCharts } from "@/lib/data";
 import { usePublicData } from "@/lib/use-public-data";
 
 export default function HomePage() {
-  const { charts, projects, loading, error } = usePublicData();
+  const { charts, projects, jacketOrder, loading, error } = usePublicData();
   const latest = groupCharts(charts).sort((a, b) => b.chart.publishedAt.localeCompare(a.chart.publishedAt)).slice(0, 4);
   const featuredProjects = projects.slice(0, 2);
 
@@ -24,7 +24,7 @@ export default function HomePage() {
       </section>
       <section className="py-16">
         <div className="mb-8 flex items-end justify-between"><div><p className="text-[10px] tracking-[0.3em] text-neutral-600">COLLECTION</p><h2 className="mt-2 text-2xl font-light">Latest charts</h2></div><Link href="/charts" className="text-xs text-neutral-500 hover:text-white">VIEW ALL ↗</Link></div>
-        {loading ? <Loading /> : error ? <EmptyState message="データを読み込めませんでした。ページを再読み込みしてください。" /> : latest.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{latest.map((group) => <ChartCard key={group.chart.id} chart={group.chart} group={group.charts} />)}</div> : <EmptyState message="譜面はまだ登録されていません。" />}
+        {loading ? <Loading /> : error ? <EmptyState message="データを読み込めませんでした。ページを再読み込みしてください。" /> : latest.length ? <div className="grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 sm:gap-x-6">{latest.map((group) => <ChartCard key={group.chart.id} chart={group.chart} group={group.charts} jacketOrder={jacketOrder} />)}</div> : <EmptyState message="譜面はまだ登録されていません。" />}
       </section>
       <section className="border-t border-line py-16">
         <div className="mb-8 flex items-end justify-between"><div><p className="text-[10px] tracking-[0.3em] text-neutral-600">COMMUNITY EVENTS</p><h2 className="mt-2 text-2xl font-light">Projects</h2></div><Link href="/projects" className="text-xs text-neutral-500 hover:text-white">VIEW ALL ↗</Link></div>

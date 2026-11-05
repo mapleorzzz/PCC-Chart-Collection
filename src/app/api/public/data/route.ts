@@ -6,15 +6,17 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const [chartsRes, projectsRes] = await Promise.all([
+    const [chartsRes, projectsRes, jacketOrderRes] = await Promise.all([
       fetch(base + "charts.json", { cache: "no-store" }),
-      fetch(base + "projects.json", { cache: "no-store" })
+      fetch(base + "projects.json", { cache: "no-store" }),
+      fetch(base + "jacket-order.json", { cache: "no-store" })
     ]);
-    if (!chartsRes.ok || !projectsRes.ok) {
+    if (!chartsRes.ok || !projectsRes.ok || !jacketOrderRes.ok) {
       return NextResponse.json({ error: "データを取得できませんでした。" }, { status: 502 });
     }
-    const [charts, projects] = await Promise.all([chartsRes.json(), projectsRes.json()]);
-    return NextResponse.json({ charts, projects }, {
+    const [charts, projects, jacketOrder] = await Promise.all([chartsRes.json(), projectsRes.json(), jacketOrderRes.json()]);
+    const publicCharts = charts.map(({ charterSearch: _privateSearch, ...chart }: Record<string, unknown>) => chart);
+    return NextResponse.json({ charts: publicCharts, projects, jacketOrder }, {
       headers: { "Cache-Control": "no-store, max-age=0" }
     });
   } catch {

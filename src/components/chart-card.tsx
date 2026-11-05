@@ -1,16 +1,13 @@
 import Link from "next/link";
-import { formatLevel, type Chart } from "@/lib/data";
+import { formatLevel, getOrderedJacketImages, type Chart, type JacketOrder } from "@/lib/data";
+import { JacketCarousel } from "@/components/jacket-carousel";
 
-export function ChartCard({ chart, group = [chart] }: { chart: Chart; group?: Chart[] }) {
+export function ChartCard({ chart, group = [chart], jacketOrder = {} }: { chart: Chart; group?: Chart[]; jacketOrder?: JacketOrder }) {
+  const jacketImages = getOrderedJacketImages(group, jacketOrder);
   return (
     <Link href={`/charts/${chart.id}`} className="group block">
       <div className="aspect-square overflow-hidden border border-line bg-[#171717]">
-        {chart.jacket ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={chart.jacket} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs tracking-[0.25em] text-neutral-700">NO JACKET</div>
-        )}
+        <JacketCarousel images={jacketImages} alt={chart.title} />
       </div>
       <div className="flex items-start justify-between gap-3 pt-3">
         <div className="min-w-0">

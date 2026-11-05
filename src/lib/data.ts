@@ -7,6 +7,7 @@ export type Chart = {
   artist: string;
   songId?: string;
   charter: string;
+  charterSearch?: string[];
   difficulty: "EZ" | "HD" | "IN" | "AT" | "Other";
   level: string;
   jacket?: string;
@@ -33,6 +34,20 @@ export const allProjects = projects as Project[];
 
 export function formatLevel(level: string) {
   return `Lv.${level.replace(/^Lv\.?\s*/i, "").replace(/(\d+)\.\d+/, "$1")}`;
+}
+
+export type JacketOrder = Record<string, string[]>;
+
+export function getSongGroupKey(chart: Chart) {
+  return chart.songId?.trim() || `chart:${chart.id}`;
+}
+
+export function getOrderedJacketImages(charts: Chart[], jacketOrder: JacketOrder = {}) {
+  if (!charts.length) return [];
+  const unique = Array.from(new Set(charts.map((chart) => chart.jacket?.trim()).filter((src): src is string => Boolean(src))));
+  const configured = jacketOrder[getSongGroupKey(charts[0])] || [];
+  const ordered = configured.filter((src) => unique.includes(src));
+  return [...ordered, ...unique.filter((src) => !ordered.includes(src))];
 }
 
 export function groupCharts(charts: Chart[]) {

@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { formatLevel, type Chart, type Project } from "@/lib/data";
+import { formatLevel, getSongGroupKey, type Chart, type Project } from "@/lib/data";
 
 type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string };
-type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[] };
+type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]> };
 const emptyChart: Chart = {
-  id: "", title: "", artist: "", charter: "", difficulty: "IN",
+  id: "", title: "", artist: "", charter: "", charterSearch: [], difficulty: "IN",
   level: "", projectIds: [], publishedAt: new Date().toISOString().slice(0, 10)
 };
 const emptyProject: Project = {
@@ -18,8 +18,8 @@ export default function AdminPanel() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [] });
-  type AdminTab = "charts" | "projects" | "scheduled";
+  const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {} });
+  type AdminTab = "charts" | "jackets" | "projects" | "scheduled";
   const [tab, setTab] = useState<AdminTab>("charts");
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [project, setProject] = useState<Project>(emptyProject);
@@ -54,7 +54,7 @@ export default function AdminPanel() {
     const response = await fetch("/api/admin/data");
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "データを読み込めませんでした。");
-    setData(result);
+    setData({ ...result, jacketOrder: result.jacketOrder || {} });
     setLoggedIn(true);
   }
 
@@ -81,7 +81,7 @@ export default function AdminPanel() {
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     setLoggedIn(false);
-    setData({ charts: [], projects: [], scheduledCharts: [] });
+    setData({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {} });
   }
 
   async function save(kind: "charts" | "projects" | "scheduled", next: Chart[] | Project[] | ScheduledChart[]) {
@@ -100,6 +100,29 @@ export default function AdminPanel() {
       clearSelectedUploads();
     } catch (e) { setError(e instanceof Error ? e.message : "保存に失敗しました。"); }
     finally { setBusy(false); }
+  }
+
+  async function saveJacketOrder(next: Record<string, string[]>) {
+    setBusy(true); setError("");
+    try {
+      const response = await fetch("/api/admin/data", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "jacketOrder", data: next })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "ジャケット順を保存できませんでした。");
+      setData((current) => ({ ...current, jacketOrder: next }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "ジャケット順の保存に失敗しました。");
+    } finally { setBusy(false); }
+  }
+
+  function moveJacket(groupKey: string, images: string[], index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (target < 0 || target >= images.length) return;
+    const next = [...images];
+    [next[index], next[target]] = [next[target], next[index]];
+    setData((current) => ({ ...current, jacketOrder: { ...current.jacketOrder, [groupKey]: next } }));
   }
 
   async function uploadChartFile(fileToUpload?: File) {
@@ -251,10 +274,19 @@ export default function AdminPanel() {
 
   const field = "mt-1 w-full border border-line bg-[#111] px-3 py-2.5 text-sm text-white outline-none transition focus:border-neutral-500";
   const label = "block text-xs text-neutral-400";
+  const jacketGroups = Array.from(data.charts.reduce((groups, item) => {
+    const key = getSongGroupKey(item);
+    groups.set(key, [...(groups.get(key) || []), item]);
+    return groups;
+  }, new Map<string, Chart[]>()).entries()).map(([key, charts]) => {
+    const images = Array.from(new Set(charts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
+    const configured = data.jacketOrder[key] || [];
+    return { key, charts, images: [...configured.filter((src) => images.includes(src)), ...images.filter((src) => !configured.includes(src))] };
+  }).filter((group) => group.images.length > 0);
   const filteredCharts = data.charts
     .filter((item) => {
       const q = chartSearch.trim().toLowerCase();
-      const matchesSearch = !q || [item.title, item.artist, item.charter, item.id].some((value) => value.toLowerCase().includes(q));
+      const matchesSearch = !q || [item.title, item.artist, item.charter, item.id, ...(item.charterSearch || [])].some((value) => value.toLowerCase().includes(q));
       return matchesSearch && (chartDifficultyFilter === "all" || item.difficulty === chartDifficultyFilter);
     })
     .sort((a, b) => chartSort === "title"
@@ -296,6 +328,7 @@ export default function AdminPanel() {
       </div>
       <div className="mt-8 flex gap-2 overflow-x-auto border-b border-line">
         <button onClick={() => { setTab("charts"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "charts" ? "border-b border-white text-white" : "text-neutral-500"}`}>譜面管理 ({data.charts.length})</button>
+        <button onClick={() => { setTab("jackets"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "jackets" ? "border-b border-white text-white" : "text-neutral-500"}`}>ジャケット管理</button>
         <button onClick={() => { setTab("projects"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "projects" ? "border-b border-white text-white" : "text-neutral-500"}`}>企画管理 ({data.projects.length})</button>
         <button onClick={() => { setTab("scheduled"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "scheduled" ? "border-b border-white text-white" : "text-neutral-500"}`}>予約・下書き ({data.scheduledCharts.length})</button>
       </div>
@@ -324,7 +357,8 @@ export default function AdminPanel() {
             <label className={label}>曲名<input className={field} value={chart.title} onChange={(e) => setChart({ ...chart, title: e.target.value })} required /></label>
             <label className={label}>楽曲グループID（同じ楽曲の譜面で共通）<input className={field} value={chart.songId || ""} onChange={(e) => setChart({ ...chart, songId: e.target.value.trim() || undefined })} placeholder="グループ化する譜面に同じIDを入力" /></label>
             <label className={label}>アーティスト<input className={field} value={chart.artist} onChange={(e) => setChart({ ...chart, artist: e.target.value })} required /></label>
-            <label className={label}>Charter<input className={field} value={chart.charter} onChange={(e) => setChart({ ...chart, charter: e.target.value })} required /></label>
+            <label className={label}>表示用製作者名義（サイトに表示）<input className={field} value={chart.charter} onChange={(e) => setChart({ ...chart, charter: e.target.value })} required /></label>
+            <label className={label + " sm:col-span-2"}>検索用製作者名義（非公開・複数可）<textarea className={field + " min-h-24"} value={(chart.charterSearch || []).join("\n")} onChange={(e) => setChart({ ...chart, charterSearch: e.target.value.split("\n").map((value) => value.trim()).filter(Boolean) })} placeholder={"1行に1名義ずつ入力\n例: maple._.zz\nHighBRidge"} /><span className="mt-1 block text-[10px] text-neutral-600">ここに入力した名義はサイト上に表示されず、製作者検索にだけ使用されます。</span></label>
             <label className={label}>難易度<select className={field} value={chart.difficulty} onChange={(e) => setChart({ ...chart, difficulty: e.target.value as Chart["difficulty"] })}>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select></label>
             <label className={label}>レベル<input className={field} value={chart.level} onChange={(e) => setChart({ ...chart, level: e.target.value })} placeholder="例: 15" required /></label>
             <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">02 / ASSETS & MEDIA</p></div>
@@ -361,7 +395,27 @@ export default function AdminPanel() {
         </section>
           </div>
         </div>
-            </> : tab === "projects" ? <>
+            </> : tab === "jackets" ? <>
+        <section className="mt-6">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div><h2 className="text-lg">楽曲グループ別ジャケット順</h2><p className="mt-1 text-xs text-neutral-500">上下ボタンで表示順を変更できます。ここで保存した順番はホーム・譜面一覧・譜面詳細で共通して使われます。</p></div>
+            <button type="button" disabled={busy} onClick={() => void saveJacketOrder(data.jacketOrder)} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : "ジャケット順を保存"}</button>
+          </div>
+          <div className="space-y-5">
+            {jacketGroups.map((group) => <section key={group.key} className="border border-line p-4 sm:p-5">
+              <div className="mb-4"><h3 className="text-sm">{group.charts[0].title}</h3><p className="mt-1 text-[10px] text-neutral-600">{group.key} · {group.charts.length}譜面 · {group.images.length}ジャケット</p></div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {group.images.map((src, index) => <div key={src} className="flex min-w-0 items-center gap-3 border border-line bg-[#111] p-2">
+                  <img src={src} alt="" className="h-16 w-16 shrink-0 object-cover" />
+                  <div className="min-w-0 flex-1"><p className="text-xs">表示順 {index + 1}</p><p className="mt-1 truncate text-[10px] text-neutral-600">{group.charts.filter((item) => item.jacket?.trim() === src).map((item) => item.difficulty).join(" / ")}</p></div>
+                  <div className="flex shrink-0 flex-col gap-1"><button type="button" aria-label="上へ移動" disabled={index === 0} onClick={() => moveJacket(group.key, group.images, index, -1)} className="border border-line px-2 py-1 text-xs disabled:opacity-20">↑</button><button type="button" aria-label="下へ移動" disabled={index === group.images.length - 1} onClick={() => moveJacket(group.key, group.images, index, 1)} className="border border-line px-2 py-1 text-xs disabled:opacity-20">↓</button></div>
+                </div>)}
+              </div>
+            </section>)}
+            {!jacketGroups.length && <p className="border border-dashed border-line py-12 text-center text-sm text-neutral-600">ジャケット画像が登録された譜面はありません。</p>}
+          </div>
+        </section>
+      </> : tab === "projects" ? <>
         <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(280px,0.82fr)_minmax(0,1.7fr)]">
           <section className="min-w-0 lg:sticky lg:top-6">
             <div className="mb-4"><h2 className="text-lg">登録済み企画</h2><p className="mt-1 text-xs text-neutral-600">{filteredProjects.length} / {data.projects.length} 件表示</p></div>
