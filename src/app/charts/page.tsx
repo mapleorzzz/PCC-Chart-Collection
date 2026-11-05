@@ -9,6 +9,7 @@ import { usePublicData } from "@/lib/use-public-data";
 export default function ChartsPage() {
   const { charts, projects, jacketOrder, loading, error } = usePublicData();
   const [hiddenCharterMatches, setHiddenCharterMatches] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
   useEffect(() => {
     const term = query.trim();
     if (!term) { setHiddenCharterMatches([]); return; }
@@ -21,7 +22,6 @@ export default function ChartsPage() {
     }, 180);
     return () => { active = false; window.clearTimeout(timer); };
   }, [query]);
-  const [query, setQuery] = useState("");
   const [difficulty, setDifficulty] = useState("ALL");
   const [project, setProject] = useState("ALL");
   const [sort, setSort] = useState("newest");
