@@ -117,7 +117,12 @@
     "publishedAt": "2024-12-02",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793756786351-IMG_4836_png.png",
     "youtubeUrl": "https://youtu.be/enRJpM_l4Xk",
-    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Silentphobia.pez"
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Silentphobia.pez",
+    "charterSearch": [
+      "neko",
+      "ねこ",
+      "Fevm1r"
+    ]
   },
   {
     "id": "genocider",
