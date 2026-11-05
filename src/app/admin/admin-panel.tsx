@@ -38,6 +38,7 @@ export default function AdminPanel() {
   const [chartSort, setChartSort] = useState<"newest" | "oldest" | "title">("newest");
   const [projectSearch, setProjectSearch] = useState("");
   const [selectedScheduledId, setSelectedScheduledId] = useState("");
+  const [draggedJacket, setDraggedJacket] = useState<{ groupKey: string; index: number } | null>(null);
 
   function clearSelectedUploads() {
     setSelectedFile(null);
@@ -282,7 +283,7 @@ export default function AdminPanel() {
     const images = Array.from(new Set(charts.map((item) => item.jacket?.trim()).filter((src): src is string => Boolean(src))));
     const configured = data.jacketOrder[key] || [];
     return { key, charts, images: [...configured.filter((src) => images.includes(src)), ...images.filter((src) => !configured.includes(src))] };
-  }).filter((group) => group.images.length > 0);
+  }).filter((group) => group.charts.length >= 2 && group.images.length > 0);
   const filteredCharts = data.charts
     .filter((item) => {
       const q = chartSearch.trim().toLowerCase();
@@ -398,21 +399,22 @@ export default function AdminPanel() {
             </> : tab === "jackets" ? <>
         <section className="mt-6">
           <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-            <div><h2 className="text-lg">楽曲グループ別ジャケット順</h2><p className="mt-1 text-xs text-neutral-500">上下ボタンで表示順を変更できます。ここで保存した順番はホーム・譜面一覧・譜面詳細で共通して使われます。</p></div>
+            <div><h2 className="text-lg">楽曲グループ別ジャケット順</h2><p className="mt-1 text-xs text-neutral-500">2譜面以上ある楽曲のみ表示。画像をドラッグ＆ドロップして順番を変更できます。</p></div>
             <button type="button" disabled={busy} onClick={() => void saveJacketOrder(data.jacketOrder)} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : "ジャケット順を保存"}</button>
           </div>
           <div className="space-y-5">
             {jacketGroups.map((group) => <section key={group.key} className="border border-line p-4 sm:p-5">
-              <div className="mb-4"><h3 className="text-sm">{group.charts[0].title}</h3><p className="mt-1 text-[10px] text-neutral-600">{group.key} · {group.charts.length}譜面 · {group.images.length}ジャケット</p></div>
+              <div className="mb-4"><h3 className="text-sm">{group.charts[0].title}</h3><p className="mt-1 text-[10px] text-neutral-600">{group.charts.length}譜面 · {group.images.length}ジャケット</p></div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {group.images.map((src, index) => <div key={src} className="flex min-w-0 items-center gap-3 border border-line bg-[#111] p-2">
-                  <img src={src} alt="" className="h-16 w-16 shrink-0 object-cover" />
+                {group.images.map((src, index) => <div key={src} draggable onDragStart={() => setDraggedJacket({ groupKey: group.key, index })} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); if (!draggedJacket || draggedJacket.groupKey !== group.key) return; const next = [...group.images]; const moved = next.splice(draggedJacket.index, 1)[0]; next.splice(index, 0, moved); setData((current) => ({ ...current, jacketOrder: { ...current.jacketOrder, [group.key]: next } })); setDraggedJacket(null); }} onDragEnd={() => setDraggedJacket(null)} className={"flex min-w-0 cursor-grab items-center gap-3 border bg-[#111] p-2 active:cursor-grabbing " + (draggedJacket?.groupKey === group.key && draggedJacket.index === index ? "border-white opacity-50" : "border-line")}>
+                  <span className="select-none text-xl text-neutral-600" aria-hidden="true">⠿</span>
+                  <img src={src} alt="" draggable={false} className="h-16 w-16 shrink-0 object-cover" />
                   <div className="min-w-0 flex-1"><p className="text-xs">表示順 {index + 1}</p><p className="mt-1 truncate text-[10px] text-neutral-600">{group.charts.filter((item) => item.jacket?.trim() === src).map((item) => item.difficulty).join(" / ")}</p></div>
                   <div className="flex shrink-0 flex-col gap-1"><button type="button" aria-label="上へ移動" disabled={index === 0} onClick={() => moveJacket(group.key, group.images, index, -1)} className="border border-line px-2 py-1 text-xs disabled:opacity-20">↑</button><button type="button" aria-label="下へ移動" disabled={index === group.images.length - 1} onClick={() => moveJacket(group.key, group.images, index, 1)} className="border border-line px-2 py-1 text-xs disabled:opacity-20">↓</button></div>
                 </div>)}
               </div>
             </section>)}
-            {!jacketGroups.length && <p className="border border-dashed border-line py-12 text-center text-sm text-neutral-600">ジャケット画像が登録された譜面はありません。</p>}
+            {!jacketGroups.length && <p className="border border-dashed border-line py-12 text-center text-sm text-neutral-600">2譜面以上ある楽曲グループはありません。</p>}
           </div>
         </section>
       </> : tab === "projects" ? <>
