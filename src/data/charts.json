@@ -483,5 +483,17 @@
     "projectIds": [],
     "publishedAt": "2026-11-05",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793923366671-IMG_4852_webp.webp"
+  },
+  {
+    "id": "resistancein",
+    "title": "RESISTANCE",
+    "artist": "Yo-SK",
+    "charter": "HighBRidge vs. Fevm1r vs. Chaos",
+    "charterSearch": [],
+    "difficulty": "IN",
+    "level": "13.1",
+    "projectIds": [],
+    "publishedAt": "2025-12-01",
+    "songId": "resistance"
   }
 ]
