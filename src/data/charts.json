@@ -462,5 +462,25 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793896263754-xaleid0_jpg.jpg",
     "youtubeUrl": "https://youtu.be/kiOlMmtrIWk",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Xaleid.scopiX.pez"
+  },
+  {
+    "id": "helpme",
+    "title": "助けてくれ",
+    "artist": "Gate",
+    "charter": "名義　☆the☆　総当たり",
+    "charterSearch": [
+      "ヤミナ",
+      "虚星 瑠一",
+      "お茶猫",
+      "Aliath",
+      "かすてら",
+      "ねこ",
+      "neko"
+    ],
+    "difficulty": "Other",
+    "level": "結月ゆかり「それじゃあ、 総当たりがんばるぞ～...　」 carto,zof,pecp,cubism,girGate",
+    "projectIds": [],
+    "publishedAt": "2026-11-05",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793923366671-IMG_4852_webp.webp"
   }
 ]
