@@ -481,23 +481,23 @@ export default function AdminPanel() {
             <label className="border border-line bg-[#0d0d0d] p-4">
               <span className="block text-xs text-neutral-300">表示する文字</span>
               <input aria-label="アーカイブ表示文字" value={selectedBossAppearance.labelText} onChange={(e) => updateSelectedBossAppearance({ labelText: e.target.value })} className={field + " mt-3"} maxLength={60} placeholder="PCC · SPECIAL ARCHIVE" />
-              <p className="mt-2 text-[9px] tracking-[0.2em] text-neutral-500">プレビュー：<span style={{ color: selectedBossAppearance.labelColor }}>{data.bossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span></p>
+              <p className="mt-2 text-[9px] tracking-[0.2em] text-neutral-500">プレビュー：<span style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span></p>
               <span className="mt-4 block text-xs text-neutral-300">文字色</span>
               <div className="mt-3 flex items-center gap-3">
                 <input aria-label="アーカイブ文字色" type="color" value={selectedBossAppearance.labelColor} onChange={(e) => updateSelectedBossAppearance({ labelColor: e.target.value })} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
-                <input aria-label="アーカイブ文字色 HEX" value={data.bossAppearance.labelColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, labelColor: e.target.value } }))} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
+                <input aria-label="アーカイブ文字色 HEX" value={selectedBossAppearance.labelColor} onChange={(e) => updateSelectedBossAppearance({ labelColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
               </div>
-              <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: data.bossAppearance.labelColor }}>{data.bossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</p>
+              <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</p>
             </label>
             <label className="border border-line bg-[#0d0d0d] p-4">
               <span className="block text-xs text-neutral-300">ジャケットの枠・装飾色</span>
               <div className="mt-3 flex items-center gap-3">
                 <input aria-label="ジャケット枠色" type="color" value={selectedBossAppearance.frameColor} onChange={(e) => updateSelectedBossAppearance({ frameColor: e.target.value })} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
-                <input aria-label="ジャケット枠色 HEX" value={data.bossAppearance.frameColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, frameColor: e.target.value } }))} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
+                <input aria-label="ジャケット枠色 HEX" value={selectedBossAppearance.frameColor} onChange={(e) => updateSelectedBossAppearance({ frameColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
               </div>
               <div className="mt-3 flex justify-center py-2">
-                <div className="border p-2" style={{ borderColor: data.bossAppearance.frameColor }}>
-                  <div className="h-16 w-16 border-2 bg-[#171717]" style={{ borderColor: data.bossAppearance.frameColor }} />
+                <div className="border p-2" style={{ borderColor: selectedBossAppearance.frameColor }}>
+                  <div className="h-16 w-16 border-2 bg-[#171717]" style={{ borderColor: selectedBossAppearance.frameColor }} />
                 </div>
               </div>
             </label>
