@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { formatLevel, getSongGroupKey, type Chart, type Project } from "@/lib/data";
+import { defaultBossAppearance, formatLevel, getSongGroupKey, type BossAppearance, type Chart, type Project } from "@/lib/data";
 
 type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string };
-type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]> };
+type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]>; bossAppearance: BossAppearance };
 const emptyChart: Chart = {
   id: "", title: "", artist: "", charter: "", charterSearch: [], difficulty: "IN", isBoss: false,
   level: "", projectIds: [], publishedAt: new Date().toISOString().slice(0, 10)
@@ -18,8 +18,8 @@ export default function AdminPanel() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {} });
-  type AdminTab = "charts" | "jackets" | "projects" | "scheduled";
+  const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {}, bossAppearance: defaultBossAppearance });
+  type AdminTab = "charts" | "jackets" | "bossAppearance" | "projects" | "scheduled";
   const [tab, setTab] = useState<AdminTab>("charts");
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [charterSearchText, setCharterSearchText] = useState("");
@@ -56,7 +56,7 @@ export default function AdminPanel() {
     const response = await fetch("/api/admin/data");
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "データを読み込めませんでした。");
-    setData({ ...result, jacketOrder: result.jacketOrder || {} });
+    setData({ ...result, jacketOrder: result.jacketOrder || {}, bossAppearance: result.bossAppearance || defaultBossAppearance });
     setLoggedIn(true);
   }
 
@@ -83,7 +83,7 @@ export default function AdminPanel() {
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     setLoggedIn(false);
-    setData({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {} });
+    setData({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {}, bossAppearance: defaultBossAppearance });
   }
 
   async function save(kind: "charts" | "projects" | "scheduled", next: Chart[] | Project[] | ScheduledChart[]) {
@@ -117,6 +117,25 @@ export default function AdminPanel() {
       setData((current) => ({ ...current, jacketOrder: next }));
     } catch (e) {
       setError(e instanceof Error ? e.message : "ジャケット順の保存に失敗しました。");
+    } finally { setBusy(false); }
+  }
+
+  async function saveBossAppearance(next: BossAppearance) {
+    if (!/^#[0-9a-fA-F]{6}$/.test(next.labelColor) || !/^#[0-9a-fA-F]{6}$/.test(next.frameColor)) {
+      setError("色は #RRGGBB 形式で入力してください。");
+      return;
+    }
+    setBusy(true); setError("");
+    try {
+      const response = await fetch("/api/admin/data", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "bossAppearance", data: next })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "BOSS画面設定を保存できませんでした。");
+      setData((current) => ({ ...current, bossAppearance: next }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "BOSS画面設定の保存に失敗しました。");
     } finally { setBusy(false); }
   }
 
@@ -334,6 +353,7 @@ export default function AdminPanel() {
       <div className="mt-8 flex gap-2 overflow-x-auto border-b border-line">
         <button onClick={() => { setTab("charts"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "charts" ? "border-b border-white text-white" : "text-neutral-500"}`}>譜面管理 ({data.charts.length})</button>
         <button onClick={() => { setTab("jackets"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "jackets" ? "border-b border-white text-white" : "text-neutral-500"}`}>ジャケット管理</button>
+        <button onClick={() => { setTab("bossAppearance"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "bossAppearance" ? "border-b border-white text-white" : "text-neutral-500"}`}>BOSS画面設定</button>
         <button onClick={() => { setTab("projects"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "projects" ? "border-b border-white text-white" : "text-neutral-500"}`}>企画管理 ({data.projects.length})</button>
         <button onClick={() => { setTab("scheduled"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "scheduled" ? "border-b border-white text-white" : "text-neutral-500"}`}>予約・下書き ({data.scheduledCharts.length})</button>
       </div>
@@ -420,6 +440,40 @@ export default function AdminPanel() {
               </div>
             </section>)}
             {!jacketGroups.length && <p className="border border-dashed border-line py-12 text-center text-sm text-neutral-600">2譜面以上ある楽曲グループはありません。</p>}
+          </div>
+        </section>
+      </> : tab === "bossAppearance" ? <>
+        <section className="mt-6 max-w-3xl">
+          <div className="mb-5">
+            <h2 className="text-lg">BOSS専用ページのデザイン</h2>
+            <p className="mt-1 text-xs leading-6 text-neutral-500">「PCC · SPECIAL ARCHIVE」の文字色と、ジャケットを囲む枠・四隅の装飾色を設定できます。変更はBOSS専用ページ全体に反映されます。</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="border border-line bg-[#0d0d0d] p-4">
+              <span className="block text-xs text-neutral-300">PCC · SPECIAL ARCHIVE の文字色</span>
+              <div className="mt-3 flex items-center gap-3">
+                <input aria-label="アーカイブ文字色" type="color" value={data.bossAppearance.labelColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, labelColor: e.target.value } }))} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
+                <input aria-label="アーカイブ文字色 HEX" value={data.bossAppearance.labelColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, labelColor: e.target.value } }))} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
+              </div>
+              <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: data.bossAppearance.labelColor }}>PCC · SPECIAL ARCHIVE</p>
+            </label>
+            <label className="border border-line bg-[#0d0d0d] p-4">
+              <span className="block text-xs text-neutral-300">ジャケットの枠・装飾色</span>
+              <div className="mt-3 flex items-center gap-3">
+                <input aria-label="ジャケット枠色" type="color" value={data.bossAppearance.frameColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, frameColor: e.target.value } }))} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
+                <input aria-label="ジャケット枠色 HEX" value={data.bossAppearance.frameColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, frameColor: e.target.value } }))} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
+              </div>
+              <div className="mt-3 flex justify-center py-2">
+                <div className="border p-2" style={{ borderColor: data.bossAppearance.frameColor }}>
+                  <div className="h-16 w-16 border-2 bg-[#171717]" style={{ borderColor: data.bossAppearance.frameColor }} />
+                </div>
+              </div>
+            </label>
+          </div>
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <button type="button" disabled={busy} onClick={() => void saveBossAppearance(data.bossAppearance)} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : "BOSS画面設定を保存"}</button>
+            <button type="button" disabled={busy} onClick={() => setData((current) => ({ ...current, bossAppearance: defaultBossAppearance }))} className="border border-line px-4 py-3 text-xs text-neutral-300 disabled:opacity-50">初期カラーに戻す</button>
+            <p className="text-[10px] text-neutral-600">色を選んだだけでは公開されません。保存ボタンを押してください。</p>
           </div>
         </section>
       </> : tab === "projects" ? <>

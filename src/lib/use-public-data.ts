@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Chart, Project, JacketOrder } from "@/lib/data";
+import { defaultBossAppearance, type BossAppearance, type Chart, type Project, type JacketOrder } from "@/lib/data";
 
-type PublicData = { charts: Chart[]; projects: Project[]; jacketOrder: JacketOrder };
+type PublicData = { charts: Chart[]; projects: Project[]; jacketOrder: JacketOrder; bossAppearance: BossAppearance };
 
 export function usePublicData() {
-  const [data, setData] = useState<PublicData>({ charts: [], projects: [], jacketOrder: {} });
+  const [data, setData] = useState<PublicData>({ charts: [], projects: [], jacketOrder: {}, bossAppearance: defaultBossAppearance });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -18,7 +18,7 @@ export function usePublicData() {
         return response.json();
       })
       .then((value: PublicData) => {
-        if (active) setData({ ...value, jacketOrder: value.jacketOrder || {} });
+        if (active) setData({ ...value, jacketOrder: value.jacketOrder || {}, bossAppearance: value.bossAppearance || defaultBossAppearance });
       })
       .catch(() => {
         if (active) setError(true);

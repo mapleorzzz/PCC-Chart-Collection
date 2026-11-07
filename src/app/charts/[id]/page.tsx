@@ -8,7 +8,7 @@ import { formatLevel, getOrderedJacketImages } from "@/lib/data";
 
 export default function ChartDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { charts, jacketOrder, loading, error } = usePublicData();
+  const { charts, jacketOrder, bossAppearance, loading, error } = usePublicData();
   const chart = charts.find((item) => item.id === id);
   const groupKey = chart ? (chart.songId?.trim() || `chart:${chart.id}`) : "";
   const songCharts = chart ? charts.filter((item) => (item.songId?.trim() || `chart:${item.id}`) === groupKey)
@@ -47,22 +47,22 @@ export default function ChartDetailPage() {
         <div className="text-center">
           <Link href="/charts" className="inline-flex items-center gap-2 text-[10px] tracking-[0.28em] text-neutral-400 transition hover:text-white">← ALL CHARTS</Link>
           <p className="mt-8 text-xs font-medium tracking-[0.55em] text-neutral-300 sm:mt-10 sm:text-sm">B O S S&nbsp;&nbsp; C H A R T</p>
-          <div className="mx-auto mt-5 flex max-w-3xl items-center gap-3 text-emerald-200/50"><span className="h-px flex-1 bg-gradient-to-r from-transparent to-white/25" /><span className="text-[9px] tracking-[0.35em]">PCC · SPECIAL ARCHIVE</span><span className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-300/50" /></div>
+          <div className="mx-auto mt-5 flex max-w-3xl items-center gap-3 text-emerald-200/50"><span className="h-px flex-1 bg-gradient-to-r from-transparent to-white/25" /><span className="text-[9px] tracking-[0.35em]" style={{ color: bossAppearance.labelColor }}>PCC · SPECIAL ARCHIVE</span><span className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-300/50" /></div>
         </div>
 
         <section className="mx-auto mt-8 max-w-4xl text-center sm:mt-10">
           <div className="relative mx-auto w-full max-w-[min(76vw,390px)]">
-            <div className="absolute -inset-3 border border-white/20 shadow-[0_0_55px_rgba(0,0,0,0.35)]" />
-            <div className="absolute -inset-1 border border-white/20" />
-            <div className="relative aspect-square overflow-hidden border border-white/35 bg-[#111111] shadow-[0_25px_90px_rgba(0,0,0,0.65)]">
+            <div className="absolute -inset-3 border shadow-[0_0_55px_rgba(0,0,0,0.35)]" style={{ borderColor: bossAppearance.frameColor }} />
+            <div className="absolute -inset-1 border" style={{ borderColor: bossAppearance.frameColor }} />
+            <div className="relative aspect-square overflow-hidden border bg-[#111111] shadow-[0_25px_90px_rgba(0,0,0,0.65)]" style={{ borderColor: bossAppearance.frameColor }}>
               <JacketCarousel images={jacketImages} alt={chart.title} />
             </div>
-            <span className="absolute -left-3 -top-3 h-7 w-7 border-l-2 border-t-2 border-white/55" />
-            <span className="absolute -right-3 -top-3 h-7 w-7 border-r-2 border-t-2 border-amber-200/80" />
-            <span className="absolute -bottom-3 -left-3 h-7 w-7 border-b-2 border-l-2 border-amber-200/80" />
-            <span className="absolute -bottom-3 -right-3 h-7 w-7 border-b-2 border-r-2 border-amber-200/80" />
+            <span className="absolute -left-3 -top-3 h-7 w-7 border-l-2 border-t-2" style={{ borderColor: bossAppearance.frameColor }} />
+            <span className="absolute -right-3 -top-3 h-7 w-7 border-r-2 border-t-2" style={{ borderColor: bossAppearance.frameColor }} />
+            <span className="absolute -bottom-3 -left-3 h-7 w-7 border-b-2 border-l-2" style={{ borderColor: bossAppearance.frameColor }} />
+            <span className="absolute -bottom-3 -right-3 h-7 w-7 border-b-2 border-r-2" style={{ borderColor: bossAppearance.frameColor }} />
           </div>
-          <h1 className="mt-2 break-words text-3xl font-light tracking-wide text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)] sm:text-5xl">{chart.title}</h1>
+          <h1 className="mt-10 break-words text-3xl font-light tracking-wide text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)] sm:mt-12 sm:text-5xl">{chart.title}</h1>
           <p className="mt-3 text-sm tracking-wide text-neutral-300">{chart.artist}</p>
         </section>
 
