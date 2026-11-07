@@ -621,5 +621,22 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794063646886-2118103970769706_png.png",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794063658947-NOTES.RUSH__IN.pez",
     "youtubeUrl": "https://youtu.be/MK-yGGTCiPY"
+  },
+  {
+    "id": "resistanceat",
+    "title": "RESISTANCE",
+    "artist": "Yo-SK",
+    "charter": "Fevm1r",
+    "charterSearch": [],
+    "difficulty": "AT",
+    "level": "15.9",
+    "projectIds": [
+      "takumicubic"
+    ],
+    "publishedAt": "2025-12-08",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794064020857-RESISTANCE_AT.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794063940114-1797882960388152_png.png",
+    "youtubeUrl": "https://youtu.be/LyrHPqqwBKQ",
+    "songId": "resistance"
   }
 ]
