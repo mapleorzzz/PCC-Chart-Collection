@@ -523,5 +523,26 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794033464469-N3ON.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794033980710-8167607827831177_png.png",
     "youtubeUrl": "https://youtu.be/kMJtxKpK3mA"
+  },
+  {
+    "id": "dropmydaw",
+    "title": "Drop My DAW",
+    "artist": "NharNoyz feat. NenotaNi",
+    "charter": "DROP MY PHIEDIT",
+    "charterSearch": [
+      "wingbat",
+      "neko",
+      "ねこ",
+      "maple._.zz"
+    ],
+    "difficulty": "IN",
+    "level": "15.2",
+    "projectIds": [
+      "takumicubic"
+    ],
+    "publishedAt": "2025-12-03",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794034660463-Drop.my.DAW.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794034666964-3951887082834875_png.png",
+    "youtubeUrl": "https://youtu.be/fGzvvNnfQUQ"
   }
 ]
