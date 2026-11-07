@@ -73,7 +73,7 @@ export default function ChartDetailPage() {
                 <div className="flex min-w-0 items-center gap-4">
                   <span className="w-7 shrink-0 text-xs tabular-nums text-neutral-500">{String(index + 1).padStart(2,"0")}</span>
                   <div className="min-w-0">
-                    <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1"><span className="text-sm font-medium tracking-wider">{entry.difficulty}</span><span className="text-sm text-neutral-300">{formatLevel(entry.level)}</span></p>
+                    <p className="flex flex-wrap items-baseline gap-x-1 gap-y-1"><span className="text-sm font-medium tracking-wider">{entry.difficulty}</span><span className="text-sm text-neutral-300">{formatLevel(entry.level)}</span></p>
                     <p className="mt-1 break-words text-xs text-neutral-400">CHARTER : {entry.charter}</p>
                     {entry.description && <p className="mt-2 whitespace-pre-wrap text-xs leading-6 text-neutral-500">{entry.description}</p>}
                   </div>
