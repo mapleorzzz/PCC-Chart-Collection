@@ -659,5 +659,24 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794064305684-NOTES.RUSH_.Daiza.remix._Ruler.of.the.heavens__AT.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794064338655-9668653754603277_png.png",
     "youtubeUrl": "https://youtu.be/1T0uGXkBLuI"
+  },
+  {
+    "id": "oversleepingat",
+    "title": "Oversleeping",
+    "artist": "Evin a'k",
+    "charter": "Papilio go back to sleep.",
+    "charterSearch": [
+      "vile Papilio"
+    ],
+    "difficulty": "AT",
+    "level": "17.5",
+    "projectIds": [
+      "takumicubic"
+    ],
+    "publishedAt": "2025-12-10",
+    "songId": "oversleeping",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794064521211-25865619_jpg.jpg",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Oversleeping_AT.pez",
+    "youtubeUrl": "https://youtu.be/kZ5JOIni2FU"
   }
 ]
