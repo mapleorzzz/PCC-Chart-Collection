@@ -4,5 +4,11 @@
     "labelColor": "#a7f3d0",
     "frameColor": "#ffffff"
   },
-  "songs": {}
+  "songs": {
+    "notesrush": {
+      "labelText": "PCC · SPECIAL ARCHIVE",
+      "labelColor": "#ff5c5c",
+      "frameColor": "#ffffff"
+    }
+  }
 }
