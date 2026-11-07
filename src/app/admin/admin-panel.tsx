@@ -488,20 +488,21 @@ export default function AdminPanel() {
                 <input aria-label="アーカイブ文字色 HEX" value={selectedBossAppearance.labelColor} onChange={(e) => updateSelectedBossAppearance({ labelColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
               </div>
               <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</p>
-              <span className="mt-4 block text-xs text-neutral-300">ラインのプレビュー（四隅の色と連動）</span>
+              <span className="mt-4 block text-xs text-neutral-300">PCC SPECIAL ARCHIVE 横線の色</span>
+              <div className="mt-3 flex items-center gap-3">
+                <input aria-label="アーカイブ横線色" type="color" value={selectedBossAppearance.lineColor} onChange={(e) => updateSelectedBossAppearance({ lineColor: e.target.value })} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
+                <input aria-label="アーカイブ横線色 HEX" value={selectedBossAppearance.lineColor} onChange={(e) => updateSelectedBossAppearance({ lineColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
+              </div>
               <div className="mt-3 flex items-center gap-2">
-                <span className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${selectedBossAppearance.cornerTopLeft} 45%, ${selectedBossAppearance.cornerBottomLeft})` }} />
+                <span className="h-px flex-1" style={{ background: selectedBossAppearance.lineColor }} />
                 <span className="text-[9px] tracking-[0.2em]" style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span>
-                <span className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${selectedBossAppearance.cornerTopRight} 45%, ${selectedBossAppearance.cornerBottomRight})` }} />
+                <span className="h-px flex-1" style={{ background: selectedBossAppearance.lineColor }} />
               </div>
             </label>
             <label className="border border-line bg-[#0d0d0d] p-4">
-              <span className="block text-xs text-neutral-300">ジャケットの枠・装飾色</span>
-              <div className="mt-3 flex items-center gap-3">
-                <input aria-label="ジャケット枠色" type="color" value={selectedBossAppearance.frameColor} onChange={(e) => updateSelectedBossAppearance({ frameColor: e.target.value })} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
-                <input aria-label="ジャケット枠色 HEX" value={selectedBossAppearance.frameColor} onChange={(e) => updateSelectedBossAppearance({ frameColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
-              </div>
-              <span className="mt-4 block text-xs text-neutral-300">四隅のカラー（ラインにも自動反映）</span>
+              <span className="block text-xs text-neutral-300">ジャケット枠線のグラデーション（四隅と連動）</span>
+              <p className="mt-2 text-[10px] leading-5 text-neutral-500">上下左右の枠線が、それぞれ対応する四隅の色をつなぐように変化します。</p>
+              <span className="mt-4 block text-xs text-neutral-300">四隅のカラー</span>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 {([
                   ["左上", "cornerTopLeft"], ["右上", "cornerTopRight"],
@@ -516,8 +517,8 @@ export default function AdminPanel() {
                 ))}
               </div>
               <div className="mt-3 flex justify-center py-2">
-                <div className="relative h-24 w-24 border p-2" style={{ borderColor: selectedBossAppearance.frameColor }}>
-                  <div className="absolute inset-2 border" style={{ borderColor: selectedBossAppearance.frameColor }} />
+                <div className="relative h-24 w-24 border-2 border-transparent p-2" style={{ borderImage: `linear-gradient(135deg, ${selectedBossAppearance.cornerTopLeft}, ${selectedBossAppearance.cornerTopRight}, ${selectedBossAppearance.cornerBottomRight}, ${selectedBossAppearance.cornerBottomLeft}, ${selectedBossAppearance.cornerTopLeft}) 1` }}>
+                  <div className="absolute inset-2 border border-transparent" style={{ borderImage: `linear-gradient(135deg, ${selectedBossAppearance.cornerTopLeft}, ${selectedBossAppearance.cornerTopRight}, ${selectedBossAppearance.cornerBottomRight}, ${selectedBossAppearance.cornerBottomLeft}, ${selectedBossAppearance.cornerTopLeft}) 1` }} />
                   <span className="absolute left-0 top-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerTopLeft }} />
                   <span className="absolute right-0 top-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerTopRight }} />
                   <span className="absolute bottom-0 left-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerBottomLeft }} />
