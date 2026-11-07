@@ -15,14 +15,14 @@
     "notesrush": {
       "labelText": "PCC · SPECIAL ARCHIVE",
       "labelColor": "#ff5c5c",
-      "lineColor": "#ffffff",
+      "lineColor": "#ff9494",
       "frameColor": "#fedd39",
       "cornerGradientStart": "#a7f3d0",
       "cornerGradientEnd": "#ffffff",
-      "cornerTopLeft": "#a7f3d0",
-      "cornerTopRight": "#ffffff",
-      "cornerBottomLeft": "#a7f3d0",
-      "cornerBottomRight": "#ffffff"
+      "cornerTopLeft": "#ff3838",
+      "cornerTopRight": "#fff833",
+      "cornerBottomLeft": "#fff833",
+      "cornerBottomRight": "#345cfe"
     }
   }
 }
