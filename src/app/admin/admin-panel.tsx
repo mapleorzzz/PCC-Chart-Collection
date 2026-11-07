@@ -490,9 +490,9 @@ export default function AdminPanel() {
               <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</p>
               <span className="mt-4 block text-xs text-neutral-300">ラインのプレビュー（四隅の色と連動）</span>
               <div className="mt-3 flex items-center gap-2">
-                <span className="h-px flex-1" style={{ background: `linear-gradient(to right, ${selectedBossAppearance.cornerTopLeft}, ${selectedBossAppearance.cornerBottomLeft})` }} />
+                <span className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${selectedBossAppearance.cornerTopLeft} 45%, ${selectedBossAppearance.cornerBottomLeft})` }} />
                 <span className="text-[9px] tracking-[0.2em]" style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span>
-                <span className="h-px flex-1" style={{ background: `linear-gradient(to right, ${selectedBossAppearance.cornerTopRight}, ${selectedBossAppearance.cornerBottomRight})` }} />
+                <span className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${selectedBossAppearance.cornerTopRight} 45%, ${selectedBossAppearance.cornerBottomRight})` }} />
               </div>
             </label>
             <label className="border border-line bg-[#0d0d0d] p-4">
