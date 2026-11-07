@@ -507,5 +507,21 @@
     "youtubeUrl": "https://youtu.be/pUudPoldsTQ",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794030839565-RESISTANCE_IN.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794033071795-4645074914731781_png.png"
+  },
+  {
+    "id": "n3on",
+    "title": "N3ON",
+    "artist": "coTatsu",
+    "charter": "F3VM1R",
+    "charterSearch": [],
+    "difficulty": "IN",
+    "level": "14.8",
+    "projectIds": [
+      "takumicubic"
+    ],
+    "publishedAt": "2025-12-02",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794033464469-N3ON.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794033980710-8167607827831177_png.png",
+    "youtubeUrl": "https://youtu.be/kMJtxKpK3mA"
   }
 ]
