@@ -62,23 +62,18 @@ export default function ChartDetailPage() {
             <span className="absolute -bottom-3 -left-3 h-7 w-7 border-b-2 border-l-2 border-amber-200/80" />
             <span className="absolute -bottom-3 -right-3 h-7 w-7 border-b-2 border-r-2 border-amber-200/80" />
           </div>
-          <p className="mt-8 text-[10px] tracking-[0.25em] text-neutral-400">BOSS ENCOUNTER · {songCharts.length} CHART{songCharts.length === 1 ? "" : "S"}</p>
           <h1 className="mt-2 break-words text-3xl font-light tracking-wide text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)] sm:text-5xl">{chart.title}</h1>
           <p className="mt-3 text-sm tracking-wide text-neutral-300">{chart.artist}</p>
         </section>
 
         <section className="mx-auto mt-12 max-w-5xl sm:mt-16">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div><p className="text-[10px] tracking-[0.35em] text-neutral-400">BATTLE DATA</p><h2 className="mt-1 text-lg font-light tracking-wider">AVAILABLE CHARTS</h2></div>
-            <span className="text-[10px] tabular-nums tracking-widest text-neutral-500">{String(songCharts.length).padStart(2,"0")} / CHARTS</span>
-          </div>
           <div className="border-y border-white/25 bg-black/35 backdrop-blur-sm">
             {songCharts.map((entry, index) => (
               <div key={entry.id} className="grid gap-4 border-b border-white/10 px-4 py-5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_minmax(180px,280px)] sm:items-center sm:px-7">
                 <div className="flex min-w-0 items-center gap-4">
                   <span className="w-7 shrink-0 text-xs tabular-nums text-neutral-500">{String(index + 1).padStart(2,"0")}</span>
                   <div className="min-w-0">
-                    <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1"><span className="text-lg font-medium tracking-wider">{entry.difficulty}</span><span className="text-sm text-neutral-300">{formatLevel(entry.level)}</span></p>
+                    <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1"><span className="text-sm font-medium tracking-wider">{entry.difficulty}</span><span className="text-sm text-neutral-300">{formatLevel(entry.level)}</span></p>
                     <p className="mt-1 break-words text-xs text-neutral-400">CHARTER : {entry.charter}</p>
                     {entry.description && <p className="mt-2 whitespace-pre-wrap text-xs leading-6 text-neutral-500">{entry.description}</p>}
                   </div>
@@ -89,8 +84,7 @@ export default function ChartDetailPage() {
           </div>
         </section>
 
-        {videos.length > 0 && <section className="mx-auto mt-12 max-w-5xl sm:mt-16"><div className="mb-4"><p className="text-[10px] tracking-[0.35em] text-emerald-200/70">BATTLE RECORD</p><h2 className="mt-1 text-lg font-light tracking-wider">PLAY VIDEOS</h2></div><div className="grid gap-6 md:grid-cols-2">{videos.map(({ chart: videoChart, url, id: videoId }) => <div key={videoChart.id} className="border border-white/15 bg-black/40 p-3"><p className="mb-3 text-xs tracking-wider text-neutral-300">{videoChart.difficulty} {formatLevel(videoChart.level)}</p>{videoId ? <div className="aspect-video overflow-hidden bg-black"><iframe className="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${videoId}`} title={`${chart.title} - ${videoChart.difficulty} YouTube`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div> : <a href={url} target="_blank" rel="noreferrer" className="text-sm text-neutral-300 underline underline-offset-4">YouTubeで動画を見る ↗</a>}</div>)}</div></section>}
-        <div className="mx-auto mt-16 flex max-w-5xl items-center gap-3 text-neutral-500"><span className="h-px flex-1 bg-gradient-to-r from-transparent to-white/20" /><span className="text-[9px] tracking-[0.4em]">END OF RECORD</span><span className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-100/30" /></div>
+        {videos.length > 0 && <section className="mx-auto mt-12 max-w-5xl sm:mt-16"><div className="mb-4"><h2 className="text-lg font-light tracking-wider">PLAY VIDEOS</h2></div><div className="grid gap-6 md:grid-cols-2">{videos.map(({ chart: videoChart, url, id: videoId }) => <div key={videoChart.id} className="border border-white/15 bg-black/40 p-3"><p className="mb-3 text-xs tracking-wider text-neutral-300">{videoChart.difficulty} {formatLevel(videoChart.level)}</p>{videoId ? <div className="aspect-video overflow-hidden bg-black"><iframe className="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${videoId}`} title={`${chart.title} - ${videoChart.difficulty} YouTube`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div> : <a href={url} target="_blank" rel="noreferrer" className="text-sm text-neutral-300 underline underline-offset-4">YouTubeで動画を見る ↗</a>}</div>)}</div></section>}
       </div>
     </main>
   );
