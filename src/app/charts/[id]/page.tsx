@@ -6,6 +6,22 @@ import { JacketCarousel } from "@/components/jacket-carousel";
 import { usePublicData } from "@/lib/use-public-data";
 import { formatLevel, getOrderedJacketImages } from "@/lib/data";
 
+type BossCornerColors = {
+  cornerTopLeft: string; cornerTopRight: string;
+  cornerBottomLeft: string; cornerBottomRight: string;
+};
+
+function BossGradientFrame({ colors, className = "" }: { colors: BossCornerColors; className?: string }) {
+  return (
+    <div aria-hidden="true" className={`pointer-events-none absolute ${className}`}>
+      <span className="absolute left-0 right-0 top-0 h-[2px]" style={{ background: `linear-gradient(to right, ${colors.cornerTopLeft}, ${colors.cornerTopRight})` }} />
+      <span className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(to right, ${colors.cornerBottomLeft}, ${colors.cornerBottomRight})` }} />
+      <span className="absolute bottom-0 left-0 top-0 w-[2px]" style={{ background: `linear-gradient(to bottom, ${colors.cornerTopLeft}, ${colors.cornerBottomLeft})` }} />
+      <span className="absolute bottom-0 right-0 top-0 w-[2px]" style={{ background: `linear-gradient(to bottom, ${colors.cornerTopRight}, ${colors.cornerBottomRight})` }} />
+    </div>
+  );
+}
+
 export default function ChartDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { charts, jacketOrder, bossAppearance, loading, error } = usePublicData();
@@ -53,10 +69,11 @@ export default function ChartDetailPage() {
 
         <section className="mx-auto mt-8 max-w-4xl text-center sm:mt-10">
           <div className="relative mx-auto w-full max-w-[min(76vw,390px)]">
-            <div className="absolute -inset-3 border-[2px] border-transparent shadow-[0_0_55px_rgba(0,0,0,0.35)]" style={{ borderImage: `linear-gradient(135deg, ${currentBossAppearance.cornerTopLeft}, ${currentBossAppearance.cornerTopRight}, ${currentBossAppearance.cornerBottomRight}, ${currentBossAppearance.cornerBottomLeft}, ${currentBossAppearance.cornerTopLeft}) 1` }} />
-            <div className="absolute -inset-1 border-[2px] border-transparent" style={{ borderImage: `linear-gradient(135deg, ${currentBossAppearance.cornerTopLeft}, ${currentBossAppearance.cornerTopRight}, ${currentBossAppearance.cornerBottomRight}, ${currentBossAppearance.cornerBottomLeft}, ${currentBossAppearance.cornerTopLeft}) 1` }} />
-            <div className="relative aspect-square overflow-hidden border-[2px] border-transparent bg-[#111111] shadow-[0_25px_90px_rgba(0,0,0,0.65)]" style={{ borderImage: `linear-gradient(135deg, ${currentBossAppearance.cornerTopLeft}, ${currentBossAppearance.cornerTopRight}, ${currentBossAppearance.cornerBottomRight}, ${currentBossAppearance.cornerBottomLeft}, ${currentBossAppearance.cornerTopLeft}) 1` }}>
+            <BossGradientFrame colors={currentBossAppearance} className="-inset-3 shadow-[0_0_55px_rgba(0,0,0,0.35)]" />
+            <BossGradientFrame colors={currentBossAppearance} className="-inset-1" />
+            <div className="relative aspect-square overflow-hidden bg-[#111111] shadow-[0_25px_90px_rgba(0,0,0,0.65)]">
               <JacketCarousel images={jacketImages} alt={chart.title} />
+              <BossGradientFrame colors={currentBossAppearance} className="inset-0" />
             </div>
             <span className="absolute -left-3 -top-3 h-7 w-7" style={{ backgroundImage: `linear-gradient(to right, ${currentBossAppearance.cornerTopLeft}, transparent), linear-gradient(to bottom, ${currentBossAppearance.cornerTopLeft}, transparent)`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "top left", backgroundRepeat: "no-repeat" }} />
             <span className="absolute -right-3 -top-3 h-7 w-7" style={{ backgroundImage: `linear-gradient(to left, ${currentBossAppearance.cornerTopRight}, transparent), linear-gradient(to bottom, ${currentBossAppearance.cornerTopRight}, transparent)`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "top right", backgroundRepeat: "no-repeat" }} />

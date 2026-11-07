@@ -4,6 +4,23 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { defaultBossAppearance, defaultBossAppearanceSettings, normalizeBossAppearanceSettings, formatLevel, getSongGroupKey, type BossAppearance, type BossAppearanceSettings, type Chart, type Project } from "@/lib/data";
 
+
+type BossCornerColors = {
+  cornerTopLeft: string; cornerTopRight: string;
+  cornerBottomLeft: string; cornerBottomRight: string;
+};
+
+function BossGradientFrame({ colors, className = "" }: { colors: BossCornerColors; className?: string }) {
+  return (
+    <div aria-hidden="true" className={`pointer-events-none absolute ${className}`}>
+      <span className="absolute left-0 right-0 top-0 h-[2px]" style={{ background: `linear-gradient(to right, ${colors.cornerTopLeft}, ${colors.cornerTopRight})` }} />
+      <span className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(to right, ${colors.cornerBottomLeft}, ${colors.cornerBottomRight})` }} />
+      <span className="absolute bottom-0 left-0 top-0 w-[2px]" style={{ background: `linear-gradient(to bottom, ${colors.cornerTopLeft}, ${colors.cornerBottomLeft})` }} />
+      <span className="absolute bottom-0 right-0 top-0 w-[2px]" style={{ background: `linear-gradient(to bottom, ${colors.cornerTopRight}, ${colors.cornerBottomRight})` }} />
+    </div>
+  );
+}
+
 type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string };
 type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]>; bossAppearance: BossAppearanceSettings };
 const emptyChart: Chart = {
@@ -517,8 +534,9 @@ export default function AdminPanel() {
                 ))}
               </div>
               <div className="mt-3 flex justify-center py-2">
-                <div className="relative h-24 w-24 border-2 border-transparent p-2" style={{ borderImage: `linear-gradient(135deg, ${selectedBossAppearance.cornerTopLeft}, ${selectedBossAppearance.cornerTopRight}, ${selectedBossAppearance.cornerBottomRight}, ${selectedBossAppearance.cornerBottomLeft}, ${selectedBossAppearance.cornerTopLeft}) 1` }}>
-                  <div className="absolute inset-2 border border-transparent" style={{ borderImage: `linear-gradient(135deg, ${selectedBossAppearance.cornerTopLeft}, ${selectedBossAppearance.cornerTopRight}, ${selectedBossAppearance.cornerBottomRight}, ${selectedBossAppearance.cornerBottomLeft}, ${selectedBossAppearance.cornerTopLeft}) 1` }} />
+                <div className="relative h-24 w-24 p-2">
+                  <BossGradientFrame colors={selectedBossAppearance} className="inset-0" />
+                  <BossGradientFrame colors={selectedBossAppearance} className="inset-2" />
                   <span className="absolute left-0 top-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerTopLeft }} />
                   <span className="absolute right-0 top-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerTopRight }} />
                   <span className="absolute bottom-0 left-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerBottomLeft }} />
