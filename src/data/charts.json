@@ -638,5 +638,26 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794063940114-1797882960388152_png.png",
     "youtubeUrl": "https://youtu.be/LyrHPqqwBKQ",
     "songId": "resistance"
+  },
+  {
+    "id": "notesrushat",
+    "title": "NOTES RUSH! Daiza remix ~Ruler of the heavens~",
+    "artist": "Daiza",
+    "charter": "「神」からの挑戦状。",
+    "charterSearch": [
+      "wingbat",
+      "neko",
+      "ねこ"
+    ],
+    "difficulty": "AT",
+    "level": "17.5",
+    "projectIds": [
+      "takumicubic"
+    ],
+    "publishedAt": "2025-12-09",
+    "songId": "notesrush",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794064305684-NOTES.RUSH_.Daiza.remix._Ruler.of.the.heavens__AT.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794064338655-9668653754603277_png.png",
+    "youtubeUrl": "https://youtu.be/1T0uGXkBLuI"
   }
 ]
