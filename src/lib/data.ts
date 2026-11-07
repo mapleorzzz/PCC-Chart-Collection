@@ -40,7 +40,18 @@ export function formatLevel(level: string) {
 export type JacketOrder = Record<string, string[]>;
 
 export type BossAppearance = { labelText: string; labelColor: string; frameColor: string };
+export type BossAppearanceSettings = { default: BossAppearance; songs: Record<string, BossAppearance> };
 export const defaultBossAppearance: BossAppearance = { labelText: "PCC · SPECIAL ARCHIVE", labelColor: "#a7f3d0", frameColor: "#ffffff" };
+export const defaultBossAppearanceSettings: BossAppearanceSettings = { default: defaultBossAppearance, songs: {} };
+export function normalizeBossAppearanceSettings(value: unknown): BossAppearanceSettings {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return defaultBossAppearanceSettings;
+  const record = value as Record<string, unknown>;
+  if (record.default && typeof record.default === "object" && !Array.isArray(record.default)) {
+    return { default: { ...defaultBossAppearance, ...(record.default as Partial<BossAppearance>) }, songs: record.songs && typeof record.songs === "object" && !Array.isArray(record.songs) ? record.songs as Record<string, BossAppearance> : {} };
+  }
+  if ("labelText" in record || "labelColor" in record || "frameColor" in record) return { default: { ...defaultBossAppearance, ...(record as Partial<BossAppearance>) }, songs: {} };
+  return defaultBossAppearanceSettings;
+}
 
 export function getSongGroupKey(chart: Chart) {
   return chart.songId?.trim() || `chart:${chart.id}`;

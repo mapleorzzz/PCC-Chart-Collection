@@ -1,5 +1,8 @@
 {
-  "labelText": "PCC · SPECIAL ARCHIVE",
-  "labelColor": "#a7f3d0",
-  "frameColor": "#ffffff"
+  "default": {
+    "labelText": "PCC · SPECIAL ARCHIVE",
+    "labelColor": "#a7f3d0",
+    "frameColor": "#ffffff"
+  },
+  "songs": {}
 }
