@@ -7,7 +7,7 @@ import { formatLevel, getSongGroupKey, type Chart, type Project } from "@/lib/da
 type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string };
 type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]> };
 const emptyChart: Chart = {
-  id: "", title: "", artist: "", charter: "", charterSearch: [], difficulty: "IN",
+  id: "", title: "", artist: "", charter: "", charterSearch: [], difficulty: "IN", isBoss: false,
   level: "", projectIds: [], publishedAt: new Date().toISOString().slice(0, 10)
 };
 const emptyProject: Project = {
@@ -361,6 +361,7 @@ export default function AdminPanel() {
             <label className={label}>ID（英数字・ハイフン）<input className={field} value={chart.id} disabled={!!editingId} onChange={(e) => setChart({ ...chart, id: e.target.value })} required /></label>
             <label className={label}>曲名<input className={field} value={chart.title} onChange={(e) => setChart({ ...chart, title: e.target.value })} required /></label>
             <label className={label}>楽曲グループID（同じ楽曲の譜面で共通）<input className={field} value={chart.songId || ""} onChange={(e) => setChart({ ...chart, songId: e.target.value.trim() || undefined })} placeholder="グループ化する譜面に同じIDを入力" /></label>
+            <label className="flex items-start gap-3 border border-amber-700/40 bg-amber-950/10 p-3 text-xs text-neutral-300 sm:col-span-2"><input type="checkbox" checked={!!chart.isBoss} onChange={(e) => setChart({ ...chart, isBoss: e.target.checked })} className="mt-0.5 accent-amber-400" /><span><span className="block font-medium tracking-wider text-amber-300">BOSS CHART</span><span className="mt-1 block leading-5 text-neutral-500">この楽曲をBOSS専用詳細画面にします。同じ楽曲グループIDの譜面は、どの難易度から開いても専用画面にまとまります。グループ内のいずれか1譜面でONにしてください。</span></span></label>
             <label className={label}>アーティスト<input className={field} value={chart.artist} onChange={(e) => setChart({ ...chart, artist: e.target.value })} required /></label>
             <label className={label}>表示用製作者名義（サイトに表示）<input className={field} value={chart.charter} onChange={(e) => setChart({ ...chart, charter: e.target.value })} required /></label>
             <label className={label + " sm:col-span-2"}>検索用製作者名義（非公開・複数可）<textarea className={field + " min-h-32 resize-y leading-6"} rows={5} value={charterSearchText} onChange={(e) => setCharterSearchText(e.target.value)} placeholder={"1行に1名義ずつ入力\n例: maple._.zz\nChaos"} /><span className="mt-1 block text-[10px] text-neutral-600">ここに入力した名義はサイト上に表示されず、製作者検索にだけ使用されます。</span></label>

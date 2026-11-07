@@ -6,6 +6,7 @@ export type Chart = {
   title: string;
   artist: string;
   songId?: string;
+  isBoss?: boolean;
   charter: string;
   charterSearch?: string[];
   difficulty: "EZ" | "HD" | "IN" | "AT" | "Other";
