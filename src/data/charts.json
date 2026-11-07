@@ -491,11 +491,20 @@
     "title": "RESISTANCE",
     "artist": "Yo-SK",
     "charter": "HighBRidge vs. Fevm1r vs. Chaos",
-    "charterSearch": [],
+    "charterSearch": [
+      "Hazefrost",
+      "Fenm1r",
+      "Chaos",
+      "HighBRidge"
+    ],
     "difficulty": "IN",
     "level": "13.1",
-    "projectIds": [],
+    "projectIds": [
+      "takumicubic"
+    ],
     "publishedAt": "2025-12-01",
-    "songId": "resistance"
+    "songId": "resistance",
+    "youtubeUrl": "https://youtu.be/pUudPoldsTQ",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794030839565-RESISTANCE_IN.pez"
   }
 ]
