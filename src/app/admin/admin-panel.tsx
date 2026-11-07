@@ -121,7 +121,7 @@ export default function AdminPanel() {
   }
 
   async function saveBossAppearance(next: BossAppearance) {
-    if (!/^#[0-9a-fA-F]{6}$/.test(next.labelColor) || !/^#[0-9a-fA-F]{6}$/.test(next.frameColor)) {
+    if (!/^#[0-9a-fA-F]{6}$/.test(next.labelColor) || !/^#[0-9a-fA-F]{6}$/.test(next.frameColor) || typeof next.labelText !== "string" || next.labelText.length > 60) {
       setError("色は #RRGGBB 形式で入力してください。");
       return;
     }
@@ -446,16 +446,19 @@ export default function AdminPanel() {
         <section className="mt-6 max-w-3xl">
           <div className="mb-5">
             <h2 className="text-lg">BOSS専用ページのデザイン</h2>
-            <p className="mt-1 text-xs leading-6 text-neutral-500">「PCC · SPECIAL ARCHIVE」の文字色と、ジャケットを囲む枠・四隅の装飾色を設定できます。変更はBOSS専用ページ全体に反映されます。</p>
+            <p className="mt-1 text-xs leading-6 text-neutral-500">「PCC · SPECIAL ARCHIVE」の表示文字・文字色と、ジャケットを囲む枠・四隅の装飾色を設定できます。変更はBOSS専用ページ全体に反映されます。</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="border border-line bg-[#0d0d0d] p-4">
-              <span className="block text-xs text-neutral-300">PCC · SPECIAL ARCHIVE の文字色</span>
+              <span className="block text-xs text-neutral-300">表示する文字</span>
+              <input aria-label="アーカイブ表示文字" value={data.bossAppearance.labelText} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, labelText: e.target.value } }))} className={field + " mt-3"} maxLength={60} placeholder="PCC · SPECIAL ARCHIVE" />
+              <p className="mt-2 text-[9px] tracking-[0.2em] text-neutral-500">プレビュー：<span style={{ color: data.bossAppearance.labelColor }}>{data.bossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span></p>
+              <span className="mt-4 block text-xs text-neutral-300">文字色</span>
               <div className="mt-3 flex items-center gap-3">
                 <input aria-label="アーカイブ文字色" type="color" value={data.bossAppearance.labelColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, labelColor: e.target.value } }))} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
                 <input aria-label="アーカイブ文字色 HEX" value={data.bossAppearance.labelColor} onChange={(e) => setData((current) => ({ ...current, bossAppearance: { ...current.bossAppearance, labelColor: e.target.value } }))} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
               </div>
-              <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: data.bossAppearance.labelColor }}>PCC · SPECIAL ARCHIVE</p>
+              <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: data.bossAppearance.labelColor }}>{data.bossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</p>
             </label>
             <label className="border border-line bg-[#0d0d0d] p-4">
               <span className="block text-xs text-neutral-300">ジャケットの枠・装飾色</span>

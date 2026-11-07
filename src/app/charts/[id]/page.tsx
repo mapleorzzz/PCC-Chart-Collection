@@ -47,7 +47,7 @@ export default function ChartDetailPage() {
         <div className="text-center">
           <Link href="/charts" className="inline-flex items-center gap-2 text-[10px] tracking-[0.28em] text-neutral-400 transition hover:text-white">← ALL CHARTS</Link>
           <p className="mt-8 text-xs font-medium tracking-[0.55em] text-neutral-300 sm:mt-10 sm:text-sm">B O S S&nbsp;&nbsp; C H A R T</p>
-          <div className="mx-auto mt-5 flex max-w-3xl items-center gap-3 text-emerald-200/50"><span className="h-px flex-1 bg-gradient-to-r from-transparent to-white/25" /><span className="text-[9px] tracking-[0.35em]" style={{ color: bossAppearance.labelColor }}>PCC · SPECIAL ARCHIVE</span><span className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-300/50" /></div>
+          <div className="mx-auto mt-5 flex max-w-3xl items-center gap-3 text-emerald-200/50"><span className="h-px flex-1 bg-gradient-to-r from-transparent to-white/25" /><span className="text-[9px] tracking-[0.35em]" style={{ color: bossAppearance.labelColor }}>{bossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span><span className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-300/50" /></div>
         </div>
 
         <section className="mx-auto mt-8 max-w-4xl text-center sm:mt-10">

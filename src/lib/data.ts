@@ -39,8 +39,8 @@ export function formatLevel(level: string) {
 
 export type JacketOrder = Record<string, string[]>;
 
-export type BossAppearance = { labelColor: string; frameColor: string };
-export const defaultBossAppearance: BossAppearance = { labelColor: "#a7f3d0", frameColor: "#ffffff" };
+export type BossAppearance = { labelText: string; labelColor: string; frameColor: string };
+export const defaultBossAppearance: BossAppearance = { labelText: "PCC · SPECIAL ARCHIVE", labelColor: "#a7f3d0", frameColor: "#ffffff" };
 
 export function getSongGroupKey(chart: Chart) {
   return chart.songId?.trim() || `chart:${chart.id}`;
