@@ -678,5 +678,24 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794064521211-25865619_jpg.jpg",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Oversleeping_AT.pez",
     "youtubeUrl": "https://youtu.be/kZ5JOIni2FU"
+  },
+  {
+    "id": "bga",
+    "title": "Better Graphic Animation",
+    "artist": "ルゼ",
+    "charter": "Charterの欄ふざけがち",
+    "charterSearch": [
+      "neko",
+      "ねこ"
+    ],
+    "difficulty": "Other",
+    "level": "え？詐称ですって？",
+    "projectIds": [
+      "takumicubic"
+    ],
+    "publishedAt": "2026-11-07",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Better.Graphic.Animation.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794064808936-7895392111279457_png.png",
+    "youtubeUrl": "https://youtu.be/th_iYW-YthM"
   }
 ]
