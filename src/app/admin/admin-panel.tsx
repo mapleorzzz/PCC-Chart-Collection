@@ -123,7 +123,7 @@ export default function AdminPanel() {
 
   async function saveBossAppearance(next: BossAppearanceSettings) {
     const appearances = [next.default, ...Object.values(next.songs)];
-    if (appearances.some((item) => !/^#[0-9a-fA-F]{6}$/.test(item.labelColor) || !/^#[0-9a-fA-F]{6}$/.test(item.lineColor) || !/^#[0-9a-fA-F]{6}$/.test(item.frameColor) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerGradientStart) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerGradientEnd) || typeof item.labelText !== "string" || item.labelText.length > 60)) {
+    if (appearances.some((item) => !/^#[0-9a-fA-F]{6}$/.test(item.labelColor) || !/^#[0-9a-fA-F]{6}$/.test(item.lineColor) || !/^#[0-9a-fA-F]{6}$/.test(item.frameColor) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerGradientStart) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerGradientEnd) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerTopLeft) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerTopRight) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerBottomLeft) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerBottomRight) || typeof item.labelText !== "string" || item.labelText.length > 60)) {
       setError("色は #RRGGBB 形式、表示文字は60文字以内で入力してください。"); return;
     }
     setBusy(true); setError("");
@@ -468,7 +468,7 @@ export default function AdminPanel() {
         <section className="mt-6 max-w-3xl">
           <div className="mb-5">
             <h2 className="text-lg">BOSS専用ページのデザイン</h2>
-            <p className="mt-1 text-xs leading-6 text-neutral-500">共通設定をベースに、楽曲ごとに表示文字・文字色・左右のライン色・ジャケット枠色・四隅のグラデーションを個別設定できます。</p>
+            <p className="mt-1 text-xs leading-6 text-neutral-500">共通設定をベースに、楽曲ごとに表示文字・文字色・ジャケット枠色・四隅の色を個別設定できます。ラインは四隅の色に連動して自動でグラデーションします。</p>
           </div>
           <label className={label + " mb-5 block max-w-xl"}>設定する楽曲
             <select className={field} value={selectedBossGroup} onChange={(e) => setSelectedBossGroup(e.target.value)}>
@@ -488,15 +488,11 @@ export default function AdminPanel() {
                 <input aria-label="アーカイブ文字色 HEX" value={selectedBossAppearance.labelColor} onChange={(e) => updateSelectedBossAppearance({ labelColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
               </div>
               <p className="mt-3 text-[9px] tracking-[0.35em]" style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</p>
-              <span className="mt-4 block text-xs text-neutral-300">左右のライン色</span>
-              <div className="mt-3 flex items-center gap-3">
-                <input aria-label="左右のライン色" type="color" value={selectedBossAppearance.lineColor} onChange={(e) => updateSelectedBossAppearance({ lineColor: e.target.value })} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
-                <input aria-label="左右のライン色 HEX" value={selectedBossAppearance.lineColor} onChange={(e) => updateSelectedBossAppearance({ lineColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
-              </div>
+              <span className="mt-4 block text-xs text-neutral-300">ラインのプレビュー（四隅の色と連動）</span>
               <div className="mt-3 flex items-center gap-2">
-                <span className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${selectedBossAppearance.lineColor})` }} />
+                <span className="h-px flex-1" style={{ background: `linear-gradient(to right, ${selectedBossAppearance.cornerTopLeft}, ${selectedBossAppearance.cornerBottomLeft})` }} />
                 <span className="text-[9px] tracking-[0.2em]" style={{ color: selectedBossAppearance.labelColor }}>{selectedBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span>
-                <span className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${selectedBossAppearance.lineColor})` }} />
+                <span className="h-px flex-1" style={{ background: `linear-gradient(to right, ${selectedBossAppearance.cornerTopRight}, ${selectedBossAppearance.cornerBottomRight})` }} />
               </div>
             </label>
             <label className="border border-line bg-[#0d0d0d] p-4">
@@ -505,28 +501,29 @@ export default function AdminPanel() {
                 <input aria-label="ジャケット枠色" type="color" value={selectedBossAppearance.frameColor} onChange={(e) => updateSelectedBossAppearance({ frameColor: e.target.value })} className="h-11 w-14 cursor-pointer border border-line bg-transparent p-1" />
                 <input aria-label="ジャケット枠色 HEX" value={selectedBossAppearance.frameColor} onChange={(e) => updateSelectedBossAppearance({ frameColor: e.target.value })} className={field + " mt-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
               </div>
-              <span className="mt-4 block text-xs text-neutral-300">四隅のグラデーション</span>
+              <span className="mt-4 block text-xs text-neutral-300">四隅のカラー（ラインにも自動反映）</span>
               <div className="mt-3 grid grid-cols-2 gap-3">
-                <label className="text-[10px] text-neutral-500">開始色
-                  <div className="mt-2 flex items-center gap-2">
-                    <input aria-label="四隅グラデーション開始色" type="color" value={selectedBossAppearance.cornerGradientStart} onChange={(e) => updateSelectedBossAppearance({ cornerGradientStart: e.target.value })} className="h-10 w-12 cursor-pointer border border-line bg-transparent p-1" />
-                    <input aria-label="四隅グラデーション開始色 HEX" value={selectedBossAppearance.cornerGradientStart} onChange={(e) => updateSelectedBossAppearance({ cornerGradientStart: e.target.value })} className={field + " mt-0 min-w-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
-                  </div>
-                </label>
-                <label className="text-[10px] text-neutral-500">終了色
-                  <div className="mt-2 flex items-center gap-2">
-                    <input aria-label="四隅グラデーション終了色" type="color" value={selectedBossAppearance.cornerGradientEnd} onChange={(e) => updateSelectedBossAppearance({ cornerGradientEnd: e.target.value })} className="h-10 w-12 cursor-pointer border border-line bg-transparent p-1" />
-                    <input aria-label="四隅グラデーション終了色 HEX" value={selectedBossAppearance.cornerGradientEnd} onChange={(e) => updateSelectedBossAppearance({ cornerGradientEnd: e.target.value })} className={field + " mt-0 min-w-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
-                  </div>
-                </label>
+                {([
+                  ["左上", "cornerTopLeft"], ["右上", "cornerTopRight"],
+                  ["左下", "cornerBottomLeft"], ["右下", "cornerBottomRight"]
+                ] as const).map(([name, key]) => (
+                  <label key={key} className="text-[10px] text-neutral-500">{name}
+                    <div className="mt-2 flex items-center gap-2">
+                      <input aria-label={name + "の色"} type="color" value={selectedBossAppearance[key]} onChange={(e) => updateSelectedBossAppearance({ [key]: e.target.value })} className="h-10 w-12 cursor-pointer border border-line bg-transparent p-1" />
+                      <input aria-label={name + "の色 HEX"} value={selectedBossAppearance[key]} onChange={(e) => updateSelectedBossAppearance({ [key]: e.target.value })} className={field + " mt-0 min-w-0 font-mono uppercase"} maxLength={7} pattern="^#[0-9a-fA-F]{6}$" />
+                    </div>
+                  </label>
+                ))}
               </div>
               <div className="mt-3 flex justify-center py-2">
-                <div className="relative h-20 w-20 border p-2" style={{ borderColor: selectedBossAppearance.frameColor }}>
+                <div className="relative h-24 w-24 border p-2" style={{ borderColor: selectedBossAppearance.frameColor }}>
                   <div className="absolute inset-2 border" style={{ borderColor: selectedBossAppearance.frameColor }} />
-                  <span className="absolute left-0 top-0 h-5 w-5" style={{ backgroundImage: `linear-gradient(to right, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd}), linear-gradient(to bottom, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "top left", backgroundRepeat: "no-repeat" }} />
-                  <span className="absolute right-0 top-0 h-5 w-5" style={{ backgroundImage: `linear-gradient(to left, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd}), linear-gradient(to bottom, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "top right", backgroundRepeat: "no-repeat" }} />
-                  <span className="absolute bottom-0 left-0 h-5 w-5" style={{ backgroundImage: `linear-gradient(to right, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd}), linear-gradient(to top, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "bottom left", backgroundRepeat: "no-repeat" }} />
-                  <span className="absolute bottom-0 right-0 h-5 w-5" style={{ backgroundImage: `linear-gradient(to left, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd}), linear-gradient(to top, ${selectedBossAppearance.cornerGradientStart}, ${selectedBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "bottom right", backgroundRepeat: "no-repeat" }} />
+                  <span className="absolute left-0 top-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerTopLeft }} />
+                  <span className="absolute right-0 top-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerTopRight }} />
+                  <span className="absolute bottom-0 left-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerBottomLeft }} />
+                  <span className="absolute bottom-0 right-0 h-5 w-5" style={{ background: selectedBossAppearance.cornerBottomRight }} />
+                  <span className="absolute left-0 top-1/2 h-px w-2/5" style={{ background: `linear-gradient(to bottom, ${selectedBossAppearance.cornerTopLeft}, ${selectedBossAppearance.cornerBottomLeft})` }} />
+                  <span className="absolute right-0 top-1/2 h-px w-2/5" style={{ background: `linear-gradient(to bottom, ${selectedBossAppearance.cornerTopRight}, ${selectedBossAppearance.cornerBottomRight})` }} />
                 </div>
               </div>
             </label>

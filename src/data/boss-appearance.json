@@ -5,7 +5,11 @@
     "lineColor": "#ffffff",
     "frameColor": "#ffffff",
     "cornerGradientStart": "#a7f3d0",
-    "cornerGradientEnd": "#ffffff"
+    "cornerGradientEnd": "#ffffff",
+    "cornerTopLeft": "#a7f3d0",
+    "cornerTopRight": "#ffffff",
+    "cornerBottomLeft": "#a7f3d0",
+    "cornerBottomRight": "#ffffff"
   },
   "songs": {
     "notesrush": {
@@ -14,7 +18,11 @@
       "lineColor": "#ffffff",
       "frameColor": "#fedd39",
       "cornerGradientStart": "#a7f3d0",
-      "cornerGradientEnd": "#ffffff"
+      "cornerGradientEnd": "#ffffff",
+      "cornerTopLeft": "#a7f3d0",
+      "cornerTopRight": "#ffffff",
+      "cornerBottomLeft": "#a7f3d0",
+      "cornerBottomRight": "#ffffff"
     }
   }
 }

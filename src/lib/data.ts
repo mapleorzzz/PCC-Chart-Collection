@@ -46,6 +46,10 @@ export type BossAppearance = {
   frameColor: string;
   cornerGradientStart: string;
   cornerGradientEnd: string;
+  cornerTopLeft: string;
+  cornerTopRight: string;
+  cornerBottomLeft: string;
+  cornerBottomRight: string;
 };
 export type BossAppearanceSettings = { default: BossAppearance; songs: Record<string, BossAppearance> };
 export const defaultBossAppearance: BossAppearance = {
@@ -54,7 +58,11 @@ export const defaultBossAppearance: BossAppearance = {
   lineColor: "#ffffff",
   frameColor: "#ffffff",
   cornerGradientStart: "#a7f3d0",
-  cornerGradientEnd: "#ffffff"
+  cornerGradientEnd: "#ffffff",
+  cornerTopLeft: "#a7f3d0",
+  cornerTopRight: "#ffffff",
+  cornerBottomLeft: "#a7f3d0",
+  cornerBottomRight: "#ffffff"
 };
 export const defaultBossAppearanceSettings: BossAppearanceSettings = { default: defaultBossAppearance, songs: {} };
 export function normalizeBossAppearanceSettings(value: unknown): BossAppearanceSettings {
@@ -63,12 +71,26 @@ export function normalizeBossAppearanceSettings(value: unknown): BossAppearanceS
   if (record.default && typeof record.default === "object" && !Array.isArray(record.default)) {
     const rawSongs = record.songs && typeof record.songs === "object" && !Array.isArray(record.songs) ? record.songs as Record<string, Partial<BossAppearance>> : {};
     return {
-      default: { ...defaultBossAppearance, ...(record.default as Partial<BossAppearance>) },
-      songs: Object.fromEntries(Object.entries(rawSongs).map(([key, appearance]) => [key, { ...defaultBossAppearance, ...appearance }]))
+      default: { ...defaultBossAppearance, ...(record.default as Partial<BossAppearance>),
+        cornerTopLeft: (record.default as Partial<BossAppearance>).cornerTopLeft || (record.default as Partial<BossAppearance>).cornerGradientStart || defaultBossAppearance.cornerTopLeft,
+        cornerTopRight: (record.default as Partial<BossAppearance>).cornerTopRight || (record.default as Partial<BossAppearance>).cornerGradientEnd || defaultBossAppearance.cornerTopRight,
+        cornerBottomLeft: (record.default as Partial<BossAppearance>).cornerBottomLeft || (record.default as Partial<BossAppearance>).cornerGradientStart || defaultBossAppearance.cornerBottomLeft,
+        cornerBottomRight: (record.default as Partial<BossAppearance>).cornerBottomRight || (record.default as Partial<BossAppearance>).cornerGradientEnd || defaultBossAppearance.cornerBottomRight },
+      songs: Object.fromEntries(Object.entries(rawSongs).map(([key, appearance]) => [key, {
+        ...defaultBossAppearance, ...appearance,
+        cornerTopLeft: appearance.cornerTopLeft || appearance.cornerGradientStart || defaultBossAppearance.cornerTopLeft,
+        cornerTopRight: appearance.cornerTopRight || appearance.cornerGradientEnd || defaultBossAppearance.cornerTopRight,
+        cornerBottomLeft: appearance.cornerBottomLeft || appearance.cornerGradientStart || defaultBossAppearance.cornerBottomLeft,
+        cornerBottomRight: appearance.cornerBottomRight || appearance.cornerGradientEnd || defaultBossAppearance.cornerBottomRight
+      }]))
     };
   }
   if ("labelText" in record || "labelColor" in record || "frameColor" in record) {
-    return { default: { ...defaultBossAppearance, ...(record as Partial<BossAppearance>) }, songs: {} };
+    return { default: { ...defaultBossAppearance, ...(record as Partial<BossAppearance>),
+      cornerTopLeft: (record as Partial<BossAppearance>).cornerTopLeft || (record as Partial<BossAppearance>).cornerGradientStart || defaultBossAppearance.cornerTopLeft,
+      cornerTopRight: (record as Partial<BossAppearance>).cornerTopRight || (record as Partial<BossAppearance>).cornerGradientEnd || defaultBossAppearance.cornerTopRight,
+      cornerBottomLeft: (record as Partial<BossAppearance>).cornerBottomLeft || (record as Partial<BossAppearance>).cornerGradientStart || defaultBossAppearance.cornerBottomLeft,
+      cornerBottomRight: (record as Partial<BossAppearance>).cornerBottomRight || (record as Partial<BossAppearance>).cornerGradientEnd || defaultBossAppearance.cornerBottomRight }, songs: {} };
   }
   return defaultBossAppearanceSettings;
 }
