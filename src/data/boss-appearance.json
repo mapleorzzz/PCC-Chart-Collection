@@ -2,13 +2,19 @@
   "default": {
     "labelText": "PCC · SPECIAL ARCHIVE",
     "labelColor": "#a7f3d0",
-    "frameColor": "#ffffff"
+    "lineColor": "#ffffff",
+    "frameColor": "#ffffff",
+    "cornerGradientStart": "#a7f3d0",
+    "cornerGradientEnd": "#ffffff"
   },
   "songs": {
     "notesrush": {
       "labelText": "PCC · SPECIAL ARCHIVE",
       "labelColor": "#ff5c5c",
-      "frameColor": "#fedd39"
+      "lineColor": "#ffffff",
+      "frameColor": "#fedd39",
+      "cornerGradientStart": "#a7f3d0",
+      "cornerGradientEnd": "#ffffff"
     }
   }
 }

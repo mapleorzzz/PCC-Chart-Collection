@@ -48,7 +48,7 @@ export default function ChartDetailPage() {
         <div className="text-center">
           <Link href="/charts" className="inline-flex items-center gap-2 text-[10px] tracking-[0.28em] text-neutral-400 transition hover:text-white">← ALL CHARTS</Link>
           <p className="mt-8 text-xs font-medium tracking-[0.55em] text-neutral-300 sm:mt-10 sm:text-sm">B O S S&nbsp;&nbsp; C H A R T</p>
-          <div className="mx-auto mt-5 flex max-w-3xl items-center gap-3 text-emerald-200/50"><span className="h-px flex-1 bg-gradient-to-r from-transparent to-white/25" /><span className="text-[9px] tracking-[0.35em]" style={{ color: currentBossAppearance.labelColor }}>{currentBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span><span className="h-px flex-1 bg-gradient-to-l from-transparent to-emerald-300/50" /></div>
+          <div className="mx-auto mt-5 flex max-w-3xl items-center gap-3"><span className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${currentBossAppearance.lineColor})` }} /><span className="text-[9px] tracking-[0.35em]" style={{ color: currentBossAppearance.labelColor }}>{currentBossAppearance.labelText || "PCC · SPECIAL ARCHIVE"}</span><span className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${currentBossAppearance.lineColor})` }} /></div>
         </div>
 
         <section className="mx-auto mt-8 max-w-4xl text-center sm:mt-10">
@@ -58,10 +58,10 @@ export default function ChartDetailPage() {
             <div className="relative aspect-square overflow-hidden border bg-[#111111] shadow-[0_25px_90px_rgba(0,0,0,0.65)]" style={{ borderColor: currentBossAppearance.frameColor }}>
               <JacketCarousel images={jacketImages} alt={chart.title} />
             </div>
-            <span className="absolute -left-3 -top-3 h-7 w-7 border-l-2 border-t-2" style={{ borderColor: currentBossAppearance.frameColor }} />
-            <span className="absolute -right-3 -top-3 h-7 w-7 border-r-2 border-t-2" style={{ borderColor: currentBossAppearance.frameColor }} />
-            <span className="absolute -bottom-3 -left-3 h-7 w-7 border-b-2 border-l-2" style={{ borderColor: currentBossAppearance.frameColor }} />
-            <span className="absolute -bottom-3 -right-3 h-7 w-7 border-b-2 border-r-2" style={{ borderColor: currentBossAppearance.frameColor }} />
+            <span className="absolute -left-3 -top-3 h-7 w-7" style={{ backgroundImage: `linear-gradient(to right, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd}), linear-gradient(to bottom, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "top left", backgroundRepeat: "no-repeat" }} />
+            <span className="absolute -right-3 -top-3 h-7 w-7" style={{ backgroundImage: `linear-gradient(to left, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd}), linear-gradient(to bottom, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "top right", backgroundRepeat: "no-repeat" }} />
+            <span className="absolute -bottom-3 -left-3 h-7 w-7" style={{ backgroundImage: `linear-gradient(to right, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd}), linear-gradient(to top, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "bottom left", backgroundRepeat: "no-repeat" }} />
+            <span className="absolute -bottom-3 -right-3 h-7 w-7" style={{ backgroundImage: `linear-gradient(to left, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd}), linear-gradient(to top, ${currentBossAppearance.cornerGradientStart}, ${currentBossAppearance.cornerGradientEnd})`, backgroundSize: "100% 2px, 2px 100%", backgroundPosition: "bottom right", backgroundRepeat: "no-repeat" }} />
           </div>
           <h1 className="mt-10 break-words text-3xl font-light tracking-wide text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.55)] sm:mt-12 sm:text-5xl">{chart.title}</h1>
           <p className="mt-3 text-sm tracking-wide text-neutral-300">{chart.artist}</p>

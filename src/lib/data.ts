@@ -39,17 +39,37 @@ export function formatLevel(level: string) {
 
 export type JacketOrder = Record<string, string[]>;
 
-export type BossAppearance = { labelText: string; labelColor: string; frameColor: string };
+export type BossAppearance = {
+  labelText: string;
+  labelColor: string;
+  lineColor: string;
+  frameColor: string;
+  cornerGradientStart: string;
+  cornerGradientEnd: string;
+};
 export type BossAppearanceSettings = { default: BossAppearance; songs: Record<string, BossAppearance> };
-export const defaultBossAppearance: BossAppearance = { labelText: "PCC · SPECIAL ARCHIVE", labelColor: "#a7f3d0", frameColor: "#ffffff" };
+export const defaultBossAppearance: BossAppearance = {
+  labelText: "PCC · SPECIAL ARCHIVE",
+  labelColor: "#a7f3d0",
+  lineColor: "#ffffff",
+  frameColor: "#ffffff",
+  cornerGradientStart: "#a7f3d0",
+  cornerGradientEnd: "#ffffff"
+};
 export const defaultBossAppearanceSettings: BossAppearanceSettings = { default: defaultBossAppearance, songs: {} };
 export function normalizeBossAppearanceSettings(value: unknown): BossAppearanceSettings {
   if (!value || typeof value !== "object" || Array.isArray(value)) return defaultBossAppearanceSettings;
   const record = value as Record<string, unknown>;
   if (record.default && typeof record.default === "object" && !Array.isArray(record.default)) {
-    return { default: { ...defaultBossAppearance, ...(record.default as Partial<BossAppearance>) }, songs: record.songs && typeof record.songs === "object" && !Array.isArray(record.songs) ? record.songs as Record<string, BossAppearance> : {} };
+    const rawSongs = record.songs && typeof record.songs === "object" && !Array.isArray(record.songs) ? record.songs as Record<string, Partial<BossAppearance>> : {};
+    return {
+      default: { ...defaultBossAppearance, ...(record.default as Partial<BossAppearance>) },
+      songs: Object.fromEntries(Object.entries(rawSongs).map(([key, appearance]) => [key, { ...defaultBossAppearance, ...appearance }]))
+    };
   }
-  if ("labelText" in record || "labelColor" in record || "frameColor" in record) return { default: { ...defaultBossAppearance, ...(record as Partial<BossAppearance>) }, songs: {} };
+  if ("labelText" in record || "labelColor" in record || "frameColor" in record) {
+    return { default: { ...defaultBossAppearance, ...(record as Partial<BossAppearance>) }, songs: {} };
+  }
   return defaultBossAppearanceSettings;
 }
 
