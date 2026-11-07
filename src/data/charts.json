@@ -697,5 +697,25 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Better.Graphic.Animation.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794064808936-7895392111279457_png.png",
     "youtubeUrl": "https://youtu.be/th_iYW-YthM"
+  },
+  {
+    "id": "lastpropoze",
+    "title": "LAST PROPOZE",
+    "artist": "あとぅす feat. 橘花音",
+    "charter": "LAST CHART",
+    "charterSearch": [
+      "Fevm1r",
+      "Hazefrost",
+      "wingbat"
+    ],
+    "difficulty": "IN",
+    "level": "14.4",
+    "projectIds": [
+      "takumicubic"
+    ],
+    "publishedAt": "2025-12-12",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/LAST.PROPOZE.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794065181596-0856186861829043_png.png",
+    "youtubeUrl": "https://youtu.be/FJ6bynMf-co"
   }
 ]
