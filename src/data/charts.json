@@ -679,7 +679,8 @@
     "songId": "oversleeping",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794064521211-25865619_jpg.jpg",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Oversleeping_AT.pez",
-    "youtubeUrl": "https://youtu.be/kZ5JOIni2FU"
+    "youtubeUrl": "https://youtu.be/kZ5JOIni2FU",
+    "isBoss": true
   },
   {
     "id": "bga",
