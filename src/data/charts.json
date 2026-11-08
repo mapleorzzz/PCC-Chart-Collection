@@ -781,5 +781,25 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794151492639-urai_png.png",
     "youtubeUrl": "https://youtu.be/Xbe1IvrZXXs",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794151522154-you.are.an.idiot_.pez"
+  },
+  {
+    "id": "ninja",
+    "title": "ひどい忍者",
+    "artist": "みせる",
+    "charter": "Ni(ght)nja",
+    "charterSearch": [
+      "ないと",
+      "Night"
+    ],
+    "difficulty": "Other",
+    "isBoss": false,
+    "level": "矢",
+    "projectIds": [
+      "2026afeve"
+    ],
+    "publishedAt": "2026-03-30",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794151676334-_____.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794151681241-ninja_jpg.jpg",
+    "youtubeUrl": "https://youtu.be/H0o4VESbGj4"
   }
 ]
