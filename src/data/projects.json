@@ -28,5 +28,15 @@
     "endDate": "2025-12-12",
     "organizer": "PCC Administrator",
     "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1793894543361-takumicover_jpg.jpg"
+  },
+  {
+    "id": "2026afeve",
+    "name": "2026 April Fool's Eve",
+    "description": "PCC運営とサーバーのメンバーで製作した2026エイプリルフール前夜祭。",
+    "year": 2026,
+    "startDate": "2026-03-29",
+    "endDate": "2026-03-31",
+    "organizer": "PCC Administrator",
+    "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794151093295-2026af_png.png"
   }
 ]
