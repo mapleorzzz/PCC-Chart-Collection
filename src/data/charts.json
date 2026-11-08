@@ -760,5 +760,26 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794150400522-artworks-000606626098-xws74o-t500x500_jpg.jpg",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/7th_Avenue.pez",
     "youtubeUrl": "https://youtu.be/3YTV29UcC4g"
+  },
+  {
+    "id": "youareanidiot",
+    "title": "you are an idiot!",
+    "artist": "oniku1234",
+    "charter": "Won't you be an idiot too?",
+    "charterSearch": [
+      "maple._.zz",
+      "Night",
+      "ないと"
+    ],
+    "difficulty": "Other",
+    "isBoss": false,
+    "level": "?",
+    "projectIds": [
+      "2026afeve"
+    ],
+    "publishedAt": "2026-03-29",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794151492639-urai_png.png",
+    "youtubeUrl": "https://youtu.be/Xbe1IvrZXXs",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794151522154-you.are.an.idiot_.pez"
   }
 ]
