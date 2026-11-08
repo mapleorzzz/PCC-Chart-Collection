@@ -628,7 +628,10 @@
     "title": "RESISTANCE",
     "artist": "Yo-SK",
     "charter": "Fevm1r",
-    "charterSearch": [],
+    "charterSearch": [
+      "Hazefrost",
+      "Fevm1r"
+    ],
     "difficulty": "AT",
     "level": "15.9",
     "projectIds": [
