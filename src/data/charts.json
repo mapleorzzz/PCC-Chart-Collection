@@ -840,5 +840,21 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794152183729-bo_png.png",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/Break.Over.pez",
     "youtubeUrl": "https://youtu.be/nC75MqJaZ2c"
+  },
+  {
+    "id": "stage5",
+    "title": "Stage 5",
+    "artist": "LV.4",
+    "charter": "うわっ…私の定数、低すぎ…？",
+    "charterSearch": [
+      "山田悠牙",
+      "囃狼"
+    ],
+    "difficulty": "Other",
+    "isBoss": false,
+    "level": "4",
+    "projectIds": [],
+    "publishedAt": "2026-03-31",
+    "youtubeUrl": "https://youtu.be/5ybDN7bEz4M"
   }
 ]
