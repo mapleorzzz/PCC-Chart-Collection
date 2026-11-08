@@ -753,7 +753,9 @@
     "difficulty": "Other",
     "isBoss": false,
     "level": "線",
-    "projectIds": [],
+    "projectIds": [
+      "2026afeve"
+    ],
     "publishedAt": "2026-03-29",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794150400522-artworks-000606626098-xws74o-t500x500_jpg.jpg",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/7th_Avenue.pez",
