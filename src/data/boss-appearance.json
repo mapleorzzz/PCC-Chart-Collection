@@ -23,6 +23,18 @@
       "cornerTopRight": "#fff833",
       "cornerBottomLeft": "#fff833",
       "cornerBottomRight": "#345cfe"
+    },
+    "invisiblefrenzy": {
+      "labelText": "PCC · SPECIAL ARCHIVE",
+      "labelColor": "#c320fe",
+      "lineColor": "#2e6dff",
+      "frameColor": "#ffffff",
+      "cornerGradientStart": "#a7f3d0",
+      "cornerGradientEnd": "#ffffff",
+      "cornerTopLeft": "#1f2eff",
+      "cornerTopRight": "#a520fe",
+      "cornerBottomLeft": "#a600ff",
+      "cornerBottomRight": "#fb1aff"
     }
   }
 }
