@@ -801,5 +801,24 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794151676334-_____.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794151681241-ninja_jpg.jpg",
     "youtubeUrl": "https://youtu.be/H0o4VESbGj4"
+  },
+  {
+    "id": "saveandcontinue",
+    "title": "Save and Continue",
+    "artist": "Liq_mmry",
+    "charter": "Super Chaos",
+    "charterSearch": [
+      "Chaos"
+    ],
+    "difficulty": "Other",
+    "isBoss": false,
+    "level": "動",
+    "projectIds": [
+      "2026afeve"
+    ],
+    "publishedAt": "2026-03-30",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794151769911-Save.and.Continue.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794151798878-artworks-000607979422-ibfh8b-t500x500_jpg.jpg",
+    "youtubeUrl": "https://youtu.be/NQWxV3hCM8A"
   }
 ]
