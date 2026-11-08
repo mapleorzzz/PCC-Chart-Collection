@@ -35,6 +35,18 @@
       "cornerTopRight": "#a520fe",
       "cornerBottomLeft": "#a600ff",
       "cornerBottomRight": "#fb1aff"
+    },
+    "oversleeping": {
+      "labelText": "TAKUMI³ Collection SECOND BOSS",
+      "labelColor": "#ff3838",
+      "lineColor": "#ffffff",
+      "frameColor": "#ffffff",
+      "cornerGradientStart": "#a7f3d0",
+      "cornerGradientEnd": "#ffffff",
+      "cornerTopLeft": "#ffffff",
+      "cornerTopRight": "#ff5252",
+      "cornerBottomLeft": "#ff5252",
+      "cornerBottomRight": "#ffffff"
     }
   }
 }
