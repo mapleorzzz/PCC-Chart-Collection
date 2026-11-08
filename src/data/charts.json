@@ -723,5 +723,22 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/LAST.PROPOZE.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794065181596-0856186861829043_png.png",
     "youtubeUrl": "https://youtu.be/FJ6bynMf-co"
+  },
+  {
+    "id": "infinitehyperdrive",
+    "title": "INFINITE HYPERDRIVE",
+    "artist": "Kobaryo",
+    "charter": "Fevm1r",
+    "charterSearch": [
+      "Hazefrost"
+    ],
+    "difficulty": "IN",
+    "isBoss": false,
+    "level": "16.0",
+    "projectIds": [],
+    "publishedAt": "2026-06-13",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794150317968-ab67616d0000b273b8a7c2455c844bee1407b18a_jpg.jpg",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794150322052-INFINITE_HYPERDRIVE.pez",
+    "youtubeUrl": "https://youtu.be/rxxTl-8AC9Y"
   }
 ]
