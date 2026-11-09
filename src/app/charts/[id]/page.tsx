@@ -93,6 +93,7 @@ export default function ChartDetailPage() {
                   <div className="min-w-0">
                     <p className="flex flex-wrap items-baseline gap-x-1 gap-y-1"><span className="text-sm font-medium tracking-wider">{entry.difficulty}</span><span className="text-sm text-neutral-300">{formatLevel(entry.level)}</span></p>
                     {entry.description && <p className="mt-2 whitespace-pre-wrap text-xs leading-6 text-neutral-500">{entry.description}</p>}
+                    <p className="mt-1 break-words text-xs text-neutral-400">Charter : {entry.charter}</p>
                   </div>
                 </div>
                 {entry.fileUrl ? <a href={entry.fileUrl} className="flex min-h-12 items-center justify-center border border-white/70 bg-white px-5 text-xs font-medium tracking-[0.18em] text-black transition hover:border-white hover:bg-neutral-200 hover:shadow-[0_0_28px_rgba(255,255,255,0.12)]" download>DOWNLOAD <span className="ml-2">↓</span></a> : <span className="flex min-h-12 items-center justify-center border border-white/10 bg-white/[0.03] text-xs tracking-wider text-neutral-500">FILE NOT AVAILABLE</span>}
@@ -119,7 +120,7 @@ export default function ChartDetailPage() {
             <div className="divide-y divide-line border-y border-line">
               {songCharts.map((entry) => (
                 <div key={entry.id} className="flex flex-col justify-between gap-3 py-4 sm:flex-row sm:items-center">
-                  <div><p className="text-sm">{entry.difficulty} <span className="text-neutral-400">{formatLevel(entry.level)}</span></p><p className="mt-1 text-xs text-neutral-500">Charter: {entry.charter} · {entry.publishedAt}</p>{entry.description && <p className="mt-2 whitespace-pre-wrap text-xs leading-6 text-neutral-500">{entry.description}</p>}</div>
+                  <div><p className="text-sm">{entry.difficulty} <span className="text-neutral-400">{formatLevel(entry.level)}</span></p>{entry.description && <p className="mt-2 whitespace-pre-wrap text-xs leading-6 text-neutral-500">{entry.description}</p>}</div>
                   {entry.fileUrl ? <a href={entry.fileUrl} className="inline-flex min-h-10 items-center justify-center bg-white px-4 py-2 text-[10px] font-medium tracking-wider text-black hover:bg-neutral-200" download>DOWNLOAD .PEZ ↓</a> : <span className="text-xs text-neutral-600">ファイル準備中</span>}
                 </div>
               ))}
