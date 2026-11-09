@@ -75,7 +75,7 @@ export function JacketCarousel({ images, alt = "", className = "" }: { images: s
           alt={alt}
           className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out"
           style={{
-            opacity: slot === activeSlot ? (fading ? 0 : 1) : (fading ? 1 : 0),
+            opacity: slot === activeSlot ? 1 : (fading ? 1 : 0),
             zIndex: slot === activeSlot ? 1 : 2,
           }}
         />
