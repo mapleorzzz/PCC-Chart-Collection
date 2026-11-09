@@ -52,6 +52,11 @@ export function JacketCarousel({ images, alt = "", className = "" }: { images: s
       setFading(true);
       finishTimer = window.setTimeout(() => {
         setCurrentIndex(nextIndex);
+        setSlotImages((previous) => {
+          const updated: [string, string] = [...previous];
+          updated[activeSlot] = images[nextIndex];
+          return updated;
+        });
         setActiveSlot((slot) => (1 - slot) as 0 | 1);
         setNextIndex(null);
         setFading(false);
@@ -61,7 +66,7 @@ export function JacketCarousel({ images, alt = "", className = "" }: { images: s
       window.cancelAnimationFrame(frame);
       if (finishTimer !== undefined) window.clearTimeout(finishTimer);
     };
-  }, [nextIndex]);
+  }, [nextIndex, activeSlot, images]);
 
   if (!images.length) return <div className={`flex h-full w-full items-center justify-center text-xs tracking-[0.25em] text-neutral-700 ${className}`}>NO JACKET</div>;
 
