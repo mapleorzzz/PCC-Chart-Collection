@@ -18,7 +18,7 @@ export function usePublicData() {
         return response.json();
       })
       .then((value: PublicData) => {
-        if (active) setData({ ...value, jacketOrder: value.jacketOrder || {}, bossAppearance: normalizeBossAppearanceSettings(value.bossAppearance) });
+        if (active) setData({ ...value, charts: (value.charts || []).map(({ charterSearch: _privateSearch, ...chart }) => chart), jacketOrder: value.jacketOrder || {}, bossAppearance: normalizeBossAppearanceSettings(value.bossAppearance) });
       })
       .catch(() => {
         if (active) setError(true);
