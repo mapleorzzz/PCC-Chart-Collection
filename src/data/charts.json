@@ -894,5 +894,19 @@
     "projectIds": [],
     "publishedAt": "2026-11-11",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794357246905-IMG_4868_png.png"
+  },
+  {
+    "id": "ikazuchi",
+    "title": "怒槌",
+    "artist": "光吉猛修",
+    "charter": "山田悠牙 × Chaos × maple._.zz × wingbat",
+    "charterSearch": [],
+    "difficulty": "IN",
+    "isBoss": false,
+    "level": "16.3",
+    "projectIds": [],
+    "publishedAt": "2026-11-11",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794357417557-IMG_4869_png.png",
+    "youtubeUrl": "https://www.youtube.com/watch?v=ny4blt1-zW4"
   }
 ]
