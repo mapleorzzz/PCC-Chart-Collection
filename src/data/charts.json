@@ -909,5 +909,21 @@
     "publishedAt": "2026-11-11",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794357417557-IMG_4869_png.png",
     "youtubeUrl": "https://www.youtube.com/watch?v=ny4blt1-zW4"
+  },
+  {
+    "id": "enchantedlove",
+    "title": "enchanted love",
+    "artist": "linear ring",
+    "charter": "やみなみょん",
+    "charterSearch": [
+      "ゆるゆみょん",
+      "ヤミナ"
+    ],
+    "difficulty": "IN",
+    "isBoss": false,
+    "level": "14.7",
+    "projectIds": [],
+    "publishedAt": "2026-11-11",
+    "youtubeUrl": "https://youtu.be/haTWQvPaeKQ?si=fa_vTTDeOkwhC-gh"
   }
 ]
