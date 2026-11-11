@@ -865,5 +865,21 @@
     "publishedAt": "2026-04-01",
     "youtubeUrl": "https://youtu.be/5ybDN7bEz4M",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794152917950-Stage_5_jacket_png.png"
+  },
+  {
+    "id": "villainvirus",
+    "title": "Villain Virus",
+    "artist": "Kobaryo feat.かめりあ",
+    "charter": "Fevm1r",
+    "charterSearch": [
+      "Hazefrost"
+    ],
+    "difficulty": "IN",
+    "isBoss": false,
+    "level": "17.3",
+    "projectIds": [],
+    "publishedAt": "2026-11-11",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794357095569-IMG_4867_webp.webp",
+    "youtubeUrl": "https://m.youtube.com/watch?v=1mGQTZDFMSg"
   }
 ]
