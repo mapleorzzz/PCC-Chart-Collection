@@ -20,7 +20,7 @@ export default function HomePage() {
         </div>
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#070910] via-[#080c18]/90 to-[#0b1020]/35" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 opacity-[0.12] [background-image:linear-gradient(rgba(150,165,220,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(150,165,220,.12)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_right,black,transparent)]" />
-        <div className="relative mx-auto flex min-h-[calc(100svh-88px)] max-w-7xl flex-col justify-center px-5 py-16 sm:min-h-[calc(100svh-104px)] sm:px-10 sm:py-20 lg:px-14">
+        <div className="relative mx-auto flex min-h-[calc(100svh-88px)] max-w-7xl flex-col items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100svh-104px)] sm:px-10 sm:py-20 lg:px-14">
           <div className="mb-7 text-[10px] font-medium tracking-[0.38em] text-[#9ba9d8]">
             PHIGROS FANMADE ARCHIVE
           </div>
@@ -28,10 +28,10 @@ export default function HomePage() {
             A collection of<br />
             <span className="bg-gradient-to-r from-white via-[#cbd5ff] to-[#778bd1] bg-clip-text text-transparent">fanmade charts.</span>
           </h1>
-          <p className="mt-8 max-w-xl text-sm leading-8 text-[#a5aec9] sm:text-[15px]">
+          <p className="mx-auto mt-8 max-w-xl text-sm leading-8 text-[#a5aec9] sm:text-[15px]">
             PCCのメンバーによって製作されたPhigros Fanmadeの譜面と、コミュニティ企画を記録・共有するアーカイブ。
           </p>
-          <div className="mt-11 flex flex-wrap gap-3">
+          <div className="mt-11 flex flex-wrap justify-center gap-3">
             <Link href="/charts" className="group inline-flex items-center gap-4 border border-[#7186d2]/70 bg-[#283867]/55 px-6 py-4 text-xs font-medium tracking-[0.16em] text-white shadow-[0_0_35px_rgba(53,76,151,0.16)] backdrop-blur-sm transition hover:border-[#b8c6ff] hover:bg-[#34477f]/70">
               譜面を探す <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
