@@ -21,8 +21,7 @@ export default function HomePage() {
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#070910] via-[#080c18]/90 to-[#0b1020]/35" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 opacity-[0.12] [background-image:linear-gradient(rgba(150,165,220,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(150,165,220,.12)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_right,black,transparent)]" />
         <div className="relative mx-auto flex min-h-[calc(100svh-88px)] max-w-7xl flex-col justify-center px-5 py-16 sm:min-h-[calc(100svh-104px)] sm:px-10 sm:py-20 lg:px-14">
-          <div className="mb-7 flex items-center gap-3 text-[10px] font-medium tracking-[0.38em] text-[#9ba9d8]">
-            <span className="h-px w-9 bg-[#788bd0]" />
+          <div className="mb-7 text-[10px] font-medium tracking-[0.38em] text-[#9ba9d8]">
             PHIGROS FANMADE ARCHIVE
           </div>
           <h1 className="max-w-3xl text-[clamp(3.2rem,8vw,6.8rem)] font-light leading-[0.98] tracking-[-0.065em] text-[#f4f6ff]">
@@ -40,10 +39,7 @@ export default function HomePage() {
               企画を見る <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
           </div>
-          <div className="mt-16 flex items-center gap-4 text-[9px] tracking-[0.3em] text-[#65739d]">
-            <span className="h-px w-12 bg-[#3a4770]" />
-            ARCHIVE / COMMUNITY / CREATION
-          </div>
+
         </div>
         <div aria-hidden="true" className="pointer-events-none absolute bottom-0 right-0 h-px w-2/3 bg-gradient-to-l from-[#7186d2]/60 to-transparent" />
       </section>
