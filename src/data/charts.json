@@ -1018,5 +1018,26 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/First.Breath.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794502202601-fb_png.png",
     "youtubeUrl": "https://youtu.be/YyLs_sB9PYI"
+  },
+  {
+    "id": "quatin",
+    "title": "QUATTUORUX",
+    "artist": "打打だいず Vs. Tanchiky Vs. からめる",
+    "charter": "PCC Charting Team",
+    "charterSearch": [
+      "maple._.zz",
+      "Chaos",
+      "ねこ",
+      "neko"
+    ],
+    "difficulty": "IN",
+    "isBoss": false,
+    "level": "16.1",
+    "projectIds": [],
+    "publishedAt": "2026-09-06",
+    "songId": "quattuorux",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794502350737-QUATTUORUX_IN.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794502354024-ab67616d0000b273aaa9c6af3b1e55ea218596ce_jpg.jpg",
+    "youtubeUrl": "https://youtu.be/Inp1e4hYkQ4"
   }
 ]
