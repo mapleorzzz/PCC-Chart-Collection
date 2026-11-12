@@ -18,7 +18,7 @@ export function SiteHeader() {
     <header className="border-b border-line">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-5 sm:py-5">
         <Link href="/" aria-label="PCC Chart Collection ホームへ戻る" className="group flex shrink-0 items-center">
-          <img src="/pcc-header-logo.webp" alt="PHIRA CHARTER CHAMPIONSHIP" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />
+          <img src="/pcc-header-logo.webp" alt="PHIRA CHARTER CHAMPIONSHIP" className="h-14 w-14 object-contain opacity-65 transition-opacity duration-300 group-hover:opacity-100 sm:h-16 sm:w-16" />
         </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((link) => (
