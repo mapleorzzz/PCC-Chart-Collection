@@ -24,10 +24,7 @@ export default function HomePage() {
           <div className="mb-7 text-[10px] font-medium tracking-[0.38em] text-[#9ba9d8]">
             PHIGROS FANMADE ARCHIVE
           </div>
-          <h1 className="max-w-3xl text-[clamp(3.2rem,8vw,6.8rem)] font-light leading-[0.98] tracking-[-0.065em] text-[#f4f6ff]">
-            A collection of<br />
-            <span className="bg-gradient-to-r from-white via-[#cbd5ff] to-[#778bd1] bg-clip-text text-transparent">fanmade charts.</span>
-          </h1>
+          <img src="/pcc-hero-logo.png" alt="PCC" className="h-auto w-full max-w-[760px] object-contain" />
           <p className="mx-auto mt-8 max-w-xl text-sm leading-8 text-[#a5aec9] sm:text-[15px]">
             PCCのメンバーによって製作されたPhigros Fanmadeの譜面と、コミュニティ企画を記録・共有するアーカイブ。
           </p>
