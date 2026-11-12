@@ -997,5 +997,24 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794502008119-tcdr-0039-1_png.png",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/BATTLE.NO.1_AT.pez",
     "youtubeUrl": "https://youtu.be/Wqtw-tHzAvY"
+  },
+  {
+    "id": "firstbreath",
+    "title": "First Breath",
+    "artist": "Kry.exe",
+    "charter": "Detection of Protection",
+    "charterSearch": [
+      "怠惰",
+      "Nanokuro",
+      "D0ΛE"
+    ],
+    "difficulty": "AT",
+    "isBoss": false,
+    "level": "17.5",
+    "projectIds": [],
+    "publishedAt": "2026-05-23",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/First.Breath.pez",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794502202601-fb_png.png",
+    "youtubeUrl": "https://youtu.be/YyLs_sB9PYI"
   }
 ]
