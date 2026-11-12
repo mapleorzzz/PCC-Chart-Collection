@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Disc3, LibraryBig } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { ChartCard } from "@/components/chart-card";
 import { groupCharts } from "@/lib/data";
 import { usePublicData } from "@/lib/use-public-data";
@@ -48,7 +48,6 @@ export default function HomePage() {
         <div className="mb-9 flex items-end justify-between"><div><p className="text-[10px] tracking-[0.34em] text-[#7180ae]">COMMUNITY / 02</p><h2 className="mt-3 text-2xl font-light tracking-wide text-[#edf0fb]">Projects</h2></div><Link href="/projects" className="group inline-flex items-center gap-2 text-[10px] tracking-[0.18em] text-[#8793b5] transition hover:text-white">VIEW ALL <ArrowUpRight size={13} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></Link></div>
         {loading ? <Loading /> : error ? <EmptyState message="企画データを読み込めませんでした。" /> : featuredProjects.length ? <div className="grid gap-5 sm:grid-cols-2">{featuredProjects.map((project) => <Link key={project.id} href={`/projects/${project.id}`} className="group overflow-hidden border border-[#252e4c] bg-[#0b1020]/70 transition duration-300 hover:-translate-y-1 hover:border-[#6378bd]/70 hover:shadow-[0_16px_50px_rgba(20,31,72,0.25)]"><div className="aspect-video overflow-hidden bg-[#10172b]">{project.cover ? <img src={project.cover} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-[10px] tracking-[0.25em] text-[#586486]">NO COVER</div>}</div><div className="p-6"><p className="text-[10px] tracking-[0.2em] text-[#7482ad]">{project.year}</p><h3 className="mt-3 text-lg text-[#edf0fb]">{project.name}</h3><p className="mt-2 line-clamp-2 text-sm leading-6 text-[#8993af]">{project.description}</p></div></Link>)}</div> : <EmptyState message="企画はまだ登録されていません。" />}
       </section>
-      <div className="mb-4 flex items-center justify-center gap-3 text-[9px] tracking-[0.3em] text-[#4f5d83]"><Disc3 size={13} /><span>PCC CHART COLLECTION</span><LibraryBig size={13} /></div>
     </div>
   );
 }
