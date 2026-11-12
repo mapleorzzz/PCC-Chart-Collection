@@ -964,5 +964,38 @@
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794501841812-tcdr-0039-1_png.png",
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794501865827-BATTLE.NO.1_IN.pez",
     "youtubeUrl": "https://youtu.be/eGMiynpdZXY"
+  },
+  {
+    "id": "battleno1at",
+    "title": "BATTLE NO.1",
+    "artist": "TANO*C Sound Team",
+    "charter": "PFM Charting Team",
+    "charterSearch": [
+      "囃狼",
+      "ねこ",
+      "neko",
+      "NotTure1",
+      "wingbat",
+      "D0ΛE",
+      "Fevm1r",
+      "Hazefrost",
+      "eggeggegg",
+      "Triangle379",
+      "Nanokuro",
+      "GetCookied3",
+      "CookieRacer",
+      "ヤミナ",
+      "怠惰",
+      "Chaos"
+    ],
+    "difficulty": "AT",
+    "isBoss": false,
+    "level": "16.9",
+    "projectIds": [],
+    "publishedAt": "2026-05-10",
+    "songId": "battleno1",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794502008119-tcdr-0039-1_png.png",
+    "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/BATTLE.NO.1_AT.pez",
+    "youtubeUrl": "https://youtu.be/Wqtw-tHzAvY"
   }
 ]
