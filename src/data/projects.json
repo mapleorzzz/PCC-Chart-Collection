@@ -38,5 +38,13 @@
     "endDate": "2026-03-31",
     "organizer": "PCC Administrator",
     "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794151093295-2026af_png.png"
+  },
+  {
+    "id": "chunithm",
+    "name": "CHUNITHM Collection",
+    "description": "PCC運営とサーバーのメンバーで制作したCHUNITHM精選集。",
+    "year": 2026,
+    "cover": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794571698519-chunithm_png.png",
+    "organizer": "PCC Administrator"
   }
 ]
