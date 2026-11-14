@@ -39,7 +39,7 @@ export default function ChartsPage() {
       if (sort === "title") return a.chart.title.localeCompare(b.chart.title, "ja");
       if (sort === "level-desc" || sort === "level-asc") {
         const parseLevel = (value: string) => {
-          const match = value.match(/\\d+(?:\\.\\d+)?/);
+          const match = value.match(/\d+(?:\.\d+)?/);
           return match ? Number(match[0]) : Number.NaN;
         };
         const levelA = parseLevel(a.chart.level);

@@ -182,6 +182,14 @@ export default function AdminPanel() {
     setData((current) => ({ ...current, chartOrder: { ...current.chartOrder, [key]: value } }));
   }
 
+  function resetChartGroupOrder(key: string) {
+    setData((current) => {
+      const chartOrder = { ...current.chartOrder };
+      delete chartOrder[key];
+      return { ...current, chartOrder };
+    });
+  }
+
   async function saveBossAppearance(next: BossAppearanceSettings) {
     const appearances = [next.default, ...Object.values(next.songs)];
     if (appearances.some((item) => !/^#[0-9a-fA-F]{6}$/.test(item.labelColor) || !/^#[0-9a-fA-F]{6}$/.test(item.lineColor) || !/^#[0-9a-fA-F]{6}$/.test(item.frameColor) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerGradientStart) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerGradientEnd) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerTopLeft) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerTopRight) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerBottomLeft) || !/^#[0-9a-fA-F]{6}$/.test(item.cornerBottomRight) || typeof item.labelText !== "string" || item.labelText.length > 60)) {
@@ -536,6 +544,7 @@ export default function AdminPanel() {
                     {orderedChartGroups.map((_, position) => <option key={position} value={position + 1}>{position + 1}</option>)}
                   </select>
                 </label>
+                {data.chartOrder[key] !== undefined && <button type="button" onClick={() => resetChartGroupOrder(key)} className="shrink-0 text-[10px] text-neutral-500 underline underline-offset-4 hover:text-white">自動順に戻す</button>}
               </div>;
             })}
             {!orderedChartGroups.length && <p className="border border-dashed border-line py-12 text-center text-sm text-neutral-600">譜面グループはありません。</p>}
