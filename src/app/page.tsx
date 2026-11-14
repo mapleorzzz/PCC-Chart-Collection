@@ -14,13 +14,13 @@ export default function HomePage() {
   return (
     <div className="mx-auto max-w-7xl px-5">
       <section className="home-hero relative isolate left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen min-h-[calc(100svh-88px)] overflow-hidden border-b border-[#20294a] sm:min-h-[calc(100svh-104px)]">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_72%_48%,rgba(43,58,125,0.42),transparent_58%),linear-gradient(115deg,#070910_0%,#0b1020_52%,#111936_100%)]" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden opacity-[0.38] sm:opacity-[0.42]">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_72%_48%,rgba(43,58,125,0.42),transparent_58%),linear-gradient(115deg,#070910_0%,#0b1020_52%,#111936_100%)]" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-[0.38] sm:opacity-[0.42]">
           <img src="/pcc-hero-background.webp" alt="" className="h-full w-full scale-[1.04] object-cover object-center blur-[1px]" />
         </div>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#070910] via-[#080c18]/90 to-[#0b1020]/35" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-[#070910] via-[#080c18]/90 to-[#0b1020]/35" />
 
-        <div className="relative mx-auto flex min-h-[calc(100svh-88px)] max-w-7xl flex-col items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100svh-104px)] sm:px-10 sm:py-20 lg:px-14">
+        <div className="relative z-20 mx-auto flex min-h-[calc(100svh-88px)] max-w-7xl flex-col items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100svh-104px)] sm:px-10 sm:py-20 lg:px-14">
           <div className="mb-7 text-[10px] font-medium tracking-[0.38em] text-[#9ba9d8]">
             PHIGROS FANMADE ARCHIVE
           </div>
