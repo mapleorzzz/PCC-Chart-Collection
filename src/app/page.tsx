@@ -15,7 +15,7 @@ export default function HomePage() {
     <div className="mx-auto max-w-7xl px-5">
       <section className="home-hero relative isolate left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen min-h-[calc(100svh-88px)] overflow-hidden border-b border-[#20294a] sm:min-h-[calc(100svh-104px)]">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_72%_48%,rgba(43,58,125,0.42),transparent_58%),linear-gradient(115deg,#070910_0%,#0b1020_52%,#111936_100%)]" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-40">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-30">
           <img src="/pcc-hero-background.webp" alt="" className="h-full w-full scale-[1.08] object-cover object-center blur-[5px]" />
         </div>
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-[#070910]/45 via-[#080c18]/35 to-[#0b1020]/65" />
