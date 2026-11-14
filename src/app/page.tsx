@@ -15,11 +15,11 @@ export default function HomePage() {
     <div className="mx-auto max-w-7xl px-5">
       <section className="home-hero relative isolate left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen min-h-[calc(100svh-88px)] overflow-hidden border-b border-[#20294a] sm:min-h-[calc(100svh-104px)]">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-20 bg-[radial-gradient(ellipse_at_72%_48%,rgba(43,58,125,0.42),transparent_58%),linear-gradient(115deg,#070910_0%,#0b1020_52%,#111936_100%)]" />
-        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[min(88vw,760px)] w-[min(88vw,760px)] -translate-x-1/2 -translate-y-1/2 opacity-[0.19] sm:opacity-[0.23]">
-          <img src="/pcc-header-logo.webp" alt="" className="h-full w-full scale-110 object-contain mix-blend-screen blur-[5px] sm:blur-[7px]" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden opacity-[0.30] sm:opacity-[0.34]">
+          <img src="/pcc-hero-background.webp" alt="" className="h-full w-full scale-[1.04] object-cover object-center blur-[1px]" />
         </div>
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#070910] via-[#080c18]/90 to-[#0b1020]/35" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 opacity-[0.12] [background-image:linear-gradient(rgba(150,165,220,.12)_1px,transparent_1px),linear-gradient(90deg,rgba(150,165,220,.12)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_right,black,transparent)]" />
+
         <div className="relative mx-auto flex min-h-[calc(100svh-88px)] max-w-7xl flex-col items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100svh-104px)] sm:px-10 sm:py-20 lg:px-14">
           <div className="mb-7 text-[10px] font-medium tracking-[0.38em] text-[#9ba9d8]">
             PHIGROS FANMADE ARCHIVE
