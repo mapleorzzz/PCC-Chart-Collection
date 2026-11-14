@@ -8,7 +8,7 @@ import { usePublicData } from "@/lib/use-public-data";
 
 export default function HomePage() {
   const { charts, projects, jacketOrder, loading, error } = usePublicData();
-  const latest = groupCharts(charts).sort((a, b) => b.chart.publishedAt.localeCompare(a.chart.publishedAt)).slice(0, 4);
+  const latest = groupCharts(charts).sort((a, b) => b.latestPublishedAt.localeCompare(a.latestPublishedAt)).slice(0, 4);
   const featuredProjects = projects.slice(0, 2);
 
   return (

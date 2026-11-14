@@ -107,13 +107,23 @@ export function getOrderedJacketImages(charts: Chart[], jacketOrder: JacketOrder
   return [...ordered, ...unique.filter((src) => !ordered.includes(src))];
 }
 
-export function groupCharts(charts: Chart[]) {
+export function groupCharts(charts: Chart[], dateReferenceCharts: Chart[] = charts) {
   const groups = new Map<string, Chart[]>();
+  const latestDates = new Map<string, string>();
+  for (const chart of dateReferenceCharts) {
+    const key = getSongGroupKey(chart);
+    const current = latestDates.get(key);
+    if (!current || chart.publishedAt > current) latestDates.set(key, chart.publishedAt);
+  }
   for (const chart of charts) {
-    const key = chart.songId?.trim() || `chart:${chart.id}`;
+    const key = getSongGroupKey(chart);
     groups.set(key, [...(groups.get(key) || []), chart]);
   }
-  return Array.from(groups.values()).map((items) => ({ chart: items[0], charts: items.sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)) }));
+  return Array.from(groups.entries()).map(([key, items]) => ({
+    chart: items[0],
+    charts: items.sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)),
+    latestPublishedAt: latestDates.get(key) || items[0].publishedAt
+  }));
 }
 
 export function getChart(id: string) {

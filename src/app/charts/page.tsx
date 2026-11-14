@@ -31,8 +31,8 @@ export default function ChartsPage() {
     return (text.includes(query.toLowerCase()) || hiddenCharterMatches.includes(chart.id)) &&
       (difficulty === "ALL" || chart.difficulty === difficulty) &&
       (project === "ALL" || chart.projectIds.includes(project));
-  })).sort((a, b) => {
-    if (sort === "oldest") return a.chart.publishedAt.localeCompare(b.chart.publishedAt);
+  }), charts).sort((a, b) => {
+    if (sort === "oldest") return a.latestPublishedAt.localeCompare(b.latestPublishedAt);
     if (sort === "title") return a.chart.title.localeCompare(b.chart.title, "ja");
     if (sort === "level-desc" || sort === "level-asc") {
       const parseLevel = (value: string) => {
@@ -49,7 +49,7 @@ export default function ChartsPage() {
       }
       return a.chart.title.localeCompare(b.chart.title, "ja");
     }
-    return b.chart.publishedAt.localeCompare(a.chart.publishedAt);
+    return b.latestPublishedAt.localeCompare(a.latestPublishedAt);
   }), [charts, query, difficulty, project, sort, hiddenCharterMatches]);
 
   return (
