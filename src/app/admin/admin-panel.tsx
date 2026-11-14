@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { defaultBossAppearance, defaultBossAppearanceSettings, normalizeBossAppearanceSettings, formatLevel, getSongGroupKey, type BossAppearance, type BossAppearanceSettings, type Chart, type Project } from "@/lib/data";
 
@@ -58,6 +58,12 @@ export default function AdminPanel() {
   const [projectSearch, setProjectSearch] = useState("");
   const [selectedScheduledId, setSelectedScheduledId] = useState("");
   const [draggedJacket, setDraggedJacket] = useState<{ groupKey: string; index: number } | null>(null);
+  const chartFormRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!editingId || typeof window === "undefined" || window.innerWidth >= 1024) return;
+    requestAnimationFrame(() => chartFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }, [editingId]);
 
   function clearSelectedUploads() {
     setSelectedFile(null);
@@ -399,7 +405,7 @@ export default function AdminPanel() {
 
       {tab === "charts" ? <>
         <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(280px,0.82fr)_minmax(0,1.7fr)]">
-          <div className="min-w-0 lg:sticky lg:top-6">
+          <div className={`min-w-0 lg:sticky lg:top-6 ${editingId ? "order-2 hidden lg:block" : "order-1"}`}>
         <section className="mt-10">
           <div className="mb-4 flex min-w-0 flex-col items-stretch gap-3">
             <div className="min-w-0"><h2 className="text-lg">登録済み譜面</h2><p className="mt-1 text-xs text-neutral-600">{filteredCharts.length} / {data.charts.length} 件表示</p></div>
@@ -412,8 +418,8 @@ export default function AdminPanel() {
           <div className="divide-y divide-line border-y border-line">{filteredCharts.map((item) => <div key={item.id} className="flex flex-col items-start justify-between gap-3 py-4 sm:flex-row sm:items-center sm:gap-4"><div className="flex min-w-0 items-center gap-3"><div className="h-12 w-12 shrink-0 overflow-hidden border border-line bg-[#171717]">{item.jacket ? <img src={item.jacket} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-[8px] text-neutral-700">NO IMG</div>}</div><div className="min-w-0"><p className="truncate text-sm">{item.title}</p><p className="mt-1 truncate text-xs text-neutral-500">{item.artist} · {item.charter}</p><p className="mt-1 text-[10px] text-neutral-600">{item.difficulty} {formatLevel(item.level)} · {item.fileUrl ? "PEZあり" : "PEZなし"} · {item.youtubeUrl ? "動画あり" : "動画なし"}</p></div></div><div className="flex min-h-10 shrink-0 items-center gap-5"><button onClick={() => editChart(item)} className="text-xs text-neutral-300 hover:text-white">編集</button><button onClick={() => removeChart(item.id)} className="text-xs text-red-400 hover:text-red-300">削除</button></div></div>)}{!filteredCharts.length && <p className="py-10 text-center text-sm text-neutral-600">{data.charts.length ? "条件に一致する譜面がありません。" : "譜面はまだ登録されていません。"}</p>}</div>
         </section>
           </div>
-          <div className="min-w-0">
-        <section className="mt-6 border border-line p-4 sm:mt-8 sm:p-7">
+          <div className={`min-w-0 ${editingId ? "order-1" : "order-2"} lg:order-2`}>
+        <section ref={chartFormRef} className="mt-6 scroll-mt-4 border border-line p-4 sm:mt-8 sm:p-7">
           <h2 className="text-lg">{editingId ? "譜面を編集" : "譜面を新規登録"}</h2>
           <form onSubmit={submitChart} className="mt-5 grid gap-5 sm:grid-cols-2">
             <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">01 / BASIC INFORMATION</p></div>
