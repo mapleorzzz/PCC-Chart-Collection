@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
-import { defaultBossAppearance, defaultBossAppearanceSettings, normalizeBossAppearanceSettings, formatLevel, getSongGroupKey, type BossAppearance, type BossAppearanceSettings, type Chart, type Project } from "@/lib/data";
+import { defaultBossAppearance, defaultBossAppearanceSettings, normalizeBossAppearanceSettings, formatLevel, getSongGroupKey, groupCharts, sortChartGroups, type BossAppearance, type BossAppearanceSettings, type Chart, type Project, type ChartOrder } from "@/lib/data";
 
 
 type BossCornerColors = {
@@ -22,7 +22,7 @@ function BossGradientFrame({ colors, className = "" }: { colors: BossCornerColor
 }
 
 type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string };
-type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]>; bossAppearance: BossAppearanceSettings };
+type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]>; chartOrder: ChartOrder; bossAppearance: BossAppearanceSettings };
 const emptyChart: Chart = {
   id: "", title: "", artist: "", charter: "", charterSearch: [], difficulty: "IN", isBoss: false,
   level: "", projectIds: [], publishedAt: new Date().toISOString().slice(0, 10)
@@ -35,9 +35,9 @@ export default function AdminPanel() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {}, bossAppearance: defaultBossAppearanceSettings });
+  const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {}, chartOrder: {}, bossAppearance: defaultBossAppearanceSettings });
   const [selectedBossGroup, setSelectedBossGroup] = useState("__default__");
-  type AdminTab = "charts" | "jackets" | "bossAppearance" | "projects" | "scheduled";
+  type AdminTab = "charts" | "chartOrder" | "jackets" | "bossAppearance" | "projects" | "scheduled";
   const [tab, setTab] = useState<AdminTab>("charts");
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [charterSearchText, setCharterSearchText] = useState("");
@@ -58,6 +58,7 @@ export default function AdminPanel() {
   const [projectSearch, setProjectSearch] = useState("");
   const [selectedScheduledId, setSelectedScheduledId] = useState("");
   const [draggedJacket, setDraggedJacket] = useState<{ groupKey: string; index: number } | null>(null);
+  const [draggedChartGroup, setDraggedChartGroup] = useState<{ key: string; index: number } | null>(null);
   const chartFormRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function AdminPanel() {
     const response = await fetch("/api/admin/data");
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "データを読み込めませんでした。");
-    setData({ ...result, jacketOrder: result.jacketOrder || {}, bossAppearance: normalizeBossAppearanceSettings(result.bossAppearance) });
+    setData({ ...result, jacketOrder: result.jacketOrder || {}, chartOrder: result.chartOrder || {}, bossAppearance: normalizeBossAppearanceSettings(result.bossAppearance) });
     setLoggedIn(true);
   }
 
@@ -107,7 +108,7 @@ export default function AdminPanel() {
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     setLoggedIn(false);
-    setData({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {}, bossAppearance: defaultBossAppearanceSettings });
+    setData({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {}, chartOrder: {}, bossAppearance: defaultBossAppearanceSettings });
   }
 
   async function save(kind: "charts" | "projects" | "scheduled", next: Chart[] | Project[] | ScheduledChart[]) {
@@ -142,6 +143,43 @@ export default function AdminPanel() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "ジャケット順の保存に失敗しました。");
     } finally { setBusy(false); }
+  }
+
+  async function saveChartOrder(next: ChartOrder) {
+    setBusy(true); setError("");
+    try {
+      const response = await fetch("/api/admin/data", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "chartOrder", data: next })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "表示順を保存できませんでした。");
+      setData((current) => ({ ...current, chartOrder: next }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "表示順の保存に失敗しました。");
+    } finally { setBusy(false); }
+  }
+
+  function moveChartGroup(fromIndex: number, toIndex: number) {
+    if (fromIndex === toIndex) return;
+    const groups = sortChartGroups(groupCharts(data.charts), data.chartOrder);
+    const next = [...groups];
+    const [moved] = next.splice(fromIndex, 1);
+    if (!moved) return;
+    next.splice(toIndex, 0, moved);
+    const getOrderValue = (group: (typeof groups)[number]) =>
+      data.chartOrder[getSongGroupKey(group.chart)] ?? Date.parse(group.latestPublishedAt);
+    const previous = next[toIndex - 1];
+    const following = next[toIndex + 1];
+    const value = previous && following
+      ? (getOrderValue(previous) + getOrderValue(following)) / 2
+      : following
+        ? getOrderValue(following) + 86_400_000
+        : previous
+          ? getOrderValue(previous) - 86_400_000
+          : Date.now();
+    const key = getSongGroupKey(moved.chart);
+    setData((current) => ({ ...current, chartOrder: { ...current.chartOrder, [key]: value } }));
   }
 
   async function saveBossAppearance(next: BossAppearanceSettings) {
@@ -348,6 +386,7 @@ export default function AdminPanel() {
     const configured = data.jacketOrder[key] || [];
     return { key, charts, images: [...configured.filter((src) => images.includes(src)), ...images.filter((src) => !configured.includes(src))] };
   }).filter((group) => group.charts.length >= 2 && group.images.length > 0);
+  const orderedChartGroups = sortChartGroups(groupCharts(data.charts), data.chartOrder);
   const bossGroups = Array.from(data.charts.reduce((groups, item) => {
     const key = getSongGroupKey(item); groups.set(key, [...(groups.get(key) || []), item]); return groups;
   }, new Map<string, Chart[]>()).entries()).map(([key, charts]) => ({ key, charts })).filter((group) => group.charts.some((item) => item.isBoss));
@@ -397,6 +436,7 @@ export default function AdminPanel() {
       </div>
       <div className="mt-8 flex gap-2 overflow-x-auto border-b border-line">
         <button onClick={() => { setTab("charts"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "charts" ? "border-b border-white text-white" : "text-neutral-500"}`}>譜面管理 ({data.charts.length})</button>
+        <button onClick={() => { setTab("chartOrder"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "chartOrder" ? "border-b border-white text-white" : "text-neutral-500"}`}>表示順管理</button>
         <button onClick={() => { setTab("jackets"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "jackets" ? "border-b border-white text-white" : "text-neutral-500"}`}>ジャケット管理</button>
         <button onClick={() => { setTab("bossAppearance"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "bossAppearance" ? "border-b border-white text-white" : "text-neutral-500"}`}>BOSS画面設定</button>
         <button onClick={() => { setTab("projects"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "projects" ? "border-b border-white text-white" : "text-neutral-500"}`}>企画管理 ({data.projects.length})</button>
@@ -466,7 +506,42 @@ export default function AdminPanel() {
         </section>
           </div>
         </div>
-            </> : tab === "jackets" ? <>
+            </> : tab === "chartOrder" ? <>
+        <section className="mt-6">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-lg">楽曲グループの表示順</h2>
+              <p className="mt-1 text-xs leading-5 text-neutral-500">公開日は変更せず、一覧での並び順だけを調整します。変更したグループだけ順番を固定し、新しく追加されたグループは公開日の新しい順で上に表示されます。</p>
+            </div>
+            <button type="button" disabled={busy} onClick={() => void saveChartOrder(data.chartOrder)} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : "表示順を保存"}</button>
+          </div>
+          <div className="space-y-2">
+            {orderedChartGroups.map((group, index) => {
+              const key = getSongGroupKey(group.chart);
+              return <div key={key} draggable onDragStart={() => setDraggedChartGroup({ key, index })} onDragOver={(event) => event.preventDefault()} onDrop={(event) => {
+                event.preventDefault();
+                if (!draggedChartGroup || draggedChartGroup.key === key) return;
+                moveChartGroup(draggedChartGroup.index, index);
+                setDraggedChartGroup(null);
+              }} onDragEnd={() => setDraggedChartGroup(null)} className={"flex min-w-0 items-center gap-3 border bg-[#111] p-3 " + (draggedChartGroup?.key === key ? "border-white opacity-50" : "border-line")}>
+                <span className="select-none text-xl text-neutral-600" aria-hidden="true">⠿</span>
+                {group.chart.jacket ? <img src={group.chart.jacket} alt="" draggable={false} className="h-14 w-14 shrink-0 object-cover" /> : <div className="flex h-14 w-14 shrink-0 items-center justify-center border border-line text-[8px] text-neutral-700">NO IMG</div>}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm">{group.chart.title}</p>
+                  <p className="mt-1 truncate text-[10px] text-neutral-500">{group.chart.artist} · {group.charts.map((item) => item.difficulty).join(" / ")}</p>
+                  <p className="mt-1 text-[10px] text-neutral-600">公開日 {group.latestPublishedAt}{data.chartOrder[key] !== undefined ? " · 手動順" : " · 自動順"}</p>
+                </div>
+                <label className="flex shrink-0 items-center gap-1 text-[10px] text-neutral-500">順番
+                  <select aria-label={group.chart.title + "の表示順"} value={index + 1} onChange={(event) => moveChartGroup(index, Number(event.target.value) - 1)} className="border border-line bg-[#111] px-2 py-2 text-sm text-white">
+                    {orderedChartGroups.map((_, position) => <option key={position} value={position + 1}>{position + 1}</option>)}
+                  </select>
+                </label>
+              </div>;
+            })}
+            {!orderedChartGroups.length && <p className="border border-dashed border-line py-12 text-center text-sm text-neutral-600">譜面グループはありません。</p>}
+          </div>
+        </section>
+      </> : tab === "jackets" ? <>
         <section className="mt-6">
           <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
             <div><h2 className="text-lg">楽曲グループ別ジャケット順</h2><p className="mt-1 text-xs text-neutral-500">2譜面以上ある楽曲のみ表示。画像をドラッグ＆ドロップして順番を変更できます。</p></div>

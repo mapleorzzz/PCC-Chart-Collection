@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { ChartCard } from "@/components/chart-card";
-import { groupCharts } from "@/lib/data";
+import { groupCharts, sortChartGroups } from "@/lib/data";
 import { usePublicData } from "@/lib/use-public-data";
 
 export default function HomePage() {
-  const { charts, projects, jacketOrder, loading, error } = usePublicData();
-  const latest = groupCharts(charts).sort((a, b) => b.latestPublishedAt.localeCompare(a.latestPublishedAt)).slice(0, 4);
+  const { charts, projects, jacketOrder, chartOrder, loading, error } = usePublicData();
+  const latest = sortChartGroups(groupCharts(charts), chartOrder).slice(0, 4);
   const featuredProjects = projects.slice(0, 2);
 
   return (

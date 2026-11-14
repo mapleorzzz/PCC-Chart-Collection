@@ -3,11 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { ChartCard } from "@/components/chart-card";
-import { groupCharts } from "@/lib/data";
+import { groupCharts, sortChartGroups } from "@/lib/data";
 import { usePublicData } from "@/lib/use-public-data";
 
 export default function ChartsPage() {
-  const { charts, projects, jacketOrder, loading, error } = usePublicData();
+  const { charts, projects, jacketOrder, chartOrder, loading, error } = usePublicData();
   const [hiddenCharterMatches, setHiddenCharterMatches] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   useEffect(() => {
@@ -26,31 +26,35 @@ export default function ChartsPage() {
   const [project, setProject] = useState("ALL");
   const [sort, setSort] = useState("newest");
 
-  const filtered = useMemo(() => groupCharts(charts.filter((chart) => {
-    const text = [chart.title, chart.artist, chart.charter].join(" ").toLowerCase();
-    return (text.includes(query.toLowerCase()) || hiddenCharterMatches.includes(chart.id)) &&
-      (difficulty === "ALL" || chart.difficulty === difficulty) &&
-      (project === "ALL" || chart.projectIds.includes(project));
-  }), charts).sort((a, b) => {
-    if (sort === "oldest") return a.latestPublishedAt.localeCompare(b.latestPublishedAt);
-    if (sort === "title") return a.chart.title.localeCompare(b.chart.title, "ja");
-    if (sort === "level-desc" || sort === "level-asc") {
-      const parseLevel = (value: string) => {
-        const match = value.match(/\d+(?:\.\d+)?/);
-        return match ? Number(match[0]) : Number.NaN;
-      };
-      const levelA = parseLevel(a.chart.level);
-      const levelB = parseLevel(b.chart.level);
-      const validA = Number.isFinite(levelA);
-      const validB = Number.isFinite(levelB);
-      if (validA !== validB) return validA ? -1 : 1;
-      if (validA && validB && levelA !== levelB) {
-        return sort === "level-desc" ? levelB - levelA : levelA - levelB;
+  const filtered = useMemo(() => {
+    const groups = groupCharts(charts.filter((chart) => {
+      const text = [chart.title, chart.artist, chart.charter].join(" ").toLowerCase();
+      return (text.includes(query.toLowerCase()) || hiddenCharterMatches.includes(chart.id)) &&
+        (difficulty === "ALL" || chart.difficulty === difficulty) &&
+        (project === "ALL" || chart.projectIds.includes(project));
+    }), charts);
+    if (sort === "newest") return sortChartGroups(groups, chartOrder);
+    return groups.sort((a, b) => {
+      if (sort === "oldest") return a.latestPublishedAt.localeCompare(b.latestPublishedAt);
+      if (sort === "title") return a.chart.title.localeCompare(b.chart.title, "ja");
+      if (sort === "level-desc" || sort === "level-asc") {
+        const parseLevel = (value: string) => {
+          const match = value.match(/\\d+(?:\\.\\d+)?/);
+          return match ? Number(match[0]) : Number.NaN;
+        };
+        const levelA = parseLevel(a.chart.level);
+        const levelB = parseLevel(b.chart.level);
+        const validA = Number.isFinite(levelA);
+        const validB = Number.isFinite(levelB);
+        if (validA !== validB) return validA ? -1 : 1;
+        if (validA && validB && levelA !== levelB) {
+          return sort === "level-desc" ? levelB - levelA : levelA - levelB;
+        }
+        return a.chart.title.localeCompare(b.chart.title, "ja");
       }
-      return a.chart.title.localeCompare(b.chart.title, "ja");
-    }
-    return b.latestPublishedAt.localeCompare(a.latestPublishedAt);
-  }), [charts, query, difficulty, project, sort, hiddenCharterMatches]);
+      return b.latestPublishedAt.localeCompare(a.latestPublishedAt);
+    });
+  }, [charts, chartOrder, query, difficulty, project, sort, hiddenCharterMatches]);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-16">

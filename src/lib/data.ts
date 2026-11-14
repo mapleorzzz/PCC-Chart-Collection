@@ -38,6 +38,7 @@ export function formatLevel(level: string) {
 }
 
 export type JacketOrder = Record<string, string[]>;
+export type ChartOrder = Record<string, number>;
 
 export type BossAppearance = {
   labelText: string;
@@ -124,6 +125,15 @@ export function groupCharts(charts: Chart[], dateReferenceCharts: Chart[] = char
     charts: items.sort((a, b) => ["EZ", "HD", "IN", "AT", "Other"].indexOf(a.difficulty) - ["EZ", "HD", "IN", "AT", "Other"].indexOf(b.difficulty)),
     latestPublishedAt: latestDates.get(key) || items[0].publishedAt
   }));
+}
+
+export function sortChartGroups(groups: ReturnType<typeof groupCharts>, chartOrder: ChartOrder = {}) {
+  return [...groups].sort((a, b) => {
+    const orderA = chartOrder[getSongGroupKey(a.chart)] ?? Date.parse(a.latestPublishedAt);
+    const orderB = chartOrder[getSongGroupKey(b.chart)] ?? Date.parse(b.latestPublishedAt);
+    if (orderA !== orderB) return orderB - orderA;
+    return b.latestPublishedAt.localeCompare(a.latestPublishedAt) || a.chart.title.localeCompare(b.chart.title, "ja");
+  });
 }
 
 export function getChart(id: string) {

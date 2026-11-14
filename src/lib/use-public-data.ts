@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { defaultBossAppearanceSettings, normalizeBossAppearanceSettings, type BossAppearanceSettings, type Chart, type Project, type JacketOrder } from "@/lib/data";
+import { defaultBossAppearanceSettings, normalizeBossAppearanceSettings, type BossAppearanceSettings, type Chart, type Project, type JacketOrder, type ChartOrder } from "@/lib/data";
 
-type PublicData = { charts: Chart[]; projects: Project[]; jacketOrder: JacketOrder; bossAppearance: BossAppearanceSettings };
+type PublicData = { charts: Chart[]; projects: Project[]; jacketOrder: JacketOrder; chartOrder: ChartOrder; bossAppearance: BossAppearanceSettings };
 
 export function usePublicData() {
-  const [data, setData] = useState<PublicData>({ charts: [], projects: [], jacketOrder: {}, bossAppearance: defaultBossAppearanceSettings });
+  const [data, setData] = useState<PublicData>({ charts: [], projects: [], jacketOrder: {}, chartOrder: {}, bossAppearance: defaultBossAppearanceSettings });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -18,7 +18,7 @@ export function usePublicData() {
         return response.json();
       })
       .then((value: PublicData) => {
-        if (active) setData({ ...value, charts: (value.charts || []).map(({ charterSearch: _privateSearch, ...chart }) => chart), jacketOrder: value.jacketOrder || {}, bossAppearance: normalizeBossAppearanceSettings(value.bossAppearance) });
+        if (active) setData({ ...value, charts: (value.charts || []).map(({ charterSearch: _privateSearch, ...chart }) => chart), jacketOrder: value.jacketOrder || {}, chartOrder: value.chartOrder || {}, bossAppearance: normalizeBossAppearanceSettings(value.bossAppearance) });
       })
       .catch(() => {
         if (active) setError(true);
