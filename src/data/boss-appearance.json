@@ -49,16 +49,16 @@
       "cornerBottomRight": "#ffffff"
     },
     "chart:unravelingstasis": {
-      "labelText": "Nanokuro Cup FIRST BOSS",
-      "labelColor": "#334bff",
-      "lineColor": "#9752ff",
+      "labelText": "Nanokuro Cup SECOND BOSS",
+      "labelColor": "#ff00d0",
+      "lineColor": "#59075a",
       "frameColor": "#ffffff",
       "cornerGradientStart": "#a7f3d0",
       "cornerGradientEnd": "#ffffff",
-      "cornerTopLeft": "#0f37ff",
-      "cornerTopRight": "#a64dfe",
-      "cornerBottomLeft": "#9e86fe",
-      "cornerBottomRight": "#2a86fe"
+      "cornerTopLeft": "#510b34",
+      "cornerTopRight": "#7a004e",
+      "cornerBottomLeft": "#7a004e",
+      "cornerBottomRight": "#3f0d35"
     },
     "chart:xaleidscopix": {
       "labelText": "Nanokuro Cup FIRST BOSS",
