@@ -47,6 +47,18 @@
       "cornerTopRight": "#ff5252",
       "cornerBottomLeft": "#ff5252",
       "cornerBottomRight": "#ffffff"
+    },
+    "chart:unravelingstasis": {
+      "labelText": "Nanokuro Cup FIRST BOSS",
+      "labelColor": "#203afe",
+      "lineColor": "#9752ff",
+      "frameColor": "#ffffff",
+      "cornerGradientStart": "#a7f3d0",
+      "cornerGradientEnd": "#ffffff",
+      "cornerTopLeft": "#a7f3d0",
+      "cornerTopRight": "#ffffff",
+      "cornerBottomLeft": "#a7f3d0",
+      "cornerBottomRight": "#ffffff"
     }
   }
 }
