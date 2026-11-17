@@ -55,10 +55,10 @@
       "frameColor": "#ffffff",
       "cornerGradientStart": "#a7f3d0",
       "cornerGradientEnd": "#ffffff",
-      "cornerTopLeft": "#a7f3d0",
-      "cornerTopRight": "#ffffff",
-      "cornerBottomLeft": "#a7f3d0",
-      "cornerBottomRight": "#ffffff"
+      "cornerTopLeft": "#0f37ff",
+      "cornerTopRight": "#a64dfe",
+      "cornerBottomLeft": "#9e86fe",
+      "cornerBottomRight": "#2a86fe"
     }
   }
 }
