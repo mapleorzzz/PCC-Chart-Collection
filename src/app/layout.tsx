@@ -4,7 +4,12 @@ import { SiteHeader } from "@/components/site-header";
 
 export const metadata: Metadata = {
   title: "PCC Chart Collection",
-  description: "An archive of Phigros Fanmade charts and community projects."
+  description: "An archive of Phigros Fanmade charts and community projects.",
+  icons: {
+    icon: "/pcc-header-logo.svg",
+    shortcut: "/pcc-header-logo.svg",
+    apple: "/pcc-header-logo.svg"
+  }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
