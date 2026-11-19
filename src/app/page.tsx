@@ -22,7 +22,7 @@ export default function HomePage() {
 
         <div className="relative z-20 mx-auto flex min-h-[calc(100svh-88px)] max-w-7xl flex-col items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100svh-104px)] sm:px-10 sm:py-20 lg:px-14">
           <div className="mb-7 text-[10px] font-medium tracking-[0.38em] text-[#9ba9d8]">
-            PHIGROS FANMADE ARCHIVE
+            PCC Chart Collection
           </div>
           <img src="/pcc-hero-logo-smooth.png" alt="PCC" className="h-auto w-full max-w-[760px] object-contain" />
           <p className="mx-auto mt-8 max-w-xl text-sm leading-8 text-[#a5aec9] sm:text-[15px]">
