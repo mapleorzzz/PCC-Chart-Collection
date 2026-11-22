@@ -45,7 +45,8 @@ export default function AdminPanel() {
   const [editingId, setEditingId] = useState("");
   const [busy, setBusy] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);\n  const [uploadedReleaseId, setUploadedReleaseId] = useState<number | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadedReleaseId, setUploadedReleaseId] = useState<number | null>(null);
   const [chartImageFile, setChartImageFile] = useState<File | null>(null);
   const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
