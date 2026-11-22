@@ -68,6 +68,7 @@ export default function AdminPanel() {
   }, [editingId]);
 
   function clearSelectedUploads() {
+    setUploadedReleaseId(null);
     setSelectedFile(null);
     setChartImageFile(null);
     setProjectImageFile(null);
