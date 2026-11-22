@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getScheduledCharts, saveScheduledCharts } from "@/lib/scheduled-storage";
+import { getScheduledCharts, saveScheduledCharts } from "@/lib/scheduled-storage";\nimport { githubAppRequest } from "@/lib/github-app";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +41,19 @@ export async function GET(request: NextRequest) {
     );
 
     if (due.length === 0) return NextResponse.json({ ok: true, published: 0 });
+
+    for (const item of due) {
+      if (!item.releaseId) continue;
+      const releaseResponse = await githubAppRequest(`releases/${item.releaseId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ draft: false })
+      });
+      const release = await releaseResponse.json().catch(() => ({})) as { draft?: boolean; message?: string };
+      if (!releaseResponse.ok || release.draft !== false) {
+        throw new Error(release.message || `譜面「${String(item.chart.title || item.id)}」のDraft Releaseを公開できませんでした。`);
+      }
+    }
 
     const dueIds = new Set(due.map((item) => item.id));
     const nextCharts = [...charts];
