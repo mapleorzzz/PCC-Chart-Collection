@@ -237,14 +237,26 @@ export default function AdminPanel() {
   async function uploadChartFile(fileToUpload?: File) {
     const file = fileToUpload || selectedFile;
     if (!file) { setError(".pezファイルを選択してください。"); return; }
+    if (!chart.id.trim()) { setError("先に譜面IDを入力してください。"); return; }
     setUploading(true); setError("");
     try {
-      const form = new FormData();
-      form.append("file", file);
-      const response = await fetch("/api/admin/upload", { method: "POST", body: form });
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chartId: chart.id.trim(), fileName: file.name })
+      });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "アップロードに失敗しました。");
-      setChart((current) => ({ ...current, fileUrl: result.browserDownloadUrl }));
+      if (!response.ok) throw new Error(result.error || "アップロード準備に失敗しました。");
+      const uploadResponse = await fetch(result.signedUrl, {
+        method: "PUT",
+        headers: { "Content-Type": "application/octet-stream", "x-upsert": "false" },
+        body: file
+      });
+      if (!uploadResponse.ok) {
+        const detail = await uploadResponse.text().catch(() => "");
+        throw new Error(detail || "Supabaseへのアップロードに失敗しました。");
+      }
+      setChart((current) => ({ ...current, fileUrl: result.fileUrl }));
       setSelectedFile(null);
       const picker = document.getElementById("chart-pez-file") as HTMLInputElement | null;
       if (picker) picker.value = "";
@@ -493,9 +505,9 @@ export default function AdminPanel() {
             <div className={label}>
               .pezファイル
               <input id="chart-pez-file" type="file" accept=".pez,application/octet-stream" className={field} disabled={uploading} onChange={(e) => { const file = e.target.files?.[0] || null; setSelectedFile(file); if (file) void uploadChartFile(file); }} />
-              {uploading && <p className="mt-2 text-xs text-neutral-400">GitHub Releaseにアップロード中...</p>}
+              {uploading && <p className="mt-2 text-xs text-neutral-400">Supabase非公開ストレージにアップロード中...</p>}
               {selectedFile && !uploading && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
-              <p className="mt-2 text-xs text-neutral-600">選択するとGitHub Releaseに自動アップロードされます。</p>
+              <p className="mt-2 text-xs text-neutral-600">選択するとSupabaseの非公開ストレージに自動アップロードされます。公開後にダウンロード可能になります。</p>
               {chart.fileUrl ? <p className="mt-2 text-[10px] text-emerald-400">✓ PEZダウンロードURL設定済み</p> : <p className="mt-2 text-[10px] text-amber-500">! PEZ未登録</p>}
             </div>
             <label className={label}>.pez ダウンロードURL<input type="url" className={field} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://example.com/chart.pez" /></label>

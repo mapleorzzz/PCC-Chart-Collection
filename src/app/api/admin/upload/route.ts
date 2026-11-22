@@ -1,30 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { createPezSignedUploadUrl } from "@/lib/pez-storage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const repo = "mapleorzzz/PCC-Chart-Collection";
-const releaseTag = "chart-files";
-const maxFileSize = 4 * 1024 * 1024;
-
-type ReleaseAsset = { id: number; name: string };
-type Release = { id: number; assets: ReleaseAsset[] };
-
-async function github(path: string, init?: RequestInit) {
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) throw new Error("GITHUB_TOKEN is not configured");
-  return fetch(`https://api.github.com/repos/${repo}${path}`, {
-    ...init,
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      ...(init?.headers || {})
-    },
-    cache: "no-store"
-  });
-}
 
 export async function POST(request: NextRequest) {
   if (!(await isAdminAuthenticated())) {
@@ -32,63 +11,29 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const form = await request.formData();
-    const file = form.get("file");
-    if (!(file instanceof File)) {
-      return NextResponse.json({ error: ".pezファイルを選択してください。" }, { status: 400 });
+    const body = await request.json();
+    const chartId = typeof body.chartId === "string" ? body.chartId.trim() : "";
+    const fileName = typeof body.fileName === "string" ? body.fileName : "";
+
+    if (!/^[a-zA-Z0-9_-]{1,100}$/.test(chartId)) {
+      return NextResponse.json({ error: "先に正しい譜面IDを入力してください。" }, { status: 400 });
     }
-    if (!file.name.toLowerCase().endsWith(".pez")) {
-      return NextResponse.json({ error: "アップロードできるのは .pez ファイルのみです。" }, { status: 400 });
-    }
-    if (file.size === 0 || file.size > maxFileSize) {
-      return NextResponse.json({ error: "ファイルサイズは1 byte以上4 MB以下にしてください。" }, { status: 400 });
+    if (!fileName.toLowerCase().endsWith(".pez")) {
+      return NextResponse.json({ error: ".pezファイルのみアップロードできます。" }, { status: 400 });
     }
 
-    let releaseResponse = await github(`/releases/tags/${releaseTag}`);
-    if (releaseResponse.status === 404) {
-      releaseResponse = await github("/releases", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tag_name: releaseTag,
-          name: "PCC Chart Files",
-          body: "PCC Chart Collectionで配布するPhigros Fanmadeの譜面ファイル置き場です。"
-        })
-      });
-    }
-    if (!releaseResponse.ok) {
-      const detail = await releaseResponse.json().catch(() => ({}));
-      throw new Error(detail.message || "GitHub Releaseを取得・作成できませんでした。");
-    }
+    const safeName = fileName
+      .replace(/[\\/]/g, "_")
+      .replace(/[^\w.()\- ]/g, "_")
+      .slice(-120);
+    const objectPath = `charts/${chartId}/${Date.now()}-${safeName}`;
+    const signedUrl = await createPezSignedUploadUrl(objectPath);
+    const fileUrl = `/api/pez/${encodeURIComponent(chartId)}?key=${encodeURIComponent(objectPath)}`;
 
-    const release = await releaseResponse.json() as Release;
-    // 既存の譜面ファイルは削除・上書きせず、アップロードごとに別名で保存する。
-    const safeOriginalName = file.name.replace(/[\\/]/g, "_").replace(/[^\w.()\- ]/g, "_");
-    const filename = `${Date.now()}-${safeOriginalName}`;
-
-    const uploadResponse = await fetch(
-      `https://uploads.github.com/repos/${repo}/releases/${release.id}/assets?name=${encodeURIComponent(filename)}`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/vnd.github+json",
-          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-          "X-GitHub-Api-Version": "2022-11-28",
-          "Content-Type": "application/octet-stream"
-        },
-        body: await file.arrayBuffer(),
-        cache: "no-store"
-      }
-    );
-    if (!uploadResponse.ok) {
-      const detail = await uploadResponse.json().catch(() => ({}));
-      throw new Error(detail.message || "GitHub Releaseへのアップロードに失敗しました。");
-    }
-    const asset = await uploadResponse.json() as { browser_download_url: string; name: string };
-    return NextResponse.json({ ok: true, name: asset.name, browserDownloadUrl: asset.browser_download_url });
+    return NextResponse.json({ ok: true, signedUrl, fileUrl });
   } catch (error) {
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "アップロードに失敗しました。" },
+      { error: error instanceof Error ? error.message : "アップロードURLを作成できませんでした。" },
       { status: 500 }
     );
   }
