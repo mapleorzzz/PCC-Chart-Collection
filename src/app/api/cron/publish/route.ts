@@ -1,19 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getScheduledCharts, saveScheduledCharts } from "@/lib/scheduled-storage";
 
 export const dynamic = "force-dynamic";
 
 const repo = "mapleorzzz/PCC-Chart-Collection";
-const paths = {
-  charts: "src/data/charts.json",
-  scheduled: "src/data/scheduled-charts.json"
-};
-
-type ScheduledItem = {
-  id: string;
-  chart: Record<string, unknown>;
-  status: "scheduled" | "draft";
-  scheduledAt?: string;
-};
+const chartsPath = "src/data/charts.json";
 
 async function githubRequest(path: string, init?: RequestInit) {
   const token = process.env.GITHUB_TOKEN;
@@ -38,19 +29,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const [chartsRes, scheduledRes] = await Promise.all([
-      githubRequest(paths.charts),
-      githubRequest(paths.scheduled)
-    ]);
-    if (!chartsRes.ok || !scheduledRes.ok) {
-      throw new Error("GitHubから公開データを取得できませんでした。");
-    }
+    const [chartsRes, scheduled] = await Promise.all([githubRequest(chartsPath), getScheduledCharts()]);
+    if (!chartsRes.ok) throw new Error("GitHubから公開データを取得できませんでした。");
 
-    const [chartsFile, scheduledFile] = await Promise.all([chartsRes.json(), scheduledRes.json()]);
-    const decode = (file: { content: string }) =>
-      JSON.parse(Buffer.from(file.content, "base64").toString("utf8"));
-    const charts = decode(chartsFile) as Record<string, unknown>[];
-    const scheduled = decode(scheduledFile) as ScheduledItem[];
+    const chartsFile = await chartsRes.json();
+    const charts = JSON.parse(Buffer.from(chartsFile.content, "base64").toString("utf8")) as Record<string, unknown>[];
     const now = Date.now();
     const due = scheduled.filter((item) =>
       item.status === "scheduled" && item.scheduledAt &&
@@ -64,27 +47,23 @@ export async function GET(request: NextRequest) {
     for (const item of due) {
       if (!nextCharts.some((chart) => chart.id === item.chart.id)) nextCharts.push(item.chart);
     }
-    const remaining = scheduled.filter((item) => !dueIds.has(item.id));
 
-    async function update(path: string, currentSha: string, data: unknown, message: string) {
-      const response = await githubRequest(path, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message,
-          content: Buffer.from(JSON.stringify(data, null, 2) + "\n").toString("base64"),
-          sha: currentSha,
-          branch: "main"
-        })
-      });
-      if (!response.ok) {
-        const detail = await response.json().catch(() => ({}));
-        throw new Error(detail.message || "GitHubへの保存に失敗しました。");
-      }
+    const updateRes = await githubRequest(chartsPath, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: "cron: publish scheduled charts",
+        content: Buffer.from(JSON.stringify(nextCharts, null, 2) + "\n").toString("base64"),
+        sha: chartsFile.sha,
+        branch: "main"
+      })
+    });
+    if (!updateRes.ok) {
+      const detail = await updateRes.json().catch(() => ({}));
+      throw new Error(detail.message || "GitHubへの公開に失敗しました。");
     }
 
-    await update(paths.charts, chartsFile.sha, nextCharts, "cron: publish scheduled charts");
-    await update(paths.scheduled, scheduledFile.sha, remaining, "cron: clear published charts");
+    await saveScheduledCharts(scheduled.filter((item) => !dueIds.has(item.id)));
     return NextResponse.json({ ok: true, published: due.length });
   } catch (error) {
     return NextResponse.json(
