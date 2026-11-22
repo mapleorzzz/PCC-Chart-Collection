@@ -64,7 +64,7 @@ export default function AdminPanel() {
   const chartFormRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!editingId || typeof window === "undefined" || window.innerWidth >= 1024) return;
+    if ((!editingId && !editingScheduledId) || typeof window === "undefined" || window.innerWidth >= 1024) return;
     requestAnimationFrame(() => chartFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }, [editingId]);
 
@@ -312,7 +312,7 @@ export default function AdminPanel() {
   async function submitChart(event: FormEvent) {
     event.preventDefault();
     if (editingScheduledId) {
-      const updatedChart = { ...chart, charterSearch: charterSearchText.split(/\\r?\\n/).map((value) => value.trim()).filter(Boolean) };
+      const updatedChart = { ...chart, charterSearch: charterSearchText.split(/\r?\n/).map((value) => value.trim()).filter(Boolean) };
       const updatedScheduled = data.scheduledCharts.map((item) => item.id === editingScheduledId
         ? { ...item, chart: updatedChart, ...(uploadedReleaseId ? { releaseId: uploadedReleaseId } : {}) }
         : item);
@@ -401,7 +401,7 @@ export default function AdminPanel() {
     setEditingId("");
     setEditingScheduledId(item.id);
     setChart({ ...item.chart });
-    setCharterSearchText((item.chart.charterSearch || []).join("\\n"));
+    setCharterSearchText((item.chart.charterSearch || []).join("\n"));
     setProject(emptyProject);
     setTab("charts");
   }
