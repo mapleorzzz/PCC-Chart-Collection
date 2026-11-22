@@ -542,9 +542,9 @@ export default function AdminPanel() {
             <div className={label}>
               .pezファイル
               <input id="chart-pez-file" type="file" accept=".pez,application/octet-stream" className={field} disabled={uploading} onChange={(e) => { const file = e.target.files?.[0] || null; setSelectedFile(file); if (file) void uploadChartFile(file); }} />
-              {uploading && <p className="mt-2 text-xs text-neutral-400">Supabase非公開ストレージにアップロード中...</p>}
+              {uploading && <p className="mt-2 text-xs text-neutral-400">GitHub Draft Releaseにアップロード中...</p>}
               {selectedFile && !uploading && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
-              <p className="mt-2 text-xs text-neutral-600">選択するとSupabaseの非公開ストレージに自動アップロードされます。公開後にダウンロード可能になります。</p>
+              <p className="mt-2 text-xs text-neutral-600">選択するとGitHubの非公開Draft Releaseに自動アップロードされます。即時公開または予約公開の日時になるとダウンロード可能になります。</p>
               {chart.fileUrl ? <p className="mt-2 text-[10px] text-emerald-400">✓ PEZダウンロードURL設定済み</p> : <p className="mt-2 text-[10px] text-amber-500">! PEZ未登録</p>}
             </div>
             <label className={label}>.pez ダウンロードURL<input type="url" className={field} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://example.com/chart.pez" /></label>

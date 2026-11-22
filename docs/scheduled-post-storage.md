@@ -1,22 +1,19 @@
 # PCC private scheduled-post storage
 
-Scheduled charts and drafts are stored in Supabase instead of the public GitHub repository.
+予約投稿・下書きのメタデータは、公開リポジトリ内の専用GitHub Draft Releaseに保存します。Draft Releaseは公開されるまで一般ユーザーから見えず、GitHub Appの認証を通したサーバー処理だけが読み書きします。
 
-## 1. Create the table
+## 保存先
 
-In the Supabase project SQL Editor, run the SQL in `supabase/scheduled-posts.sql`.
+- 公開済み譜面データ: `src/data/charts.json`
+- .pezファイル: 譜面ごとのGitHub Draft Release
+- 予約投稿・下書きメタデータ: `pcc-private-scheduled-data` タグの専用Draft Release本文
 
-## 2. Configure Vercel environment variables
+専用Draft Releaseは絶対に手動で公開・削除しないでください。公開すると予約・下書き情報が一般公開される可能性があります。
 
-Add these variables to the PCC Vercel project for Production (and Preview if you use it):
+## 初回移行
 
-- `SUPABASE_URL`: Project URL from Supabase Project Settings → API.
-- `SUPABASE_SERVICE_ROLE_KEY`: the server-side `service_role` key from Project Settings → API Keys.
+初回アクセス時に専用Draft Releaseが存在しない場合、アプリは既存のSupabaseテーブル `pcc_private_data` から予約・下書き情報を一度だけ読み込み、専用Draft Releaseを作成します。既存データを移行するため、最初の管理画面表示が成功するまではVercelの `SUPABASE_URL` と `SUPABASE_SERVICE_ROLE_KEY` を削除しないでください。
 
-Keep the service-role key private. Do not prefix it with `NEXT_PUBLIC_`, do not put it in GitHub, and do not share it in chat.
+管理画面を開いて予約・下書き一覧が正常に表示され、GitHub Releasesに `PCC Private Scheduled Data` というDraft Releaseが作成されたことを確認したら、Vercelの `SUPABASE_URL` と `SUPABASE_SERVICE_ROLE_KEY` を削除して構いません。その後、再デプロイしてください。
 
-Redeploy the Vercel project after adding the variables.
-
-## 3. Existing scheduled posts
-
-The public `src/data/scheduled-charts.json` was empty when this migration was prepared. New drafts and scheduled posts will be saved only in Supabase. The cron endpoint publishes due charts to the public chart data in GitHub, then removes them from the private store.
+以後の予約・下書きの読み書きにはSupabaseを一切使用しません。
