@@ -58,6 +58,7 @@ export default function AdminPanel() {
   const [chartSort, setChartSort] = useState<"newest" | "oldest" | "title">("newest");
   const [projectSearch, setProjectSearch] = useState("");
   const [selectedScheduledId, setSelectedScheduledId] = useState("");
+  const [editingScheduledId, setEditingScheduledId] = useState("");
   const [draggedJacket, setDraggedJacket] = useState<{ groupKey: string; index: number } | null>(null);
   const [draggedChartGroup, setDraggedChartGroup] = useState<{ key: string; index: number } | null>(null);
   const chartFormRef = useRef<HTMLElement | null>(null);
@@ -125,6 +126,7 @@ export default function AdminPanel() {
       setData((current) => ({ ...current, [kind === "scheduled" ? "scheduledCharts" : kind]: next } as Dataset));
       setUploadedReleaseId(null);
       setEditingId("");
+      setEditingScheduledId("");
       setChart(emptyChart);
       setCharterSearchText("");
       setProject(emptyProject);
@@ -309,6 +311,14 @@ export default function AdminPanel() {
 
   async function submitChart(event: FormEvent) {
     event.preventDefault();
+    if (editingScheduledId) {
+      const updatedChart = { ...chart, charterSearch: charterSearchText.split(/\\r?\\n/).map((value) => value.trim()).filter(Boolean) };
+      const updatedScheduled = data.scheduledCharts.map((item) => item.id === editingScheduledId
+        ? { ...item, chart: updatedChart, ...(uploadedReleaseId ? { releaseId: uploadedReleaseId } : {}) }
+        : item);
+      await save("scheduled", updatedScheduled);
+      return;
+    }
     if (!editingId && publicationMode !== "now") {
       if (publicationMode === "scheduled" && !scheduledAt) {
         setError("公開日時を指定してください。");
@@ -386,6 +396,15 @@ export default function AdminPanel() {
     setProject(emptyProject);
     setTab("charts");
   }
+  function editScheduledChart(item: ScheduledChart) {
+    clearSelectedUploads();
+    setEditingId("");
+    setEditingScheduledId(item.id);
+    setChart({ ...item.chart });
+    setCharterSearchText((item.chart.charterSearch || []).join("\\n"));
+    setProject(emptyProject);
+    setTab("charts");
+  }
   function editProject(item: Project) {
     clearSelectedUploads();
     setEditingId(item.id);
@@ -396,6 +415,7 @@ export default function AdminPanel() {
   function cancelEdit() {
     clearSelectedUploads();
     setEditingId("");
+    setEditingScheduledId("");
     setChart(emptyChart);
     setCharterSearchText("");
     setProject(emptyProject);
@@ -497,10 +517,10 @@ export default function AdminPanel() {
           </div>
           <div className={`min-w-0 ${editingId ? "order-1" : "order-2"} lg:order-2`}>
         <section ref={chartFormRef} className="mt-6 scroll-mt-4 border border-line p-4 sm:mt-8 sm:p-7">
-          <h2 className="text-lg">{editingId ? "譜面を編集" : "譜面を新規登録"}</h2>
+          <h2 className="text-lg">{editingId || editingScheduledId ? "譜面を編集" : "譜面を新規登録"}</h2>
           <form onSubmit={submitChart} className="mt-5 grid gap-5 sm:grid-cols-2">
             <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">01 / BASIC INFORMATION</p></div>
-            <label className={label}>ID（英数字・ハイフン）<input className={field} value={chart.id} disabled={!!editingId} onChange={(e) => setChart({ ...chart, id: e.target.value })} required /></label>
+            <label className={label}>ID（英数字・ハイフン）<input className={field} value={chart.id} disabled={!!editingId || !!editingScheduledId} onChange={(e) => setChart({ ...chart, id: e.target.value })} required /></label>
             <label className={label}>曲名<input className={field} value={chart.title} onChange={(e) => setChart({ ...chart, title: e.target.value })} required /></label>
             <label className={label}>楽曲グループID（同じ楽曲の譜面で共通）<input className={field} value={chart.songId || ""} onChange={(e) => setChart({ ...chart, songId: e.target.value.trim() || undefined })} placeholder="グループ化する譜面に同じIDを入力" /></label>
             <label className="flex items-start gap-3 border border-amber-700/40 bg-amber-950/10 p-3 text-xs text-neutral-300 sm:col-span-2"><input type="checkbox" checked={!!chart.isBoss} onChange={(e) => setChart({ ...chart, isBoss: e.target.checked })} className="mt-0.5 accent-amber-400" /><span><span className="block font-medium tracking-wider text-amber-300">BOSS CHART</span><span className="mt-1 block leading-5 text-neutral-500">この楽曲をBOSS専用詳細画面にします。同じ楽曲グループIDの譜面は、どの難易度から開いても専用画面にまとまります。グループ内のいずれか1譜面でONにしてください。</span></span></label>
@@ -533,12 +553,12 @@ export default function AdminPanel() {
             <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
             <label className={label}>関連企画（複数選択可）<select multiple className={field + " min-h-32"} value={chart.projectIds} onChange={(e) => setChart({ ...chart, projectIds: Array.from(e.target.selectedOptions, (option) => option.value) })}>{data.projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
             <label className={label + " sm:col-span-2"}>説明<textarea className={field + " min-h-24"} value={chart.description || ""} onChange={(e) => setChart({ ...chart, description: e.target.value })} /></label>
-            {!editingId && <div className="grid gap-4 border-t border-line pt-4 sm:col-span-2 sm:grid-cols-2"><p className="text-[10px] tracking-[0.2em] text-neutral-500 sm:col-span-2">04 / PUBLISHING</p>
+            {!editingId && !editingScheduledId && <div className="grid gap-4 border-t border-line pt-4 sm:col-span-2 sm:grid-cols-2"><p className="text-[10px] tracking-[0.2em] text-neutral-500 sm:col-span-2">04 / PUBLISHING</p>
               <label className={label}>公開方法<select className={field} value={publicationMode} onChange={(e) => setPublicationMode(e.target.value as "now" | "scheduled" | "draft")}><option value="now">今すぐ公開</option><option value="scheduled">日時を指定して予約公開</option><option value="draft">下書き保存（非公開）</option></select></label>
               {publicationMode === "scheduled" && <label className={label}>公開日時（日本時間）<input type="datetime-local" className={field} value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} /></label>}
               <p className="text-xs leading-6 text-neutral-500 sm:col-span-2">予約投稿は約5分間隔で公開処理されます。下書きは公開されません。</p>
             </div>}
-            <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId ? "変更を保存" : publicationMode === "now" ? "譜面を登録・公開" : publicationMode === "scheduled" ? "予約投稿を保存" : "下書き保存"}</button>{editingId && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
+            <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId || editingScheduledId ? "変更を保存" : publicationMode === "now" ? "譜面を登録・公開" : publicationMode === "scheduled" ? "予約投稿を保存" : "下書き保存"}</button>{(editingId || editingScheduledId) && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
           </form>
         </section>
           </div>
@@ -735,6 +755,7 @@ export default function AdminPanel() {
                 <div><p className="text-[10px] text-neutral-600">PEZ</p><p className="mt-1 break-all text-sm">{selectedScheduled.chart.fileUrl ? "登録済み" : "未登録"}</p></div>
               </div>
               <div className="mt-6 flex flex-wrap gap-3 border-t border-line pt-5">
+                <button onClick={() => editScheduledChart(selectedScheduled)} className="bg-white px-4 py-3 text-xs text-black hover:bg-neutral-200">編集</button>
                 {selectedScheduled.status === "scheduled" && <><button onClick={() => reschedule(selectedScheduled)} className="border border-line px-4 py-3 text-xs text-neutral-200 hover:border-white">日時変更</button><button onClick={() => publishScheduled(selectedScheduled)} className="bg-white px-4 py-3 text-xs text-black">今すぐ公開</button></>}
                 <button onClick={() => removeScheduled(selectedScheduled.id)} className="border border-red-900 px-4 py-3 text-xs text-red-400 hover:border-red-500">削除</button>
               </div>
