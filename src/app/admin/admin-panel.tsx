@@ -21,7 +21,7 @@ function BossGradientFrame({ colors, className = "" }: { colors: BossCornerColor
   );
 }
 
-type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string };
+type ScheduledChart = { id: string; chart: Chart; status: "scheduled" | "draft"; scheduledAt?: string; releaseId?: number };
 type Dataset = { charts: Chart[]; projects: Project[]; scheduledCharts: ScheduledChart[]; jacketOrder: Record<string, string[]>; chartOrder: ChartOrder; bossAppearance: BossAppearanceSettings };
 const emptyChart: Chart = {
   id: "", title: "", artist: "", charter: "", charterSearch: [], difficulty: "IN", isBoss: false,
@@ -45,7 +45,7 @@ export default function AdminPanel() {
   const [editingId, setEditingId] = useState("");
   const [busy, setBusy] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState(false);\n  const [uploadedReleaseId, setUploadedReleaseId] = useState<number | null>(null);
   const [chartImageFile, setChartImageFile] = useState<File | null>(null);
   const [projectImageFile, setProjectImageFile] = useState<File | null>(null);
   const [imageUploading, setImageUploading] = useState(false);
@@ -120,7 +120,7 @@ export default function AdminPanel() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "保存できませんでした。");
-      setData((current) => ({ ...current, [kind === "scheduled" ? "scheduledCharts" : kind]: next } as Dataset));
+      setData((current) => ({ ...current, [kind === "scheduled" ? "scheduledCharts" : kind]: next } as Dataset));\n      setUploadedReleaseId(null);
       setEditingId("");
       setChart(emptyChart);
       setCharterSearchText("");
@@ -247,16 +247,17 @@ export default function AdminPanel() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "アップロード準備に失敗しました。");
-      const uploadResponse = await fetch(result.signedUrl, {
-        method: "PUT",
-        headers: { "Content-Type": "application/octet-stream", "x-upsert": "false" },
+      const uploadResponse = await fetch(result.uploadUrl, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${result.uploadToken}`, "Content-Type": "application/octet-stream" },
         body: file
       });
       if (!uploadResponse.ok) {
         const detail = await uploadResponse.text().catch(() => "");
-        throw new Error(detail || "Supabaseへのアップロードに失敗しました。");
+        throw new Error(detail || "GitHubへのアップロードに失敗しました。");
       }
       setChart((current) => ({ ...current, fileUrl: result.fileUrl }));
+      setUploadedReleaseId(Number(result.releaseId));
       setSelectedFile(null);
       const picker = document.getElementById("chart-pez-file") as HTMLInputElement | null;
       if (picker) picker.value = "";
@@ -303,7 +304,7 @@ export default function AdminPanel() {
     }
   }
 
-  function submitChart(event: FormEvent) {
+  async function submitChart(event: FormEvent) {
     event.preventDefault();
     if (!editingId && publicationMode !== "now") {
       if (publicationMode === "scheduled" && !scheduledAt) {
@@ -319,12 +320,24 @@ export default function AdminPanel() {
       }
       void save("scheduled", [...data.scheduledCharts, item]); return;
     }
+    if (uploadedReleaseId) {
+      try {
+        const response = await fetch("/api/admin/releases/publish", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ releaseId: uploadedReleaseId }) });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Draft Releaseを公開できませんでした。");
+      } catch (e) { setError(e instanceof Error ? e.message : "Releaseの公開に失敗しました。"); return; }
+    }
     const next = editingId ? data.charts.map((item) => item.id === editingId ? chart : item) : [...data.charts, chart];
     void save("charts", next.map((item) => item.id === chart.id ? { ...item, charterSearch: charterSearchText.split(/\r?\n/).map((value) => value.trim()).filter(Boolean) } : item));
   }
 
   async function publishScheduled(item: ScheduledChart) {
     if (!window.confirm(`「${item.chart.title}」を今すぐ公開しますか？`)) return;
+    if (item.releaseId) {
+      const response = await fetch("/api/admin/releases/publish", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ releaseId: item.releaseId }) });
+      const result = await response.json();
+      if (!response.ok) { setError(result.error || "Draft Releaseを公開できませんでした。"); return; }
+    }
     await save("charts", [...data.charts.filter((chart) => chart.id !== item.chart.id), item.chart]);
     await save("scheduled", data.scheduledCharts.filter((entry) => entry.id !== item.id));
   }
