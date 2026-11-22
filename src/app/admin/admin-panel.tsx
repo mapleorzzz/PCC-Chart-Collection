@@ -315,7 +315,8 @@ export default function AdminPanel() {
       }
       const item: ScheduledChart = {
         id: chart.id, chart, status: publicationMode,
-        ...(publicationMode === "scheduled" ? { scheduledAt: new Date(scheduledAt + ":00+09:00").toISOString() } : {})
+        ...(publicationMode === "scheduled" ? { scheduledAt: new Date(scheduledAt + ":00+09:00").toISOString() } : {}),
+        ...(uploadedReleaseId ? { releaseId: uploadedReleaseId } : {})
       };
       if (data.charts.some((item) => item.id === chart.id) || data.scheduledCharts.some((item) => item.id === chart.id)) {
         setError("このIDは既に使用されています。"); return;
