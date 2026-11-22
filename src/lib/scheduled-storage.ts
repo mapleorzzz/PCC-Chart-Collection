@@ -4,7 +4,7 @@ export type ScheduledChartRecord = {
   id: string;
   chart: Record<string, unknown>;
   status: "scheduled" | "draft";
-  scheduledAt?: string;
+  scheduledAt?: string;\n  releaseId?: number;
 };
 
 const tableUrl = () => {
