@@ -6,5 +6,6 @@ create table if not exists public.pcc_private_data (
 
 alter table public.pcc_private_data enable row level security;
 
--- Intentionally create no anon/authenticated policies.
--- The server-side service_role key bypasses RLS and must never be exposed to browsers.
+-- Only the server-side service role can access this table through the Data API.
+-- No privileges are granted to anon or authenticated roles.
+grant select, insert, update, delete on table public.pcc_private_data to service_role;
