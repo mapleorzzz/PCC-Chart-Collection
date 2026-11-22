@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getScheduledCharts, saveScheduledCharts } from "@/lib/scheduled-storage";\nimport { githubAppRequest } from "@/lib/github-app";
+import { getScheduledCharts, saveScheduledCharts } from "@/lib/scheduled-storage";
+import { githubAppRequest } from "@/lib/github-app";
 
 export const dynamic = "force-dynamic";
 
