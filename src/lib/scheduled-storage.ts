@@ -23,8 +23,8 @@ type GitHubRelease = {
   message?: string;
 };
 
-async function githubRequest(path: string, token: string, init?: RequestInit) {
-  return fetch(`https://api.github.com/repos/${privateDataRepository}/${path.replace(/^\//, "")}`, {
+async function githubRequest(path: string, token: string, init?: RequestInit, repository = privateDataRepository) {
+  return fetch(`https://api.github.com/repos/${repository}/${path.replace(/^\//, "")}`, {
     ...init,
     headers: {
       Accept: "application/vnd.github+json",
