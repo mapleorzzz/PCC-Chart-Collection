@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "folern",
+    "chart": {
+      "id": "folern",
+      "title": "folern",
+      "artist": "ぬゆり",
+      "charter": "Cosmos",
+      "charterSearch": [],
+      "difficulty": "IN",
+      "isBoss": false,
+      "level": "15",
+      "projectIds": [],
+      "publishedAt": "2026-11-23",
+      "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1795436355127-folern.pez"
+    },
+    "status": "scheduled",
+    "scheduledAt": "2026-12-24T12:21:00.000Z"
+  }
+]
