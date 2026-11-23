@@ -75,27 +75,6 @@ async function findStorageRelease(token: string): Promise<GitHubRelease | null> 
   return release;
 }
 
-async function readLegacySupabase(): Promise<ScheduledChartRecord[]> {
-  const url = process.env.SUPABASE_URL?.replace(/\/$/, "");
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    throw new Error("予約・下書きデータの初回移行がまだです。Vercelに既存のSUPABASE_URLとSUPABASE_SERVICE_ROLE_KEYを一時的に残したまま、管理画面を一度開いてください。");
-  }
-  const response = await fetch(`${url}/rest/v1/pcc_private_data?id=eq.scheduled_charts&select=data`, {
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json"
-    },
-    cache: "no-store"
-  });
-  if (!response.ok) {
-    const detail = await response.text().catch(() => "");
-    throw new Error(detail || `旧予約データの読み込みに失敗しました（${response.status}）。`);
-  }
-  const rows = await response.json() as { data?: ScheduledChartRecord[] }[];
-  return Array.isArray(rows[0]?.data) ? rows[0].data : [];
-}
 
 async function createStorageRelease(token: string, items: ScheduledChartRecord[]): Promise<GitHubRelease> {
   const response = await githubRequest("releases", token, {
@@ -140,9 +119,8 @@ async function getOrCreateStorageRelease(token: string): Promise<GitHubRelease> 
     throw new Error(detail.message || "旧予約・下書きデータを確認できませんでした。");
   }
 
-  // Last-resort one-time migration for installations that still have records in Supabase.
-  const legacyItems = await readLegacySupabase();
-  return createStorageRelease(token, legacyItems);
+  // No Supabase dependency: initialize an empty private store when no legacy GitHub release exists.
+  return createStorageRelease(token, []);
 }
 
 export async function getScheduledCharts(): Promise<ScheduledChartRecord[]> {
