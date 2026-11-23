@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: "PCC Chart Collection",
   description: "An archive of Phigros Fanmade charts and community projects.",
   icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg"
+    icon: "/icon.svg?v=2",
+    shortcut: "/icon.svg?v=2"
   }
 };
 
