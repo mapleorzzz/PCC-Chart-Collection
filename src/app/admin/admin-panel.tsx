@@ -387,7 +387,7 @@ export default function AdminPanel() {
     setScheduledAt(item.scheduledAt
       ? new Date(new Date(item.scheduledAt).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 16)
       : "");
-    setTab("charts");
+    setSelectedScheduledId(item.id);
   }
 
   function editChart(item: Chart) {
@@ -738,7 +738,52 @@ export default function AdminPanel() {
             </div>
           </section>
           <section className="min-w-0 border border-line p-4 sm:p-7">
-            {selectedScheduled ? <>
+            {selectedScheduled ? <>{editingScheduledId ? <section className="min-w-0">
+              <p className="text-[10px] tracking-[0.2em] text-neutral-500">EDIT SCHEDULED ITEM</p>
+              <h2 className="mt-2 text-lg">予約・下書きの譜面を編集</h2>
+              <form onSubmit={submitChart} className="mt-5 grid gap-5 sm:grid-cols-2">
+            <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">01 / BASIC INFORMATION</p></div>
+            <label className={label}>ID（英数字・ハイフン）<input className={field} value={chart.id} disabled={!!editingId || !!editingScheduledId} onChange={(e) => setChart({ ...chart, id: e.target.value })} required /></label>
+            <label className={label}>曲名<input className={field} value={chart.title} onChange={(e) => setChart({ ...chart, title: e.target.value })} required /></label>
+            <label className={label}>楽曲グループID（同じ楽曲の譜面で共通）<input className={field} value={chart.songId || ""} onChange={(e) => setChart({ ...chart, songId: e.target.value.trim() || undefined })} placeholder="グループ化する譜面に同じIDを入力" /></label>
+            <label className="flex items-start gap-3 border border-amber-700/40 bg-amber-950/10 p-3 text-xs text-neutral-300 sm:col-span-2"><input type="checkbox" checked={!!chart.isBoss} onChange={(e) => setChart({ ...chart, isBoss: e.target.checked })} className="mt-0.5 accent-amber-400" /><span><span className="block font-medium tracking-wider text-amber-300">BOSS CHART</span><span className="mt-1 block leading-5 text-neutral-500">この楽曲をBOSS専用詳細画面にします。同じ楽曲グループIDの譜面は、どの難易度から開いても専用画面にまとまります。グループ内のいずれか1譜面でONにしてください。</span></span></label>
+            <label className={label}>アーティスト<input className={field} value={chart.artist} onChange={(e) => setChart({ ...chart, artist: e.target.value })} required /></label>
+            <label className={label}>表示用製作者名義（サイトに表示）<input className={field} value={chart.charter} onChange={(e) => setChart({ ...chart, charter: e.target.value })} required /></label>
+            <label className={label + " sm:col-span-2"}>検索用製作者名義（非公開・複数可）<textarea className={field + " min-h-32 resize-y leading-6"} rows={5} value={charterSearchText} onChange={(e) => setCharterSearchText(e.target.value)} placeholder={"1行に1名義ずつ入力\n例: maple._.zz\nChaos"} /><span className="mt-1 block text-[10px] text-neutral-600">ここに入力した名義はサイト上に表示されず、製作者検索にだけ使用されます。</span></label>
+            <label className={label}>難易度<select className={field} value={chart.difficulty} onChange={(e) => setChart({ ...chart, difficulty: e.target.value as Chart["difficulty"] })}>{["EZ","HD","IN","AT","Other"].map((d) => <option key={d}>{d}</option>)}</select></label>
+            <label className={label}>レベル<input className={field} value={chart.level} onChange={(e) => setChart({ ...chart, level: e.target.value })} placeholder="例: 15" required /></label>
+            <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">02 / ASSETS & MEDIA</p></div>
+            <div className={label}>
+              ジャケット画像
+              <input className={field} value={chart.jacket || ""} onChange={(e) => setChart({ ...chart, jacket: e.target.value })} placeholder="画像URL（アップロード後に自動入力）" />
+              {chart.jacket && <div className="mt-2 flex items-center gap-3"><img src={chart.jacket} alt="ジャケットプレビュー" className="h-14 w-14 border border-line object-cover" /><span className="text-[10px] text-emerald-400">画像URL設定済み</span></div>}
+              <input id="chart-image-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={field} disabled={imageUploading} onChange={(e) => { const file = e.target.files?.[0] || null; setChartImageFile(file); if (file) void uploadImage("chart", file); }} />
+              {imageUploading && imageTarget === "chart" && <p className="mt-2 text-xs text-neutral-400">画像をアップロード中...</p>}
+              {chartImageFile && !imageUploading && <p className="mt-2 text-xs text-neutral-400">{chartImageFile.name} · {(chartImageFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+              <p className="mt-2 text-xs text-neutral-600">JPEG・PNG・WebP・GIF / 4 MB以下。選択すると自動アップロードされます。</p>
+            </div>
+            <div className={label}>
+              .pezファイル
+              <input id="chart-pez-file" type="file" accept=".pez,application/octet-stream" className={field} disabled={uploading} onChange={(e) => { const file = e.target.files?.[0] || null; setSelectedFile(file); if (file) void uploadChartFile(file); }} />
+              {uploading && <p className="mt-2 text-xs text-neutral-400">GitHub Releaseにアップロード中...</p>}
+              {selectedFile && !uploading && <p className="mt-2 text-xs text-neutral-500">{selectedFile.name} · {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>}
+              <p className="mt-2 text-xs text-neutral-600">選択するとGitHub Releaseに自動アップロードされます。</p>
+              {chart.fileUrl ? <p className="mt-2 text-[10px] text-emerald-400">✓ PEZダウンロードURL設定済み</p> : <p className="mt-2 text-[10px] text-amber-500">! PEZ未登録</p>}
+            </div>
+            <label className={label}>.pez ダウンロードURL<input type="url" className={field} value={chart.fileUrl || ""} onChange={(e) => setChart({ ...chart, fileUrl: e.target.value })} placeholder="https://example.com/chart.pez" /></label>
+            <div className="sm:col-span-2"><p className="border-b border-line pb-2 text-[10px] tracking-[0.2em] text-neutral-500">03 / VIDEO & DETAILS</p></div>
+            <label className={label}>YouTubeリンク<input type="url" className={field} value={chart.youtubeUrl || ""} onChange={(e) => setChart({ ...chart, youtubeUrl: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." />{chart.youtubeUrl ? <span className="mt-1 block text-[10px] text-emerald-400">動画リンク設定済み</span> : <span className="mt-1 block text-[10px] text-neutral-600">未設定（後から追加できます）</span>}</label>
+            <label className={label}>登録日<input type="date" className={field} value={chart.publishedAt} onChange={(e) => setChart({ ...chart, publishedAt: e.target.value })} required /></label>
+            <label className={label}>関連企画（複数選択可）<select multiple className={field + " min-h-32"} value={chart.projectIds} onChange={(e) => setChart({ ...chart, projectIds: Array.from(e.target.selectedOptions, (option) => option.value) })}>{data.projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
+            <label className={label + " sm:col-span-2"}>説明<textarea className={field + " min-h-24"} value={chart.description || ""} onChange={(e) => setChart({ ...chart, description: e.target.value })} /></label>
+            {!editingId && <div className="grid gap-4 border-t border-line pt-4 sm:col-span-2 sm:grid-cols-2"><p className="text-[10px] tracking-[0.2em] text-neutral-500 sm:col-span-2">04 / PUBLISHING</p>
+              <label className={label}>公開方法<select className={field} value={publicationMode} onChange={(e) => setPublicationMode(e.target.value as "now" | "scheduled" | "draft")}><option value="now" disabled={!!editingScheduledId}>今すぐ公開</option><option value="scheduled">日時を指定して予約公開</option><option value="draft">下書き保存（非公開）</option></select></label>
+              {publicationMode === "scheduled" && <label className={label}>公開日時（日本時間）<input type="datetime-local" className={field} value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} /></label>}
+              <p className="text-xs leading-6 text-neutral-500 sm:col-span-2">予約投稿は約5分間隔で公開処理されます。下書きは公開されません。</p>
+            </div>}
+            <div className="flex gap-2 sm:col-span-2"><button disabled={busy} className="bg-white px-5 py-3 text-xs font-medium text-black disabled:opacity-50">{busy ? "保存中..." : editingId || editingScheduledId ? "変更を保存" : publicationMode === "now" ? "譜面を登録・公開" : publicationMode === "scheduled" ? "予約投稿を保存" : "下書き保存"}</button>{(editingId || editingScheduledId) && <button type="button" onClick={cancelEdit} className="border border-line px-5 py-3 text-xs text-neutral-300">キャンセル</button>}</div>
+          </form>
+            </section> : <>
               <div className="flex flex-col gap-4 sm:flex-row">
                 {selectedScheduled.chart.jacket && <img src={selectedScheduled.chart.jacket} alt="" className="h-28 w-28 border border-line object-cover" />}
                 <div className="min-w-0"><p className="text-[10px] tracking-[0.2em] text-neutral-500">SCHEDULED ITEM</p><h2 className="mt-2 text-xl">{selectedScheduled.chart.title}</h2><p className="mt-1 text-sm text-neutral-500">{selectedScheduled.chart.artist}</p><p className="mt-3 text-xs text-neutral-400">{selectedScheduled.status === "draft" ? "下書き・非公開" : "予約公開"}</p>{selectedScheduled.scheduledAt && <p className="mt-1 text-xs text-neutral-500">{new Date(selectedScheduled.scheduledAt).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}（JST）</p>}</div>
@@ -754,7 +799,7 @@ export default function AdminPanel() {
                 {selectedScheduled.status === "scheduled" && <><button onClick={() => reschedule(selectedScheduled)} className="border border-line px-4 py-3 text-xs text-neutral-200 hover:border-white">日時変更</button><button onClick={() => publishScheduled(selectedScheduled)} className="bg-white px-4 py-3 text-xs text-black">今すぐ公開</button></>}
                 <button onClick={() => removeScheduled(selectedScheduled.id)} className="border border-red-900 px-4 py-3 text-xs text-red-400 hover:border-red-500">削除</button>
               </div>
-            </> : <div className="flex min-h-64 items-center justify-center text-center text-sm text-neutral-600">{data.scheduledCharts.length ? "左側から予約・下書きを選択してください。" : "予約・下書きはまだありません。"}</div>}
+            </>}</> : <div className="flex min-h-64 items-center justify-center text-center text-sm text-neutral-600">{data.scheduledCharts.length ? "左側から予約・下書きを選択してください。" : "予約・下書きはまだありません。"}</div>}
           </section>
         </div>
       </>}
