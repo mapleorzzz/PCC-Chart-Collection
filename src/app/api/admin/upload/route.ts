@@ -5,7 +5,7 @@ import { getGitHubAppToken } from "@/lib/github-app";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const repository = "mapleorzzz/PCC-Chart-Collection";
+const repository = "mapleorzzz/PCC-Private-Data";
 
 export async function POST(request: NextRequest) {
   if (!(await isAdminAuthenticated())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       assetName,
       uploadUrl: `${uploadUrl}?name=${encodeURIComponent(assetName)}`,
       uploadToken: token,
-      fileUrl: `https://github.com/${repository}/releases/download/${tag}/${encodeURIComponent(assetName)}`
+      fileUrl: `https://pcc-chart-collection.vercel.app/api/pez?id=${encodeURIComponent(chartId)}&releaseId=${release.id}&asset=${encodeURIComponent(assetName)}`
     });
   } catch (error) {
     return NextResponse.json(
