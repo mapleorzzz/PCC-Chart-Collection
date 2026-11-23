@@ -74,7 +74,16 @@ export async function PUT(request: NextRequest) {
       const detail = await updateRes.json().catch(() => ({}));
       throw new Error(detail.message || "GitHubへの保存に失敗しました。");
     }
-    return NextResponse.json({ ok: true });
+
+    // Verify the exact data persisted on the main branch before reporting success.
+    const verifyRes = await githubRequest(path);
+    if (!verifyRes.ok) throw new Error("保存後のデータをGitHubから再取得できませんでした。");
+    const verifyFile = await verifyRes.json();
+    const persisted = JSON.parse(Buffer.from(verifyFile.content, "base64").toString("utf8"));
+    if (JSON.stringify(persisted) !== JSON.stringify(data)) {
+      throw new Error("GitHubへの保存内容と再取得した内容が一致しません。もう一度保存してください。");
+    }
+    return NextResponse.json({ ok: true, verified: true });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "保存に失敗しました。" }, { status: 500 });
   }

@@ -123,7 +123,9 @@ export default function AdminPanel() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "保存できませんでした。");
-      setData((current) => ({ ...current, [kind === "scheduled" ? "scheduledCharts" : kind]: next } as Dataset));
+      // Re-read the canonical GitHub data after the write. This prevents the UI
+      // from showing a local optimistic state that disappears after a refresh.
+      await loadData();
       setUploadedReleaseId(null);
       setEditingId("");
       setEditingScheduledId("");
