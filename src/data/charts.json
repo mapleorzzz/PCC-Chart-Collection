@@ -1043,5 +1043,22 @@
     "fileUrl": "https://github.com/mapleorzzz/PCC-Chart-Collection/releases/download/chart-files/1794502350737-QUATTUORUX_IN.pez",
     "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1794502354024-ab67616d0000b273aaa9c6af3b1e55ea218596ce_jpg.jpg",
     "youtubeUrl": "https://youtu.be/Inp1e4hYkQ4"
+  },
+  {
+    "id": "folern",
+    "title": "folern",
+    "artist": "ぬゆり",
+    "charter": "Cosmos",
+    "charterSearch": [
+      "Chaos"
+    ],
+    "difficulty": "IN",
+    "isBoss": false,
+    "level": "15.7",
+    "projectIds": [
+      "chunithm"
+    ],
+    "publishedAt": "2026-12-24",
+    "jacket": "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/public/uploads/1795407854004-folernmod_png.png"
   }
 ]
