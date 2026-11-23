@@ -119,7 +119,21 @@ async function getOrCreateStorageRelease(token: string): Promise<GitHubRelease> 
     throw new Error(detail.message || "旧予約・下書きデータを確認できませんでした。");
   }
 
-  // No Supabase dependency: initialize an empty private store when no legacy GitHub release exists.
+  // Older versions sometimes created the data release with an untagged-* tag.
+  // Locate it by the private-data marker so migration does not silently drop scheduled charts.
+  const legacyListResponse = await githubRequest("releases?per_page=100", token, undefined, "mapleorzzz/PCC-Chart-Collection");
+  if (!legacyListResponse.ok) {
+    const detail = await legacyListResponse.json().catch(() => ({})) as { message?: string };
+    throw new Error(detail.message || "旧予約・下書きRelease一覧を確認できませんでした。");
+  }
+  const legacyReleases = await legacyListResponse.json() as GitHubRelease[];
+  const legacyStore = legacyReleases.find((item) => item.body?.startsWith(bodyMarker));
+  if (legacyStore) {
+    if (!legacyStore.draft) throw new Error("旧予約・下書き用Releaseが公開状態です。安全のため移行を停止しました。");
+    return createStorageRelease(token, parseReleaseBody(legacyStore.body));
+  }
+
+  // No legacy GitHub store exists: initialize an empty private store.
   return createStorageRelease(token, []);
 }
 

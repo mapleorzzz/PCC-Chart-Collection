@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Release IDが不正です。" }, { status: 400 });
     }
     const response = await githubAppRequest(`releases/${releaseId}`, undefined, "mapleorzzz/PCC-Private-Data");
-    const result = await response.json().catch(() => ({})) as { draft?: boolean; message?: string };
-    if (!response.ok || result.draft !== true) {
-      throw new Error(result.message || "非公開Releaseを確認できませんでした。");
+    const result = await response.json().catch(() => ({})) as { draft?: boolean; assets?: Array<{ name: string; size: number }>; message?: string };
+    if (!response.ok || result.draft !== true || !result.assets?.length) {
+      throw new Error(result.message || "非公開Releaseにアップロード済みの .pez ファイルが見つかりません。");
     }
     return NextResponse.json({ ok: true, private: true });
   } catch (error) {

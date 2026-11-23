@@ -5,7 +5,6 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const privateRepository = "mapleorzzz/PCC-Private-Data";
-const publicChartsUrl = "https://raw.githubusercontent.com/mapleorzzz/PCC-Chart-Collection/main/src/data/charts.json";
 
 type PublicChart = { id?: string; fileUrl?: string };
 
@@ -21,9 +20,11 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const indexResponse = await fetch(publicChartsUrl, { cache: "no-store" });
+    const indexResponse = await githubAppRequest("contents/src/data/charts.json");
     if (!indexResponse.ok) return NextResponse.json({ error: "Chart index unavailable." }, { status: 503 });
-    const charts = await indexResponse.json() as PublicChart[];
+    const indexFile = await indexResponse.json() as { content?: string; encoding?: string };
+    if (!indexFile.content || indexFile.encoding !== "base64") return NextResponse.json({ error: "Chart index unavailable." }, { status: 503 });
+    const charts = JSON.parse(Buffer.from(indexFile.content, "base64").toString("utf8")) as PublicChart[];
     const chart = charts.find((item) => item.id === id);
     const expectedUrl = `https://pcc-chart-collection.vercel.app/api/pez?id=${encodeURIComponent(id)}&releaseId=${releaseId}&asset=${encodeURIComponent(assetName)}`;
     if (!chart || chart.fileUrl !== expectedUrl) {

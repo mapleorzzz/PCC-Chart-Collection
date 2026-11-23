@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { getScheduledCharts, saveScheduledCharts } from "@/lib/scheduled-storage";
+import { githubAppRequest } from "@/lib/github-app";
 
 const repo = "mapleorzzz/PCC-Chart-Collection";
 const files = {
@@ -12,18 +13,7 @@ const files = {
 } as const;
 
 async function githubRequest(path: string, init?: RequestInit) {
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) throw new Error("GITHUB_TOKEN is not configured");
-  return fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-    ...init,
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      ...(init?.headers || {})
-    },
-    cache: "no-store"
-  });
+  return githubAppRequest(`contents/${path}`, init);
 }
 
 export async function GET() {
