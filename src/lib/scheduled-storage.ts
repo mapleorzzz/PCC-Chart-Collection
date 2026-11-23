@@ -24,7 +24,7 @@ type GitHubRelease = {
 };
 
 async function githubRequest(path: string, token: string, init?: RequestInit) {
-  return fetch(`https://api.github.com/repos/mapleorzzz/PCC-Chart-Collection/${path.replace(/^\//, "")}`, {
+  return fetch(`https://api.github.com/repos/${privateDataRepository}/${path.replace(/^\//, "")}`, {
     ...init,
     headers: {
       Accept: "application/vnd.github+json",
