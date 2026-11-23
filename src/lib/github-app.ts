@@ -42,7 +42,7 @@ export async function getGitHubAppToken() {
 
 export async function githubAppRequest(path: string, init?: RequestInit, repository = defaultRepository) {
   const { token } = await getGitHubAppToken();
-  return fetch(`https://api.github.com/repos/${repo}/${path.replace(/^\//, "")}`, {
+  return fetch(`https://api.github.com/repos/${repository}/${path.replace(/^\//, "")}`, {
     ...init,
     headers: {
       Accept: "application/vnd.github+json",
