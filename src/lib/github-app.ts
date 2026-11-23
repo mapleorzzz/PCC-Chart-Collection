@@ -1,7 +1,7 @@
 import "server-only";
 import { createSign } from "node:crypto";
 
-const repo = "mapleorzzz/PCC-Chart-Collection";
+const defaultRepository = "mapleorzzz/PCC-Chart-Collection";
 
 function base64url(value: string) {
   return Buffer.from(value).toString("base64url");
@@ -40,7 +40,7 @@ export async function getGitHubAppToken() {
   return { token: result.token, expiresAt: result.expires_at };
 }
 
-export async function githubAppRequest(path: string, init?: RequestInit) {
+export async function githubAppRequest(path: string, init?: RequestInit, repository = defaultRepository) {
   const { token } = await getGitHubAppToken();
   return fetch(`https://api.github.com/repos/${repo}/${path.replace(/^\//, "")}`, {
     ...init,
@@ -54,4 +54,4 @@ export async function githubAppRequest(path: string, init?: RequestInit) {
   });
 }
 
-export { repo as githubRepository };
+export const githubRepository = defaultRepository;
