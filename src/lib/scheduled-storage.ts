@@ -9,6 +9,7 @@ export type ScheduledChartRecord = {
   releaseId?: number;
 };
 
+const privateDataRepository = "mapleorzzz/PCC-Private-Data";
 const storageTag = "pcc-private-scheduled-data";
 const storageName = "PCC Private Scheduled Data";
 const bodyMarker = "<!-- PCC_PRIVATE_SCHEDULED_DATA_V1 -->";
