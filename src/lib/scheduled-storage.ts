@@ -126,7 +126,21 @@ async function getOrCreateStorageRelease(token: string): Promise<GitHubRelease> 
   const existing = await findStorageRelease(token);
   if (existing) return existing;
 
-  // One-time migration: preserve all existing scheduled/draft records before Supabase is retired.
+  // Migrate the previous GitHub Draft Release before consulting the retired Supabase fallback.
+  const legacyResponse = await githubRequest(`releases/tags/${encodeURIComponent(storageTag)}`, token, undefined, "mapleorzzz/PCC-Chart-Collection");
+  if (legacyResponse.ok) {
+    const legacyRelease = await legacyResponse.json() as GitHubRelease;
+    if (!legacyRelease.draft) {
+      throw new Error("旧予約・下書き用Releaseが公開状態です。安全のため移行を停止しました。");
+    }
+    return createStorageRelease(token, parseReleaseBody(legacyRelease.body));
+  }
+  if (legacyResponse.status !== 404) {
+    const detail = await legacyResponse.json().catch(() => ({})) as { message?: string };
+    throw new Error(detail.message || "旧予約・下書きデータを確認できませんでした。");
+  }
+
+  // Last-resort one-time migration for installations that still have records in Supabase.
   const legacyItems = await readLegacySupabase();
   return createStorageRelease(token, legacyItems);
 }
