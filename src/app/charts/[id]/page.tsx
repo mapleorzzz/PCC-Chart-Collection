@@ -96,7 +96,7 @@ export default function ChartDetailPage() {
                     <p className="mt-1 break-words text-xs text-neutral-400">Charter : {entry.charter}</p>
                   </div>
                 </div>
-                {entry.fileUrl ? <a href={entry.fileUrl} className="flex min-h-12 items-center justify-center border border-white/70 bg-white px-5 text-xs font-medium tracking-[0.18em] text-black transition hover:border-white hover:bg-neutral-200 hover:shadow-[0_0_28px_rgba(255,255,255,0.12)]" download>DOWNLOAD <span className="ml-2">↓</span></a> : <span className="flex min-h-12 items-center justify-center border border-white/10 bg-white/[0.03] text-xs tracking-wider text-neutral-500">FILE NOT AVAILABLE</span>}
+                {entry.fileUrl ? <a href={entry.fileUrl} className="flex min-h-12 items-center justify-center border border-white/70 bg-white px-5 text-xs font-medium tracking-[0.18em] text-black transition hover:border-white hover:bg-neutral-200 hover:shadow-[0_0_28px_rgba(255,255,255,0.12)]" download>DOWNLOAD .PEZ <span className="ml-2">↓</span></a> : <span className="flex min-h-12 items-center justify-center border border-white/10 bg-white/[0.03] text-xs tracking-wider text-neutral-500">FILE NOT AVAILABLE</span>}
               </div>
             ))}
           </div>
