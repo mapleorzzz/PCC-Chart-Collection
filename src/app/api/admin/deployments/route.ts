@@ -20,8 +20,8 @@ function config() {
   const token = process.env.VERCEL_TOKEN;
   const projectId = process.env.VERCEL_PROJECT_ID;
   const teamId = process.env.VERCEL_ORG_ID;
-  if (!token || !projectId) {
-    throw new Error("Vercel連携の設定がありません。VERCEL_TOKEN と VERCEL_PROJECT_ID を環境変数に設定してください。");
+  if (!token || !projectId || !teamId) {
+    throw new Error("Vercel連携の設定がありません。VERCEL_TOKEN と VERCEL_ORG_ID を設定し、System Environment Variables を有効にしてください。");
   }
   return { token, projectId, teamId };
 }
