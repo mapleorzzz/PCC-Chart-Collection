@@ -762,7 +762,7 @@ export default function AdminPanel() {
             </form>
           </section>
         </div>
-      </> : <>
+      </> : tab === "scheduled" ? <>
         <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(280px,0.82fr)_minmax(0,1.7fr)]">
           <section className="min-w-0 lg:sticky lg:top-6">
             <div className="mb-4"><h2 className="text-lg">予約・下書き</h2><p className="mt-1 text-xs text-neutral-600">{data.scheduledCharts.length} 件 · 公開予約と非公開下書き</p></div>
