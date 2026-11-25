@@ -37,7 +37,7 @@ export default function AdminPanel() {
   const [error, setError] = useState("");
   const [data, setData] = useState<Dataset>({ charts: [], projects: [], scheduledCharts: [], jacketOrder: {}, chartOrder: {}, bossAppearance: defaultBossAppearanceSettings });
   const [selectedBossGroup, setSelectedBossGroup] = useState("__default__");
-  type AdminTab = "charts" | "chartOrder" | "jackets" | "bossAppearance" | "projects" | "scheduled" | "deployments";
+  type AdminTab = "charts" | "chartOrder" | "jackets" | "bossAppearance" | "projects" | "scheduled";
   const [tab, setTab] = useState<AdminTab>("charts");
   const [chart, setChart] = useState<Chart>(emptyChart);
   const [charterSearchText, setCharterSearchText] = useState("");
@@ -58,10 +58,6 @@ export default function AdminPanel() {
   const [chartSort, setChartSort] = useState<"newest" | "oldest" | "title">("newest");
   const [projectSearch, setProjectSearch] = useState("");
   const [selectedScheduledId, setSelectedScheduledId] = useState("");
-  type DeploymentItem = { id: string; url: string; name: string; created: number; state: string; target: string; protected: boolean };
-  const [deployments, setDeployments] = useState<DeploymentItem[]>([]);
-  const [deploymentsLoading, setDeploymentsLoading] = useState(false);
-  const [deletingDeploymentId, setDeletingDeploymentId] = useState("");
   const [draggedJacket, setDraggedJacket] = useState<{ groupKey: string; index: number } | null>(null);
   const [draggedChartGroup, setDraggedChartGroup] = useState<{ key: string; index: number } | null>(null);
   const chartFormRef = useRef<HTMLElement | null>(null);
@@ -108,39 +104,6 @@ export default function AdminPanel() {
       setPassword("");
     } catch (e) { setError(e instanceof Error ? e.message : "ログインに失敗しました。"); }
     finally { setBusy(false); }
-  }
-
-  async function loadDeployments() {
-    setDeploymentsLoading(true);
-    setError("");
-    try {
-      const response = await fetch("/api/admin/deployments", { cache: "no-store" });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "デプロイ一覧を取得できませんでした。");
-      setDeployments(result.deployments || []);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "デプロイ一覧を取得できませんでした。");
-    } finally {
-      setDeploymentsLoading(false);
-    }
-  }
-
-  async function deleteDeployment(item: DeploymentItem) {
-    if (item.protected) return;
-    const date = item.created ? new Date(item.created).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) : "日時不明";
-    if (!window.confirm("この過去デプロイを削除しますか？\n\n" + item.url + "\n" + date + "\n\n削除すると、このデプロイへのロールバックやURLの利用ができなくなります。")) return;
-    setDeletingDeploymentId(item.id);
-    setError("");
-    try {
-      const response = await fetch("/api/admin/deployments", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: item.id }) });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "デプロイを削除できませんでした。");
-      setDeployments((current) => current.filter((entry) => entry.id !== item.id));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "デプロイを削除できませんでした。");
-    } finally {
-      setDeletingDeploymentId("");
-    }
   }
 
   async function logout() {
@@ -530,7 +493,6 @@ export default function AdminPanel() {
         <button onClick={() => { setTab("bossAppearance"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "bossAppearance" ? "border-b border-white text-white" : "text-neutral-500"}`}>BOSS画面設定</button>
         <button onClick={() => { setTab("projects"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "projects" ? "border-b border-white text-white" : "text-neutral-500"}`}>企画管理 ({data.projects.length})</button>
         <button onClick={() => { setTab("scheduled"); cancelEdit(); }} className={`px-4 py-3 text-xs ${tab === "scheduled" ? "border-b border-white text-white" : "text-neutral-500"}`}>予約・下書き ({data.scheduledCharts.length})</button>
-        <button onClick={() => { setTab("deployments"); cancelEdit(); void loadDeployments(); }} className={`px-4 py-3 text-xs ${tab === "deployments" ? "border-b border-white text-white" : "text-neutral-500"}`}>デプロイ管理</button>
       </div>
 
       {tab === "charts" ? <>
@@ -762,7 +724,7 @@ export default function AdminPanel() {
             </form>
           </section>
         </div>
-      </> : tab === "scheduled" ? <>
+      </> : <>
         <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(280px,0.82fr)_minmax(0,1.7fr)]">
           <section className="min-w-0 lg:sticky lg:top-6">
             <div className="mb-4"><h2 className="text-lg">予約・下書き</h2><p className="mt-1 text-xs text-neutral-600">{data.scheduledCharts.length} 件 · 公開予約と非公開下書き</p></div>
@@ -840,21 +802,7 @@ export default function AdminPanel() {
             </>}</> : <div className="flex min-h-64 items-center justify-center text-center text-sm text-neutral-600">{data.scheduledCharts.length ? "左側から予約・下書きを選択してください。" : "予約・下書きはまだありません。"}</div>}
           </section>
         </div>
-      </> : <>
-        <section className="mt-6">
-          <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-            <div><h2 className="text-lg">Vercel デプロイ管理</h2><p className="mt-1 text-xs leading-6 text-neutral-500">過去のデプロイを削除して、不要なデプロイの保存容量を整理できます。最新のProductionデプロイは削除対象から保護されます。</p></div>
-            <button type="button" onClick={() => void loadDeployments()} disabled={deploymentsLoading} className="border border-line px-4 py-3 text-xs text-neutral-300 disabled:opacity-50">{deploymentsLoading ? "読み込み中..." : "一覧を再読み込み"}</button>
-          </div>
-          <div className="mb-5 border border-amber-900/50 bg-amber-950/20 p-4 text-xs leading-6 text-amber-200">削除したデプロイにはロールバックできず、そのデプロイ固有のURLも利用できなくなります。現在のProductionデプロイは削除できません。</div>
-          {deploymentsLoading && !deployments.length ? <p className="py-12 text-center text-sm text-neutral-500">デプロイ一覧を読み込んでいます...</p> : deployments.length ? <div className="divide-y divide-line border-y border-line">
-            {deployments.map((item) => <div key={item.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0"><p className="break-all text-sm text-neutral-200">{item.url || item.name || item.id}</p><p className="mt-1 text-[10px] text-neutral-500">{item.created ? new Date(item.created).toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" }) : "日時不明"} · {item.target === "production" ? "Production" : "Preview"} · {item.state}</p><p className="mt-1 break-all text-[10px] text-neutral-700">{item.id}</p></div>
-              {item.protected ? <span className="w-fit border border-emerald-900/60 px-3 py-2 text-[10px] text-emerald-400">最新の本番環境 · 保護中</span> : <button type="button" disabled={!!deletingDeploymentId} onClick={() => void deleteDeployment(item)} className="w-fit border border-red-900 px-4 py-2 text-xs text-red-400 hover:border-red-500 disabled:opacity-50">{deletingDeploymentId === item.id ? "削除中..." : "このデプロイを削除"}</button>}
-            </div>)}
-          </div> : <p className="border border-dashed border-line py-12 text-center text-sm text-neutral-600">{deploymentsLoading ? "読み込み中..." : "デプロイが見つかりません。"}</p>}
-        </section>
-      </>
+      </>}
     </div>
   );
 }
